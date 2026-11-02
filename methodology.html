@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Methodology · Hustle Stats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="How every Hustle Stats metric is built, and how much of it is skill versus noise.">
+<meta property="og:title" content="Methodology · Hustle Stats"><meta property="og:description" content="How every Hustle Stats metric is built, and how much of it is skill versus noise.">
+<meta property="og:image" content="assets/icon_512.png"><meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="assets/icon_180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="assets/site.css">
+</head><body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="index.html" aria-label="Hustle Stats home"><img src="assets/shield_sm.png" alt="" width="36" height="41">
+    <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="index.html">Home</a><a href="shot-profile.html">Shot Profile</a><a href="hustle-plus-minus.html">Hustle Plus-Minus</a><a href="research.html">Research</a><a href="hustle-report.html">The Hustle Report</a><a href="methodology.html" aria-current="page">Methodology</a><a href="about.html">About</a></nav>
+</div></header>
+<main>
+<section class="page-head"><div class="wrap"><div class="eyebrow">Methodology</div><h1>How the numbers work</h1>
+<p>Every metric on Hustle Stats, how it is built, and how much of it is skill versus noise. The full method notes, with live tables, also sit at the bottom of each tool.</p></div></section>
+<section class="section"><div class="wrap method-page">
+<nav class="toc" aria-label="On this page"><a href="#data">Data</a><a href="#shot-profile">Shot Profile</a><a href="#hpm">Hustle Plus-Minus</a><a href="#noise">Skill vs noise</a><a href="#peers">Role peers</a><a href="#limits">Limits</a></nav>
+<div class="mdoc">
+
+<section id="data"><h2>Data</h2>
+<p><b>Play-by-play</b> comes from NBA.com's live data feed: every shot, foul, turnover, rebound and substitution for the 2020-21 through 2025-26 regular seasons (7,230 games), retrieved through the public <a href="https://github.com/shufinskiy/nba_data" rel="noopener">nba_data</a> archive. The 2026-27 season is pulled from NBA.com every Monday.</p>
+<p><b>Player tracking</b> (deflections, loose balls, screen assists, contests, box-outs, contested rebounds, distance and speed) comes from NBA.com's tracking stats, pulled month by month so recent games can be weighted more.</p>
+<p>Totals are checked against official box scores, and the two sources are checked against each other: charges drawn match player by player (r = 0.995).</p></section>
+
+<section id="shot-profile"><h2>Shot Profile</h2>
+<p>Shot Profile measures points per shot attempt above a baseline and splits the gap into five parts, all in points per 100 attempts. An attempt is a field-goal attempt or a shooting-foul trip.</p>
+<h3>Decisions</h3>
+<ul><li><b>Selection:</b> takes shot types worth more than an average attempt.</li>
+<li><b>Alignment:</b> takes more of the shots where he beats the baseline and fewer where he doesn't.</li>
+<li><b>Foul drawing:</b> gets to the line on shots, valued at baseline FT%.</li></ul>
+<h3>Execution</h3>
+<ul><li><b>Making:</b> finishing by zone, on a baseline shot mix.</li><li><b>FT making:</b> his FT% against baseline, times his shooting-foul free throws.</li></ul>
+<p><b>Total</b> = Decisions + Execution. The five parts add up exactly to the difference between his points per attempt and the baseline's.</p>
+<h3>Zones and shot types</h3>
+<p>Zones use NBA's own tags: restricted area, paint, mid-range, corner 3 and above-the-break 3. Shot-type mode splits those further with the play-by-play descriptors (cuts and lobs, putbacks, drives, floaters, post-ups, catch-and-shoot, pull-up and step-back threes), and grades each shot only against the same shot type.</p>
+<h3>Garbage time</h3>
+<p>Player numbers drop garbage time: 4th-quarter margins of 25+ in the first 3 minutes, 20+ in the next 3, or 15+ in the last 6. Team numbers keep every possession, the way team ratings are usually reported.</p>
+<h3>Does it repeat?</h3>
+<p>Year-to-year correlation of single-season scores (players with 450+ attempts in both seasons), across all five season pairs since 2020-21: Decisions 0.83 to 0.88, Execution 0.65 to 0.72, Total 0.73 to 0.79. Shot choices are one of the most stable things a player does.</p></section>
+
+<section id="hpm"><h2>Hustle Plus-Minus</h2>
+<p>Hustle Plus-Minus (HPM) is the number of points per 100 possessions a player adds through hustle, compared with an average player, split into offense (O-HPM) and defense (D-HPM).</p>
+<h3>Plays with a direct points value</h3>
+<p>Each play is valued by what it is worth on the scoreboard, measured from possessions in 2023-24 to 2025-26:</p>
+<div class="mtable-wrap"><table class="mtable"><thead><tr><th>Play</th><th>Points</th></tr></thead><tbody><tr><td>Average possession</td><td>1.14</td></tr><tr><td>Steal (possession it starts)</td><td>1.32</td></tr><tr><td>Charge or offensive foul drawn</td><td>1.11</td></tr><tr><td>Block the defense recovers</td><td>1.47 avg</td></tr><tr><td>Block the offense recovers</td><td>0.37 avg</td></tr><tr><td>Offensive rebound (points that follow)</td><td>1.11</td></tr></tbody></table></div>
+<h3>Rebounding impact</h3>
+<p>oREB and dREB Impact are lineup-adjusted: a ridge regression (RAPM) over about 1.46 million possessions with all ten players on the floor, controlling for score margin and home court, with games 550 days old counting half. One percentage point of team offensive rebound rate is worth 0.58 points per 100 possessions.</p>
+<h3>Plays without a direct value</h3>
+<p>Deflections, screen assists, loose balls, contests and box-outs get the weight the data says they earn: how much each predicts lineup-adjusted impact beyond steals, blocks, charges and rebounding. Each weight is pulled toward zero by its uncertainty:</p>
+<div class="formula">weight used = learned weight × z² / (1 + z²)</div>
+<p>Most of these earn very little once steals and rebounding are counted. The deflections that matter become steals, and good box-outs show up as rebounds. They stay on the site as their own leaderboards.</p>
+<h3>Does it repeat?</h3>
+<p>Year-to-year correlation of single-season HPM (2,000+ possessions in both seasons): 0.69 to 0.71. Blocks (0.87 to 0.92) and screen assists (0.93 to 0.96) repeat most; rebounding impact (0.39 to 0.54) least.</p></section>
+
+<section id="noise"><h2>Skill vs noise</h2>
+<p>Every number on the site is an estimate from a limited sample, so two ideas run through all of it.</p>
+<h3>Shrinkage</h3>
+<p>Rates are pulled toward a baseline in proportion to how little data stands behind them, with the pull <code>k</code> estimated from how much real talent varies:</p>
+<div class="formula">estimate = (makes + k × baseline) / (attempts + k)</div>
+<p>Small samples get pulled a lot and big samples barely move, so a hot month can't top a leaderboard.</p>
+<h3>Likely real or could be noise</h3>
+<p>Each result carries a noise range from its sample size or the model's uncertainty. <b>Likely real</b> means the result is more than twice its noise range away from average. <b>Could be noise</b> means it may still be real, but the sample can't rule out luck yet.</p></section>
+
+<section id="peers"><h2>Role peers</h2>
+<p>A center and a point guard shouldn't be judged against the same average. Each player can be compared with his closest role peers: the most similar players on usage, playmaking, share of assisted makes, minutes and shot locations. Hustle stats are never used to pick peers, so a player can't be compared only with other hustlers.</p>
+<p>Listed positions cover players active from 2023-24 on. For about 180 players whose careers ended earlier, position is estimated from their most similar players (within one position 98% of the time).</p></section>
+
+<section id="limits"><h2>Limits</h2>
+<ul><li>Shot difficulty inside a zone (defender distance, shot clock) isn't in the play-by-play.</li>
+<li>Defenses decide which shots are available, so read Alignment as a signal, not a verdict.</li>
+<li>Transition defense, closeouts and communication don't show up in either data source.</li>
+<li>Tracking stats exist only as player totals, so they can't be lineup-adjusted.</li>
+<li>Age, team changes, injuries and role changes all move trends. Check context before calling a trend development.</li></ul></section>
+</div></div></section>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div><a class="brand" href="index.html"><img src="assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+    <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
+  <div><h4>Analysis</h4><ul><li><a href="shot-profile.html">Shot Profile</a></li><li><a href="hustle-plus-minus.html">Hustle Plus-Minus</a></li><li><a href="research.html">Research</a></li><li><a href="methodology.html">Methodology</a></li></ul></div>
+  <div><h4>Hustle Stats</h4><ul><li><a href="hustle-report.html">The Hustle Report</a></li><li><a href="about.html">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
+</div>
+<div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
+</footer>
+</body></html>

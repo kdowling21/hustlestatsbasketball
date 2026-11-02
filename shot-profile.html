@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Shot Profile · Hustle Stats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Where every NBA player and team shoots from, how well they finish, and how many points their shot choices add or cost against league average or role peers.">
+<meta property="og:title" content="Shot Profile · Hustle Stats"><meta property="og:description" content="Where every NBA player and team shoots from, how well they finish, and how many points their shot choices add or cost against league average or role peers.">
+<meta property="og:image" content="assets/icon_512.png"><meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="assets/icon_180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/shot.css">
+</head><body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="index.html" aria-label="Hustle Stats home"><img src="assets/shield_sm.png" alt="" width="36" height="41">
+    <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="index.html">Home</a><a href="shot-profile.html" aria-current="page">Shot Profile</a><a href="hustle-plus-minus.html">Hustle Plus-Minus</a><a href="research.html">Research</a><a href="hustle-report.html">The Hustle Report</a><a href="methodology.html">Methodology</a><a href="about.html">About</a></nav>
+</div></header>
+<main>
+<div class="app">
+<header>
+  <div class="eyebrow" id="eyebrow">2020-21 to 2025-26 regular seasons · NBA play-by-play</div>
+  <h1>Shot Profile Analysis</h1>
+  <p class="lede">Points per shot attempt above a baseline, split into five parts. An attempt is a field-goal attempt or a shooting-foul trip (a fouled miss). Three parts measure <strong>decisions</strong> and two measure <strong>execution</strong>, all in points per 100 attempts. Pick a single season or a multi-season view, compare against the league or each player's role peers, and look at performance against the 10 best defenses. Switch to <strong>Teams</strong> for the same breakdown for all 30 offenses.</p>
+  <div class="parts">
+    <div class="part dec"><span class="tag">Decision</span><b>Selection</b>Takes shot types worth more than an average attempt.</div>
+    <div class="part dec"><span class="tag">Decision</span><b>Alignment</b>Takes more shots where he beats the baseline, fewer where he doesn't.</div>
+    <div class="part dec"><span class="tag">Decision</span><b>Foul drawing</b>Gets to the line on shots, valued at baseline FT%.</div>
+    <div class="part"><span class="tag">Execution</span><b>Making</b>Finishing by zone, on a baseline shot mix.</div>
+    <div class="part"><span class="tag">Execution</span><b>FT making</b>His FT% vs baseline, times his shooting-foul FT volume.</div>
+  </div>
+</header>
+
+<div class="controls" role="group" aria-label="Filters">
+  <div class="ctl"><span class="lab">Show</span><div class="seg" id="ent"></div></div>
+  <div class="ctl"><label for="viewsf">Seasons</label><select id="viewsf"></select></div>
+  <div class="ctl"><span class="lab">Shot detail</span><div class="seg" id="mode"></div></div>
+  <div class="ctl"><span class="lab">Games</span><div class="seg" id="games"></div></div>
+  <div class="ctl"><span class="lab">Baseline</span><div class="seg" id="base"></div></div>
+  <div class="ctl"><label for="posf">Position</label><select id="posf"><option value="all">All positions</option><option value="G">Guards (PG, SG)</option><option value="F">Forwards (SF, PF)</option><option value="B">Bigs (PF, C)</option><option value="PG">PG</option><option value="SG">SG</option><option value="SF">SF</option><option value="PF">PF</option><option value="C">C</option></select></div>
+  <div class="ctl"><label for="teamf">Team</label><select id="teamf"><option value="all">All teams</option></select></div>
+  <div class="ctl"><label for="minfga">Min FGA per season: <span id="minfgaV">400</span></label><input id="minfga" type="range" min="200" max="1200" step="50" value="400"></div>
+  <div class="ctl"><label for="q" id="qlab">Find player</label><input id="q" type="search" placeholder="Name or team"></div>
+  <div class="count" id="count"></div>
+</div>
+
+<section style="display:grid;gap:10px">
+  <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
+    <div><h2 id="lbtitle">Leaderboard</h2><p class="note" style="margin:4px 0 0">Click a player to open his full breakdown. Total = Decisions + Execution.</p></div>
+    <div class="legend" id="zlegend"></div>
+  </div>
+  <div class="tablewrap"><table id="tbl"><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+</section>
+
+<section class="panel chartpanel">
+    <h2>Execution vs decisions</h2>
+    <p class="note" id="chartnote"></p>
+    <div class="chartrow"><div id="chart"></div><div class="chartside"><p><b>Across:</b> Execution. <b>Up:</b> Decisions. Both in points per 100 attempts above the baseline.</p><p>Click any dot to open that player's breakdown.</p></div></div>
+    <h3 class="sub">Reading the four corners</h3>
+    <p class="note">Dots near the center are close to average. Distance from the center matters more than which side a player lands on. Examples update with the filters.</p>
+    <div class="quads" id="quads"></div>
+  </section>
+
+
+
+<section class="panel" id="kings">
+  <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
+    <h2 id="ktitle">Kings of</h2>
+    <span class="count" id="kcount"></span>
+  </div>
+  <div class="seg kseg" id="kseg" role="group" aria-label="Shot type"></div>
+  <p class="note" id="knote"></p>
+  <div class="tablewrap" style="max-height:520px"><table id="kingtbl"><thead><tr>
+    <th>#</th><th class="l">Player</th><th>Att</th><th>Made</th><th>FG%</th><th title="FG% shrunk toward league average by the noise in this many attempts">Skill est.</th><th>vs league</th><th title="Points above a league-average shooter on the same attempts, 3 seasons">Pts above avg</th><th class="l">Signal</th>
+  </tr></thead><tbody id="kbody"></tbody></table></div>
+</section>
+
+<section class="panel" id="trends">
+  <h2>Development trends, last 3 seasons (2023-24 to 2025-26)</h2>
+  <p class="note">Position and team filters apply here using each player's most recent season. Each season is scored on its own against that season's league. The trend is the change per season, weighted so noisier seasons count less. Players need 250+ attempts in at least two seasons. A trend is <b>likely real</b> when it is more than twice its noise range. <span id="tsig"></span></p>
+  <div class="trendgrid">
+    <div><div id="tchart"></div><p class="note">Across: change in Execution per season. Up: change in Decisions per season. Filled dots have at least one likely-real trend. Click a dot to open that player.</p></div>
+    <div class="tlists" id="tlists"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Method</h2>
+  <div class="method">
+    <div>
+      <h3 class="sub">Data</h3>
+      <p>All six seasons come from NBA's own play-by-play feed (7,230 games; 2020-21 was a 72-game season), using a public mirror of that feed. Shot zones use NBA's tags on each shot: restricted area, paint (non-RA), mid-range, corner 3 and above-the-break 3. Backcourt heaves are excluded. Totals match the official box scores, for example 57,768 free throw attempts in 2025-26.</p>
+      <p>Only trips from <b>shooting fouls</b> count, including and-ones. Bonus fouls, away-from-play hacks, technicals, flagrants and clear-path fouls are excluded. <b>Garbage time is removed</b> for players (teams keep it; see Teams below): 4th-quarter margins of 25+ in the first 3 minutes, 20+ in the next 3, or 15+ in the last 6.</p>
+      <h3 class="sub">Season views</h3>
+      <p><b>Single seasons</b> are scored independently, so they can be compared with each other. <b>Last 2, Last 3 and Last 6</b> add up every attempt with equal weight. That's the best descriptive view, and it roughly halves the noise. <b>Recent-weighted</b> counts attempts at 0.6 / 0.8 / 1.0 by season (the familiar 3-4-5 weighting). It's the best guess at who a player is now. In multi-season views, Pts added is a per-season average.</p>
+    </div>
+    <div>
+      <h3 class="sub">Baselines</h3>
+      <p><b>League:</b> everyone in the same seasons and games. <b>Role peers:</b> each player's 20 nearest neighbors on usage, assist %, offensive and defensive rebound %, block %, share of made shots assisted, and minutes per game, all computed from play-by-play. Peers are pooled by attempts, so high-volume peers count most, and the detail panel shows the six that carry the most weight. Adding minutes per game hardly changed how well peers predict shot mix and shooting, but it keeps starters grouped with starters. Height and weight were dropped because they aren't available for every season. Shot location is never an input.</p>
+      <h3 class="sub">Shrinkage</h3>
+      <p>Each zone FG% and FT% is pulled toward the player's role-peer average: <code>(M + k·peer%) / (A + k)</code>. <code>k</code> is estimated from the spread of real talent in the current view. This is the statistically grounded version of pulling extreme numbers back toward the middle: small samples get pulled a lot, big samples barely move. Values for the current view:</p>
+      <table id="ktbl"></table>
+    </div>
+    <div>
+      <h3 class="sub">Does it repeat?</h3>
+      <p>Year-to-year correlation of single-season scores, for players with 450+ attempts in both seasons:</p>
+      <table id="stbl"></table>
+      <h3 class="sub">Teams</h3>
+      <p>Team scores use the same five parts, built from every attempt by every player, not just the players on the leaderboard. <b>Teams include garbage time</b>, so every possession counts, the same way team ratings are usually reported; the team league baseline includes it too. Each attempt counts for the team the shooter played for <b>in that game</b>, so a player traded midseason splits his shots between both teams. Teams are measured against the league only; role peers don't apply. Team zone FG% and FT% are shrunk toward league average with their own <code>k</code> (table above). Team shooting differences in some zones, especially threes, are mostly luck even over thousands of attempts, so those estimates move a lot toward average. A team's noise range is roughly ±1 point per 100 attempts, so most team gaps of 2 or more are real. Team year-to-year correlation, single seasons:</p>
+      <table id="ttbl"></table>
+      <h3 class="sub">Against top-10 defenses</h3>
+      <p>Defenses are ranked each season by points allowed per 100 possessions. <span id="defs"></span> Each split has its own league baseline. The noise test simulates each player as if he were identical against every opponent. <span id="noisetxt"></span></p>
+      <h3 class="sub">Shot-type mode: how real is it?</h3>
+      <p>Shot types come from the play-by-play's own descriptors (driving, cutting, floating, pull-up, step-back and so on), which scorekeepers enter by hand. Year-to-year correlation of single-season scores, players with 450+ attempts in both seasons:</p>
+      <table id="gtbl"></table>
+      <p>Each shot type on its own, Last 3 seasons. "Repeat r" is the year-to-year correlation of raw FG% for players with 40+ attempts of that type in both seasons. "Signal at typical volume" is how much of a typical player's raw FG% on that shot is skill rather than luck.</p>
+      <div style="overflow-x:auto"><table id="ctbl"></table></div>
+      <h3 class="sub">Positions before 2023-24</h3><p>Listed positions cover players active from 2023-24 on. For about 180 players whose careers ended earlier, position is estimated from their 10 most similar players on rebounding, blocks, assists, usage, screen assists, speed and shot locations. The estimate matches the listed position 68% of the time and is within one position 98% of the time.</p>
+      <h3 class="sub">Still not covered</h3>
+      <ul>
+        <li>Shot difficulty within a zone: defender distance, pull-up vs catch-and-shoot, shot clock.</li>
+        <li>Defenses decide which shots are available, so read Alignment as a signal, not a verdict.</li>
+        <li>Age, team changes, injuries and role changes all drive trends. Check context before calling a trend development.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<div class="app-foot" style="display:grid;gap:4px;padding:4px 2px 0;font-size:12px;color:var(--muted);max-width:90ch">
+  <div><b style="color:var(--ink2)">Data source:</b> NBA play-by-play from NBA.com's live data feed, 2020-21 to 2025-26 regular seasons, retrieved through the public <a href="https://github.com/shufinskiy/nba_data" style="color:var(--accent)">nba_data</a> archive (shufinskiy, GitHub). Player names come from NBA.com shot data in the same archive. Totals were checked against official box scores.</div>
+  <div>Independent analysis. Not affiliated with or endorsed by the NBA.</div>
+</div>
+
+<div class="pop" id="pop" hidden>
+  <div class="pop-back" id="popBack"></div>
+  <div class="pop-card" role="dialog" aria-modal="true" aria-labelledby="popTitle">
+    <div class="pop-bar">
+      <button type="button" class="pop-nav" id="popPrev" aria-label="Previous in leaderboard">‹ Prev</button>
+      <span class="pop-pos" id="popPos"></span>
+      <button type="button" class="pop-nav" id="popNext" aria-label="Next in leaderboard">Next ›</button>
+      <button type="button" class="pop-x" id="popClose" aria-label="Close">✕</button>
+    </div>
+    <div class="pop-body"><div class="detail" id="detail" aria-live="polite"></div></div>
+  </div>
+</div>
+</div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div><a class="brand" href="index.html"><img src="assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+    <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
+  <div><h4>Analysis</h4><ul><li><a href="shot-profile.html">Shot Profile</a></li><li><a href="hustle-plus-minus.html">Hustle Plus-Minus</a></li><li><a href="research.html">Research</a></li><li><a href="methodology.html">Methodology</a></li></ul></div>
+  <div><h4>Hustle Stats</h4><ul><li><a href="hustle-report.html">The Hustle Report</a></li><li><a href="about.html">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
+</div>
+<div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
+</footer>
+<script>(async()=>{
+const [DATA,DT,DTM,KINGS]=await Promise.all([
+fetch('data/shot_zone.json').then(r=>r.json()),
+fetch('data/shot_type.json').then(r=>r.json()),
+fetch('data/shot_team.json').then(r=>r.json()),
+fetch('data/shot_kings.json').then(r=>r.json())]);
+
+const M=DATA.meta, VIEWS=M.views, VK={}; VIEWS.forEach(v=>VK[v.key]=v);
+const Z=[{k:'rim',name:'Rim',c:'--z1',v:2},{k:'pnt',name:'Paint',c:'--z2',v:2},{k:'mid',name:'Mid-range',c:'--z3',v:2},{k:'c3',name:'Corner 3',c:'--z4',v:3},{k:'ab3',name:'Above-break 3',c:'--z5',v:3}];
+const TRIP={k:'trip',name:'Fouled (trips)',c:'--z6'};
+Z.forEach(z=>z.fam=z.k);
+const ZT=[{k:'x_rcut',name:'Rim: cut, lob, dunk',fam:'rim'},{k:'x_put',name:'Putback / tip',fam:'rim'},{k:'x_rdrv',name:'Rim: drive',fam:'rim'},{k:'x_roth',name:'Rim: other',fam:'rim'},
+ {k:'x_pflt',name:'Paint: floater',fam:'pnt'},{k:'x_ppost',name:'Paint: post / hook',fam:'pnt'},{k:'x_poth',name:'Paint: other',fam:'pnt'},{k:'x_mid',name:'Mid-range',fam:'mid'},
+ {k:'x_c3',name:'Corner 3',fam:'c3'},{k:'x_acs',name:'3: catch & shoot',fam:'ab3'},{k:'x_apull',name:'3: pull-up',fam:'ab3'},{k:'x_asb',name:'3: step-back',fam:'ab3'}];
+const FAMC={rim:'--z1',pnt:'--z2',mid:'--z3',c3:'--z4',ab3:'--z5'};ZT.forEach(z=>{z.c=FAMC[z.fam];});
+const CELLS=()=>state.mode==='type'?ZT:Z;
+const VKT={};DT.meta.views.forEach(v=>VKT[v.key]=v);const GR=DT.meta.grade;
+const GAMES={A:'All games',T:'vs top-10 defenses',R:'vs other 20 teams'};
+const PL=Object.entries(DATA.players).map(([pid,p],i)=>{p.pid=pid;p.id=i;p._c={};p.dt=DT.players[pid]||{};return p;});
+const TM=Object.values(DTM.teams).sort((a,b)=>a.n.localeCompare(b.n)).map((p,i)=>{p.pid=p.t;p.id=i;p._c={};p.team=1;return p;});
+let P=PL;const TEAMS=()=>state.ent==='teams';const selMem={players:null,teams:null};
+const SN=n=>{const w=n.split(' ');return /^(Jr\.?|Sr\.?|II|III|IV)$/.test(w[w.length-1])&&w.length>2?w.slice(-2).join(' '):w[w.length-1];};
+const OR=n=>{const s=n%100>=11&&n%100<=13?'th':['th','st','nd','rd'][n%10]||'th';return n+s;};
+const nz=x=>x==null||isNaN(x)?0:x;
+function U(p,vk){
+  const ck=state.mode+vk;if(p._c[ck])return p._c[ck];
+  const zraw=p.v[vk];if(!zraw)return null;
+  let raw=zraw,cells=Z,sdA=zraw.x.sdA;
+  if(state.mode==='type'){const tv=p.dt[vk];if(!tv)return null;raw={A:tv.A};cells=ZT;sdA=tv.sdA;}
+  const out={x:Object.assign({},zraw.x,{sdA})};
+  (state.mode==='type'?['A']:['A','T','R']).forEach(S=>{const [b,z,Lc,Rc,Lz,Rz,rb]=raw[S];const nc=cells.length;
+    const s={N:nz(b[0]),T:nz(b[1]),fga:nz(b[2]),and1:nz(b[3]),pps:b[4],ft:b[5],ftraw:b[6],phi:b[7],z:{},Lz:{},Rz:{},rb:{sh:{trip:rb[nc]},fg:{},phi:rb[2*nc+1],ft:rb[2*nc+2]}};
+    cells.forEach((zz,j)=>{s.z[zz.k]=z[j];s.Lz[zz.k]=Lz[j];s.Rz[zz.k]=Rz[j];s.rb.sh[zz.k]=rb[j];s.rb.fg[zz.k]=rb[nc+1+j];});
+    [['L',Lc],['R',Rc]].forEach(([k,c])=>{const o={sel:nz(c[0]),foul:nz(c[1]),mak:nz(c[2]),ali:nz(c[3]),ftm:nz(c[4])};o.dec=o.sel+o.ali+o.foul;o.exe=o.mak+o.ftm;o.tot=o.dec+o.exe;o.pts=o.tot*s.N/100/VK[vk].wsum;s[k+'o']=o;});
+    out[S]=s;});
+  if(state.mode==='type'){out.T=out.A;out.R=out.A;}
+  return p._c[ck]=out;}
+const famA=(g,f)=>CELLS().filter(z=>z.fam===f).reduce((s,z)=>s+(g.z[z.k]?g.z[z.k][0]:0),0);
+
+const state={ent:'players',mode:'zone',view:'s25',games:'A',base:'L',pos:'all',team:'all',min:400,q:'',sort:'tot',dir:-1,sel:null,open:false};
+try{const s=JSON.parse(localStorage.getItem('spl4')||'{}');['ent','mode','view','games','base','pos','team','min','sort','dir'].forEach(k=>{if(s[k]!=null)state[k]=s[k];});}catch(e){}
+if(!VK[state.view])state.view='s25';
+if(state.sort==='chg')state.sort='tot';
+const save=()=>{try{localStorage.setItem('spl4',JSON.stringify({ent:state.ent,mode:state.mode,pos:state.pos,team:state.team,view:state.view,games:state.games,base:state.base,min:state.min,sort:state.sort,dir:state.dir}))}catch(e){}};
+const f1=x=>x==null||isNaN(x)?'–':(x>0?'+':x<0?'−':'')+Math.abs(x).toFixed(1);
+const pc=x=>x==null||isNaN(x)?'–':(x*100).toFixed(1)+'%';
+const LIVEDATE=()=>{if(!M.live||!M.live.through)return '';const d=new Date(M.live.through.slice(0,10)+'T12:00:00Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});};
+if(M.live)document.getElementById('eyebrow').textContent=`2020-21 to 2025-26 + 2026-27 through ${LIVEDATE()} · NBA play-by-play · updated weekly`;
+const W=()=>VK[state.view].wsum, multi=()=>state.view[0]!=='s';
+const GS=()=>state.mode==='type'?'A':state.games;
+const G=p=>U(p,state.view)[GS()];
+const BS=()=>TEAMS()?'L':state.base;
+const V=p=>G(p)[BS()+'o'];
+const X=p=>U(p,state.view).x;
+const CH=p=>{const u=U(p,state.view),a=u.T[BS()+'o'],b=u.R[BS()+'o'];return {tot:a.tot-b.tot,dec:a.dec-b.dec,exe:a.exe-b.exe};};
+const REAL=(v,sd)=>sd&&Math.abs(v)>2*sd;
+
+function seg(id,opts,key){const el=document.getElementById(id);opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.onclick=()=>{state[key]=v;save();render();};el.appendChild(b);});return el;}
+const entEl=seg('ent',[['players','Players'],['teams','Teams']],'ent');
+const modeEl=seg('mode',[['zone','Zones'],['type','Zones + shot type']],'mode');
+const viewsEl=document.getElementById('viewsf');{const ORDV=['s26','s25','s24','s23','s22','s21','s20','w3','l3','l2','l6'];const og1=document.createElement('optgroup'),og2=document.createElement('optgroup');og1.label='Single season';og2.label='Combined seasons';ORDV.filter(k=>VK[k]).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k==='s26'?'2026-27 (live)':VK[k].label;(k[0]==='s'?og1:og2).appendChild(o);});viewsEl.append(og1,og2);}viewsEl.onchange=()=>{state.view=viewsEl.value;save();render();};
+const gamesEl=seg('games',[['A','All games'],['T','vs top-10 D'],['R','vs other 20']],'games');
+const baseEl=seg('base',[['L','League'],['R','Role peers']],'base');
+const mf=document.getElementById('minfga');mf.value=state.min;mf.oninput=()=>{state.min=+mf.value;save();render();};
+document.getElementById('q').oninput=e=>{state.q=e.target.value;render();};
+document.getElementById('zlegend').innerHTML=Z.concat([TRIP]).map(z=>`<span><i style="background:var(${z.c})"></i>${z.name}</span>`).join('');
+
+const COLS=[{k:'rank',l:'#',ns:1},{k:'name',l:'Player',cls:'l'},{k:'N',l:'Att'},{k:'mix',l:'Shot mix',cls:'l',ns:1},{k:'pps',l:'PPA'},
+  {k:'sel',l:'Select',g:1},{k:'ali',l:'Align'},{k:'foul',l:'Foul draw'},{k:'dec',l:'Decisions'},
+  {k:'mak',l:'Make',g:1},{k:'ftm',l:'FT make'},{k:'exe',l:'Execution'},
+  {k:'tot',l:'Total',g:1},{k:'pts',l:'Pts added'},{k:'pct',l:'Pctile',ns:1}];
+
+const SLUG=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function setHash(h){try{if(location.hash!=='#'+h)history.replaceState(null,'','#'+h);}catch(e){}}
+
+const POP=document.getElementById('pop');let ORDER=[],LASTFOCUS=null;
+function openPop(){if(!POP.hidden)return;LASTFOCUS=document.activeElement;state.open=true;POP.hidden=false;document.body.classList.add('popped');setTimeout(()=>document.getElementById('popClose').focus(),0);}
+function closePop(){state.open=false;POP.hidden=true;document.body.classList.remove('popped');try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  if(LASTFOCUS&&LASTFOCUS.focus)LASTFOCUS.focus();}
+function pick(id){state.sel=id;openPop();render();}
+function step(d){const i=ORDER.indexOf(state.sel);const j=i+d;if(i<0||j<0||j>=ORDER.length)return;state.sel=ORDER[j];render();document.querySelector('.pop').scrollTop=0;}
+document.getElementById('popClose').onclick=closePop;document.getElementById('popBack').onclick=closePop;
+document.getElementById('popPrev').onclick=()=>step(-1);document.getElementById('popNext').onclick=()=>step(1);
+document.addEventListener('keydown',e=>{if(POP.hidden)return;if(e.key==='Escape')closePop();else if(e.key==='ArrowLeft')step(-1);else if(e.key==='ArrowRight')step(1);});
+function popBar(){const i=ORDER.indexOf(state.sel);document.getElementById('popPrev').disabled=i<=0;document.getElementById('popNext').disabled=i<0||i>=ORDER.length-1;
+  document.getElementById('popPos').textContent=i<0?'Not in the current list':`${i+1} of ${ORDER.length} · leaderboard order`;}
+const thead=document.getElementById('thead');
+COLS.forEach(c=>{const th=document.createElement('th');th.textContent=c.l;th.className=(c.cls||'')+(c.g?' grp':'');th.dataset.k=c.k;
+  if(!c.ns){th.tabIndex=0;const go=()=>{if(state.sort===c.k)state.dir*=-1;else{state.sort=c.k;state.dir=c.k==='name'?1:-1;}save();render();};th.onclick=go;th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};}
+  thead.appendChild(th);});
+const sv=(p,k)=>k==='name'?p.n:k==='N'?G(p).N:k==='pps'?nz(G(p).pps):k==='chg'?CH(p).tot:V(p)[k];
+function withPct(list){const s=list.map(p=>V(p).tot).sort((a,b)=>a-b),d=list.map(p=>V(p).dec).sort((a,b)=>a-b),n=list.length;
+  const r=(arr,v)=>{let lo=0;while(lo<n&&arr[lo]<v)lo++;let hi=lo;while(hi<n&&arr[hi]===v)hi++;return Math.round(100*((lo+hi)/2)/n);};
+  list.forEach(p=>{p.pT=r(s,V(p).tot);p.pD=r(d,V(p).dec);});return list;}
+const POSG={G:['PG','SG'],F:['SF','PF'],B:['PF','C']};
+const posOK=pos=>state.pos==='all'||(POSG[state.pos]?POSG[state.pos].includes(pos):pos===state.pos);
+const fOK=x=>posOK(x.pos)&&(state.team==='all'||x.tm===state.team);
+const latestX=p=>{for(const k of ['s26','s25','w3','l3','l2','s24','s23'])if(p.v[k])return p.v[k].x;return {pos:'',tm:''};};
+const inView=p=>p.team?!!(p.v[state.view]&&(state.mode!=='type'||p.dt[state.view])):p.v[state.view]&&(state.mode!=='type'||p.dt[state.view])&&U(p,state.view).A.fga>=state.min*W()*(VK[state.view].frac||1)*(multi()?0.67:1)&&fOK(p.v[state.view].x);
+const posEl=document.getElementById('posf'),teamEl=document.getElementById('teamf');
+[...new Set(PL.flatMap(p=>Object.values(p.v).map(v=>v.x.tm)).filter(Boolean))].sort().forEach(tm=>{const o=document.createElement('option');o.value=tm;o.textContent=tm;teamEl.appendChild(o);});
+posEl.value=state.pos;teamEl.value=state.team;if(teamEl.value!==state.team){state.team='all';teamEl.value='all';}
+posEl.onchange=()=>{state.pos=posEl.value;save();render();};teamEl.onchange=()=>{state.team=teamEl.value;save();render();};
+
+let RKL=null,RKC={};
+function rkN(key,fn,p){if(!RKL)return 0;let a=RKC[key];if(!a){a=RKL.map(fn).filter(v=>v!=null&&!isNaN(v)).sort((x,y)=>y-x);RKC[key]=a;}const v=fn(p);if(v==null||isNaN(v))return 0;let r=1;for(const x of a){if(x>v+1e-9)r++;else break;}return r;}
+function RKS(key,fn,p,pre){const r=rkN(key,fn,p);if(!r)return '';const n=RKL.length;return `${pre||''}<span class="rk ${r<=5?'hi':r>n-5?'lo':''}" title="Rank among ${n} teams">#${r}</span>`;}
+function render(){
+  const want=TEAMS()?TM:PL;if(P!==want){selMem[P===TM?'teams':'players']=state.sel;P=want;state.sel=selMem[state.ent];}
+  const tm=TEAMS();[posEl,teamEl,mf].forEach(e=>{e.disabled=tm;e.title=tm?'Player filters. Switch to Players to use them.':'';});
+  [...baseEl.children].forEach(b=>{b.disabled=tm&&b.dataset.v==='R';b.title=b.disabled?'Teams are measured against the league':'';});
+  document.getElementById('qlab').textContent=tm?'Find team':'Find player';document.getElementById('q').placeholder=tm?'Name or abbreviation':'Name or team';
+  document.getElementById('tbl').classList.toggle('teams',tm);document.getElementById('lbtitle').textContent=tm?'Team leaderboard':'Leaderboard';thead.querySelector('[data-k=name]').textContent=tm?'Team':'Player';
+  [[entEl,'ent'],[modeEl,'mode'],[gamesEl,'games'],[baseEl,'base']].forEach(([el,k])=>[...el.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===(k==='games'?GS():k==='base'?BS():state[k]))));
+  [...gamesEl.children].forEach(b=>{b.disabled=state.mode==='type'&&b.dataset.v!=='A';b.title=b.disabled?'Opponent splits are available in Zones mode':'';});
+  viewsEl.value=state.view;
+  document.getElementById('minfgaV').textContent=state.min;
+  const list=withPct(P.filter(inView));RKL=TEAMS()?list:null;RKC={};
+  const q=state.q.toLowerCase(),match=p=>q&&(p.n+' '+p.t).toLowerCase().includes(q);
+  const shown=q?list.filter(match):list;
+  document.getElementById('count').textContent=`${shown.length} of ${list.length} ${tm?'teams':'players'}`+(!tm&&(state.pos!=='all'||state.team!=='all')?' · percentiles within this filter':'');
+  if(state.sel==null||!list.find(p=>p.id===state.sel)){const t=[...list].sort((a,b)=>V(b).tot-V(a).tot)[0];state.sel=t?t.id:null;}
+  const k=state.sort;const sorted=[...shown].sort((a,b)=>k==='name'?a.n.localeCompare(b.n)*state.dir:(sv(a,k)-sv(b,k))*state.dir);
+  ORDER=sorted.map(p=>p.id);
+  [...thead.children].forEach(th=>th.classList.toggle('sorted',th.dataset.k===k));
+  const cell=(v,g,bold,rk)=>`<td class="num${g?' grp':''}${v<0?' neg':''}">${bold?'<strong>':''}${f1(v)}${bold?'</strong>':''}${rk||''}</td>`;
+  const LR=(p,k)=>RKS('o'+k,q=>V(q)[k],p);
+  document.getElementById('tbody').innerHTML=sorted.map((p,i)=>{const o=V(p),g=G(p),N=g.N||1;return `<tr data-id="${p.id}" tabindex="0" class="${p.id===state.sel?'sel':''}">
+    <td class="num dim">${i+1}</td><td class="l"><span class="pname">${p.n}</span>${p.team?'':`<span class="meta">${X(p).tm} · ${X(p).pos}</span>`}</td><td class="num">${Math.round(g.N)}${RKS('N',q=>G(q).N,p)}</td>
+    <td class="l"><span class="mix" title="${Z.map(z=>z.name+' '+Math.round(famA(g,z.k)/N*100)+'%').join(' · ')} · Fouled ${Math.round(g.T/N*100)}%">${Z.map(z=>`<span style="width:${famA(g,z.k)/N*100}%;background:var(${z.c})"></span>`).join('')}<span style="width:${g.T/N*100}%;background:var(${TRIP.c})"></span></span></td>
+    <td class="num">${g.pps==null?'–':g.pps.toFixed(3)}${RKS('pps',q=>G(q).pps,p)}</td>
+    ${cell(o.sel,1,0,LR(p,'sel'))}${cell(o.ali,0,0,LR(p,'ali'))}${cell(o.foul,0,0,LR(p,'foul'))}${cell(o.dec,0,1,LR(p,'dec'))}${cell(o.mak,1,0,LR(p,'mak'))}${cell(o.ftm,0,0,LR(p,'ftm'))}${cell(o.exe,0,1,LR(p,'exe'))}${cell(o.tot,1,1,LR(p,'tot'))}
+    <td class="num${o.pts<0?' neg':''}">${o.pts>0?'+':''}${o.pts.toFixed(0)}${LR(p,'pts')}</td><td class="pctc"><span class="pct ${p.pT>=90?'top':''}">${p.pT}</span></td></tr>`;}).join('');
+  document.querySelectorAll('#tbody tr').forEach(tr=>{const go=()=>pick(+tr.dataset.id);tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go();};});
+  document.getElementById('chartnote').textContent=(state.view==='s26'&&M.live?`Season in progress: ${M.live.games} games through ${LIVEDATE()}, about ${Math.round(VK.s26.frac*82)} per team. Min FGA is prorated to ${Math.round(state.min*VK.s26.frac)}. Early-season samples are small, so most gaps are noise until roughly midseason. `:'')+`${state.mode==='type'?'Zones + shot type':'Zones'} · ${VK[state.view].label} · ${GAMES[GS()].toLowerCase()} · ${BS()==='L'?'league':'role-peer'} baseline.${TEAMS()?' Each dot is a team; every attempt counts for the team the shooter was on that night, garbage time included.':''} Across: Execution (Making + FT making). Up: Decisions (Selection + Alignment + Foul drawing).`;
+  drawChart(list,match);drawQuads(list);const cur=list.find(p=>p.id===state.sel);if(cur&&state.open)setHash(cur.team?'team-'+String(cur.t).toLowerCase():SLUG(cur.n));popBar();drawDetail(cur);drawTrends();methodTables();
+}
+
+function drawChart(list,match){
+  const el=document.getElementById('chart');const Wd=640,H=440,m={l:44,r:16,t:16,b:44};
+  const xs=list.map(p=>V(p).exe),ys=list.map(p=>V(p).dec);const pad=v=>Math.ceil(v/5)*5;
+  const x0=-pad(Math.max(5,-Math.min(...xs,0))),x1=pad(Math.max(5,...xs)),y0=-pad(Math.max(5,-Math.min(...ys,0))),y1=pad(Math.max(5,...ys));
+  const Xs=v=>m.l+(v-x0)/(x1-x0)*(Wd-m.l-m.r),Ys=v=>H-m.b-(v-y0)/(y1-y0)*(H-m.t-m.b);
+  const ticks=(a,b)=>{const st=(b-a)>30?10:5,t=[];for(let v=a;v<=b+1e-9;v+=st)t.push(v);return t;};
+  let s=`<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Scatter of execution versus decisions">`;
+  ticks(x0,x1).forEach(v=>{s+=`<line x1="${Xs(v)}" x2="${Xs(v)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--grid)"/><text x="${Xs(v)}" y="${H-m.b+16}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">${v>0?'+':''}${v}</text>`;});
+  ticks(y0,y1).forEach(v=>{s+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${Ys(v)}" y2="${Ys(v)}" stroke="var(--grid)"/><text x="${m.l-8}" y="${Ys(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">${v>0?'+':''}${v}</text>`;});
+  s+=`<line x1="${Xs(0)}" x2="${Xs(0)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--axis)" stroke-width="1.5"/><line x1="${m.l}" x2="${Wd-m.r}" y1="${Ys(0)}" y2="${Ys(0)}" stroke="var(--axis)" stroke-width="1.5"/>`;
+  s+=`<text x="${Wd-m.r}" y="${H-8}" text-anchor="end" font-size="11" fill="var(--ink2)">Execution (pts / 100 att) →</text><text transform="translate(12 ${m.t}) rotate(90)" font-size="11" fill="var(--ink2)">Decisions →</text>`;
+  const ql=(x,y,a,t)=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="11" fill="var(--muted)" font-family="var(--mono)">${t}</text>`;
+  s+=ql(Wd-m.r-6,m.t+14,'end','GOOD DECISIONS, MADE')+ql(m.l+8,m.t+14,'start','GOOD DECISIONS, MISSED')+ql(Wd-m.r-6,H-m.b-8,'end','BAD DECISIONS, MADE')+ql(m.l+8,H-m.b-8,'start','BAD DECISIONS, MISSED');
+  const lab=new Set([...list].sort((a,b)=>V(b).tot-V(a).tot).slice(0,5).map(p=>p.id).concat([...list].sort((a,b)=>V(a).tot-V(b).tot).slice(0,3).map(p=>p.id)));
+  const ord=[...list].sort((a,b)=>(a.id===state.sel)-(b.id===state.sel)||(!!match(a))-(!!match(b)));const nm=list.filter(match).length;
+  ord.forEach(p=>{const on=p.id===state.sel,dim=nm&&!match(p)&&!on;s+=`<circle cx="${Xs(V(p).exe).toFixed(1)}" cy="${Ys(V(p).dec).toFixed(1)}" r="${on?7:5}" fill="${on?'var(--neg)':'var(--pos)'}" fill-opacity="${dim?0.15:on?1:0.7}" stroke="var(--surface)" stroke-width="2"/>`;});
+  ord.forEach(p=>{if(p.team||lab.has(p.id)||p.id===state.sel||(match(p)&&nm<=6)){const x=Xs(V(p).exe),r=x<Wd-140;s+=`<text x="${x+(r?9:-9)}" y="${Ys(V(p).dec)+4}" text-anchor="${r?'start':'end'}" font-size="11" fill="var(--ink)" paint-order="stroke" stroke="var(--surface)" stroke-width="3">${p.team?p.t:SN(p.n)}</text>`;}});
+  ord.forEach(p=>{s+=`<circle class="hit" data-id="${p.id}" cx="${Xs(V(p).exe).toFixed(1)}" cy="${Ys(V(p).dec).toFixed(1)}" r="11" fill="transparent" style="cursor:pointer"/>`;});
+  s+='</svg><div class="tip" id="tip" hidden></div>';el.innerHTML=s;
+  const tip=el.querySelector('.tip'),svg=el.querySelector('svg');
+  el.querySelectorAll('.hit').forEach(c=>{const p=P[+c.dataset.id];
+    c.onmouseenter=()=>{const o=V(p),sc=svg.getBoundingClientRect().width/Wd;tip.innerHTML=`<b>${p.team?p.n:p.n+' · '+X(p).tm}</b>Decisions ${f1(o.dec)} · Execution ${f1(o.exe)}<br>Total ${f1(o.tot)} · ${OR(p.pT)} pct`;tip.style.left=(+c.getAttribute('cx')*sc)+'px';tip.style.top=(+c.getAttribute('cy')*sc)+'px';tip.hidden=false;};
+    c.onmouseleave=()=>{tip.hidden=true;};c.onclick=()=>pick(p.id);});
+}
+
+function seasonChart(p){
+  if(!p.sl||!p.sl.length)return '<p class="note">Fewer than 200 FGA in every season, so there are no single-season scores.</p>';
+  const Wd=300,H=120,m={l:30,r:8,t:10,b:20};const vals=p.sl.flatMap(r=>[r[2]+r[5],r[2]-r[5],r[3]+r[6],r[3]-r[6]]);
+  const lo=Math.floor(Math.min(0,...vals)/5)*5,hi=Math.ceil(Math.max(0,...vals)/5)*5||5;
+  const Xs=t=>m.l+(t+0.5)/M.seasons.length*(Wd-m.l-m.r),Ys=v=>H-m.b-(v-lo)/(hi-lo)*(H-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Season by season decisions and execution">`;
+  [lo,0,hi].forEach(v=>{s+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${Ys(v)}" y2="${Ys(v)}" stroke="${v===0?'var(--axis)':'var(--grid)'}"/><text x="${m.l-4}" y="${Ys(v)+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="var(--mono)">${v>0?'+':''}${v}</text>`;});
+  M.seasons.forEach((l,t)=>{s+=`<text x="${Xs(t)}" y="${H-5}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="var(--mono)">${l.slice(2)}</text>`;});
+  [['dec',2,5,'var(--pos)',-5],['exe',3,6,'var(--neg)',5]].forEach(([k,i,j,col,dx])=>{const pts=p.sl.map(r=>[Xs(r[0])+dx,Ys(r[i]),Ys(r[i]+r[j]),Ys(r[i]-r[j])]);
+    if(pts.length>1)s+=`<polyline points="${pts.map(q=>q[0]+','+q[1]).join(' ')}" fill="none" stroke="${col}" stroke-width="2"/>`;
+    pts.forEach(q=>{s+=`<line x1="${q[0]}" x2="${q[0]}" y1="${q[2]}" y2="${q[3]}" stroke="${col}" stroke-opacity=".45" stroke-width="2"/><circle cx="${q[0]}" cy="${q[1]}" r="4" fill="${col}" stroke="var(--surface)" stroke-width="1.5"/>`;});});
+  s+='</svg>';
+  let t='';if(p.tr){const [n,ds,dz,es,ez]=p.tr;const lab=(z)=>Math.abs(z)>=2?'<span class="tag real">likely real</span>':Math.abs(z)>=1.5?'<span class="tag">leaning</span>':'<span class="tag">noise</span>';
+    t=`<p class="note">Trend per season: Decisions ${f1(ds)} ${lab(dz)} · Execution ${f1(es)} ${lab(ez)}</p>`;}
+  return `<div class="legend"><span><i style="background:var(--pos)"></i>Decisions</span><span><i style="background:var(--neg)"></i>Execution</span><span class="dim">bars show ±1 noise SD, league baseline, zones mode</span></div>${s}${t}`;
+}
+
+const NT=(v,sd)=>sd==null?'':(Math.abs(v)>2*sd?'<span class="tag real" title="More than twice its noise range (±'+(2*sd).toFixed(1)+')">likely real</span>':'<span class="tag" title="Within ±'+(2*sd).toFixed(1)+' noise range">noise</span>');
+function drawDetail(p){
+  const el=document.getElementById('detail');if(!p){el.innerHTML='<p class="note">Nothing matches these filters.</p>';return;}
+  const b=BS(),o=V(p),g=G(p),x=X(p),bz=g[b+'z'],LB=(state.mode==='type'?VKT:VK)[state.view].LB[GS()];
+  const UL=b==='L'&&!p.team,bsh=z=>UL?LB.sh[z]:g.rb.sh[z],bfg=z=>UL?LB.fg[z]:g.rb.fg[z],bft=UL?LB.ft:g.rb.ft,N=g.N||1;
+  const sw=c=>`<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(${c});margin-right:6px"></span>`;
+  const BR='<br>',zr=(k,j)=>RKS('z'+k+j,q=>{const gq=G(q);return gq[b+'z'][k][j];},p,BR);
+  const rows=CELLS().map(z=>{const d=g.z[z.k],e=bz[z.k],gc=state.mode==='type'?GR.cells[z.k]:null;return `<tr><td class="l">${sw(z.c)}${z.name}${gc?`<br><span class="dim" style="font-size:11px">repeat r ${gc.yoy.toFixed(2)}</span>`:''}</td><td class="num">${Math.round(d[0]/N*100)}%<br><span class="dim">${Math.round(bsh(z.k)*100)}% · ${Math.round(d[0])}</span>${RKS('sh'+z.k,q=>{const gq=G(q);return gq.z[z.k][0]/(gq.N||1);},p,BR)}</td><td class="num">${d[0]?pc(d[1]/d[0]):'–'}<br><span class="dim">est ${pc(d[2])}</span>${RKS('fg'+z.k,q=>{const a=G(q).z[z.k];return a[0]?a[1]/a[0]:null;},p,BR)}</td><td class="num">${f1(e[0])}<br><span class="dim">vs ${pc(bfg(z.k))}</span>${zr(z.k,0)}</td><td class="num">${f1(e[1])}${zr(z.k,1)}</td><td class="num">${f1(e[2])}${zr(z.k,2)}</td><td class="num">${f1(e[3])}${zr(z.k,3)}</td></tr>`;}).join('');
+  const trip=`<tr><td class="l">${sw(TRIP.c)}Fouled</td><td class="num">${Math.round(g.T/N*100)}%<br><span class="dim">${Math.round(bsh('trip')*100)}% · ${Math.round(g.T)}</span>${RKS('shtrip',q=>G(q).T/(G(q).N||1),p,BR)}</td><td class="num">${pc(g.ftraw)}<br><span class="dim">est ${pc(g.ft)}</span>${RKS('ftraw',q=>G(q).ftraw,p,BR)}</td><td class="num dim">–<br>vs ${pc(bft)}</td><td class="num">${f1(o.foul)}${RKS('ofoul',q=>V(q).foul,p,BR)}</td><td class="num">${f1(o.ftm)}${RKS('oftm',q=>V(q).ftm,p,BR)}</td><td class="num dim">–</td></tr>`;
+  const u=U(p,state.view),tO=u.T[b+'o'],rO=u.R[b+'o'],c=CH(p),rD=REAL(c.dec,x.sdCd),rT=REAL(c.tot,x.sdCt);
+  const verdict=(rD||rT)?`<b>Larger than normal noise.</b> ${c.tot>0?'Better than usual against top defenses':'A bigger drop than usual against top defenses'}. About 1 in 20 players shows a gap this size by chance, and across the league the count of flagged players matches chance, so check it on film before trusting it.`:`<b>Within normal noise.</b> No evidence ${p.team?'this team plays':'he plays'} differently against top defenses.`;
+  const splitBox=`<div class="splitbox"><div class="eyebrow">Against top-10 defenses · ${VK[state.view].label}</div><div style="overflow-x:auto"><table><thead><tr><th class="l"></th><th>vs top 10</th><th>vs other 20</th><th>Change</th><th>Noise ±</th></tr></thead><tbody>
+    <tr><td class="l">Decisions</td><td class="num">${f1(tO.dec)}</td><td class="num">${f1(rO.dec)}</td><td class="num"><strong>${f1(c.dec)}</strong></td><td class="num dim">${x.sdCd?(2*x.sdCd).toFixed(1):'–'}</td></tr>
+    <tr><td class="l">Execution</td><td class="num">${f1(tO.exe)}</td><td class="num">${f1(rO.exe)}</td><td class="num">${f1(c.exe)}</td><td class="num dim">–</td></tr>
+    <tr><td class="l">Total</td><td class="num">${f1(tO.tot)}</td><td class="num">${f1(rO.tot)}</td><td class="num"><strong>${f1(c.tot)}</strong></td><td class="num dim">${x.sdCt?(2*x.sdCt).toFixed(1):'–'}</td></tr>
+    <tr><td class="l dim">Attempts</td><td class="num dim">${Math.round(u.T.N)}</td><td class="num dim">${Math.round(u.R.N)}</td><td></td><td></td></tr></tbody></table></div>
+    <div class="verdict"><span class="pill ${(rD||rT)?'real':''}">${(rD||rT)?'Larger than noise':'Within noise'}</span> ${verdict}</div></div>`;
+  el.innerHTML=`<div class="eyebrow">${p.team?X(p).tm+' · '+Math.round(X(p).gp)+' games':X(p).tm+' · '+X(p).pos} · ${VK[state.view].label} · ${GAMES[state.games]} · ${Math.round(g.fga)} FGA · ${Math.round(g.T)} fouled trips</div><h3 id="popTitle">${p.n}</h3>
+  <div class="kpis"><div class="kpi hi"><div class="k">Decisions</div><div class="v">${f1(o.dec)}</div><div class="s">${p.team?RKS('odec',q=>V(q).dec,p)+'of '+RKL.length:OR(p.pD)+' pct'} ${NT(o.dec,x.sdA[0])}</div></div>
+    <div class="kpi"><div class="k">Execution</div><div class="v">${f1(o.exe)}</div><div class="s">${p.team?RKS('oexe',q=>V(q).exe,p)+'of '+RKL.length:''} ${NT(o.exe,x.sdA[1])}</div></div>
+    <div class="kpi hi"><div class="k">Total</div><div class="v">${f1(o.tot)}</div><div class="s">${p.team?RKS('otot',q=>V(q).tot,p)+'of '+RKL.length:OR(p.pT)+' pct'} ${NT(o.tot,x.sdA[2])}</div></div>
+    <div class="kpi"><div class="k">Pts added</div><div class="v">${o.pts>0?'+':''}${o.pts.toFixed(0)}</div><div class="s">${p.team?RKS('opts',q=>V(q).pts,p):''}${multi()?'per season':state.view==='s26'?'season to date':'season'}${state.games==='A'?'':', these games'}</div></div></div>
+  <div class="five"><div><div class="k">Select</div><div class="v">${f1(o.sel)}</div>${p.team?RKS('osel',q=>V(q).sel,p,'<div>')+'</div>':''}</div><div><div class="k">Align</div><div class="v">${f1(o.ali)}</div>${p.team?RKS('oali',q=>V(q).ali,p,'<div>')+'</div>':''}</div><div><div class="k">Foul draw</div><div class="v">${f1(o.foul)}</div>${p.team?RKS('ofoul',q=>V(q).foul,p,'<div>')+'</div>':''}</div><div><div class="k">Make</div><div class="v">${f1(o.mak)}</div>${p.team?RKS('omak',q=>V(q).mak,p,'<div>')+'</div>':''}</div><div><div class="k">FT make</div><div class="v">${f1(o.ftm)}</div>${p.team?RKS('oftm',q=>V(q).ftm,p,'<div>')+'</div>':''}</div></div>
+  <div class="dgrid wide"><div class="dcol"><div style="overflow-x:auto"><table><thead><tr><th class="l">Zone</th><th>Share<br>base · att</th><th>FG%<br>shrunk</th><th>Edge<br>vs base</th><th>Select</th><th>Make</th><th>Align</th></tr></thead><tbody>${rows}${trip}</tbody></table></div>
+  <p class="note">${p.team?'#1 to #30 rank this team against the other 29 in the same view; higher is #1 in every column, including attempts and shares. ':''}${state.mode==='type'?'In shot-type mode each row is graded against the same shot type, so a step-back three is compared with other step-back threes. "Repeat r" is how well raw FG% on that shot type carries from one season to the next (0 = pure noise, 1 = fully stable). ':''}Edge is points per 100 shots above baseline in that zone, using the shrunk estimate; the line under it is the baseline FG%. In the Fouled row, FG% is FT%, Select holds Foul drawing and Make holds FT making.</p>
+  </div><div class="dcol"><div class="splitbox seasons"><div class="eyebrow">Season by season</div>${seasonChart(p)}</div>
+  ${state.mode==='type'?'<p class="note">Against-top-defenses splits are shown in Zones mode.</p>':splitBox}
+  <div class="flag"><div>${p.team?`<b>Most attempts for this team:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}% (${c[2].toFixed(2)} PPA)`).join(', ')}. Players who changed teams count only for the games they played here.`:`<b>Role peers carrying the most weight:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}%`).join(', ')}. The baseline pools 20 peers, weighted by their attempts.`}</div></div>
+  <div class="flag"><div><b>Not counted:</b> ${Math.round(x.ns)} non-shooting FTA in this view (${x.ns?pc(x.nsm/x.ns):'–'} made): bonus fouls, hacks, technicals and flagrants.</div></div></div></div>`;
+}
+
+const QUADS=[
+ {c:'tl',t:'Good decisions, missed',w:'Top left · right shots, below-average results',d:'He takes valuable shots and plays to his strengths, but the ball isn\'t going in as often as it should.',why:['Poor free throw shooting on heavy foul-drawing volume. The Mitchell Robinson pattern.','A shooting slump or injury season. Check the season-by-season chart.','A young player whose shot diet is ahead of his skill. Development, not a new diet, fixes this.'],f:(x,y)=>x<0&&y>0},
+ {c:'tr',t:'Good decisions, made',w:'Top right · right shots, above-average results',d:'He takes high-value shots, leans into what he does well, and finishes them. This is the ideal corner.',why:['Rim-running bigs who live at the basket and finish. Switch to Role peers to see if they still stand out among other bigs.','Stars who pressure the rim, draw fouls and make their free throws.','Role players in a well-defined job, like corner-three specialists or lob threats.'],f:(x,y)=>x>=0&&y>0},
+ {c:'bl',t:'Bad decisions, missed',w:'Bottom left · tough shots, below-average results',d:'He takes low-value shots and doesn\'t make them at an above-average rate. This corner has the most room to improve.',why:['A role bigger than his skill set, such as a bench scorer asked to create.','Poor team spacing or late shot-clock bailouts that force tough attempts.','Young guards still learning which shots to pass up.'],f:(x,y)=>x<0&&y<=0},
+ {c:'br',t:'Bad decisions, made',w:'Bottom right · tough shots, above-average results',d:'He takes shots that are usually low-value, like mid-range pull-ups, but makes enough of them to come out ahead.',why:['Elite shot-makers whose skill turns "bad" shots into good ones. The DeRozan and Durant type.','Primary creators who take the hard shots late in the clock so teammates don\'t have to.','A hot shooting year. Check whether the Making edge holds up across seasons.'],f:(x,y)=>x>=0&&y<=0}];
+const QUADS_T={tl:{d:'The offense generates valuable shots, but the ball isn\'t going in as often as it should.',why:['Rim pressure and foul drawing without the finishers or free throw shooters to cash it in.','A cold shooting year from the main shooters. Check the season chart and the contributors list.','Injuries that shifted shots to weaker shooters.']},
+ tr:{d:'The offense creates high-value looks and converts them. This is where elite offenses live.',why:['A system built around rim pressure, corner threes and free throws, with the shooters to finish.','An MVP-level creator who bends the defense.','Depth: good shooters throughout the rotation, not just one star.']},
+ bl:{d:'The offense settles for low-value shots and doesn\'t make them. This corner has the most room to improve.',why:['Young rosters that lean on isolation and mid-range attempts.','Poor spacing that cuts off drives and corner threes.','Late-clock bailouts after stalled possessions.']},
+ br:{d:'The shot mix is below average, but the shot-makers turn tough attempts into points.',why:['Shot-making stars who live in the mid-range.','A roster of above-average shooters who take contested looks.','A hot shooting year. Compare with other seasons.']}};
+function drawQuads(list){const el=document.getElementById('quads');
+  el.innerHTML=QUADS.map(q0=>TEAMS()?Object.assign({},q0,QUADS_T[q0.c]):q0).map(q=>{const ex=list.filter(p=>q.f(V(p).exe,V(p).dec)).sort((a,b)=>(Math.abs(V(b).exe)+Math.abs(V(b).dec))-(Math.abs(V(a).exe)+Math.abs(V(a).dec))).slice(0,3);
+    return `<div class="quad ${q.c}"><div class="where">${q.w}</div><h4>${q.t}</h4><p>${q.d}</p><ul>${q.why.map(w=>`<li>${w}</li>`).join('')}</ul><div class="ex">Clearest examples now: ${ex.length?ex.map(p=>`<button type="button" data-id="${p.id}">${p.n}</button>`).join(', '):'none in this view'}</div></div>`;}).join('');
+  el.querySelectorAll('button[data-id]').forEach(b=>b.onclick=()=>{if(TEAMS()){pick(+b.dataset.id);}else pickPlayer(+b.dataset.id);});}
+
+function pickPlayer(id){if(TEAMS()){selMem.teams=state.sel;state.ent='players';P=PL;}const p=PL[id];state.sel=id;if(!inView(p)){state.pos='all';state.team='all';posEl.value='all';teamEl.value='all';state.view=p.v.l3?'l3':Object.keys(p.v).slice(-1)[0];state.min=200;mf.value=200;save();}openPop();render();}
+
+const TRALL=PL.filter(p=>p.tr);let TR=TRALL;
+const TLISTS=[
+ {t:'Good decider, improving maker',d:'Top 40% in Decisions over 3 seasons, Execution trending up, Decisions holding.',f:p=>p.tr[9]>=0.6&&p.tr[4]>=1.5&&p.tr[2]>-1,key:p=>p.tr[4],val:p=>`Exec ${f1(p.tr[3])}/yr`,z:p=>p.tr[4]},
+ {t:'Good maker, improving decider',d:'Top 40% in Execution over 3 seasons, Decisions trending up, Execution holding.',f:p=>p.tr[10]>=0.6&&p.tr[2]>=1.5&&p.tr[4]>-1,key:p=>p.tr[2],val:p=>`Dec ${f1(p.tr[1])}/yr`,z:p=>p.tr[2]},
+ {t:'Rising on both',d:'Both trends up, with the combined trend likely real.',f:p=>p.tr[1]>0&&p.tr[3]>0&&p.tr[6]>=2,key:p=>p.tr[6],val:p=>`Total ${f1(p.tr[5])}/yr`,z:p=>p.tr[6]},
+ {t:'Slipping',d:'Combined trend down and likely real. Check age and role changes.',f:p=>p.tr[6]<=-2,key:p=>-p.tr[6],val:p=>`Total ${f1(p.tr[5])}/yr`,z:p=>p.tr[6]}];
+function drawTrends(){
+  TR=TRALL.filter(p=>fOK(latestX(p)));
+  const ts=M.trend_signal;document.getElementById('tsig').textContent=`About ${Math.round(ts.dec.signal*100)}% of the spread in Decisions trends and ${Math.round(ts.exe.signal*100)}% in Execution trends is real signal. ${ts.dec.flagged} players have a likely-real Decisions trend, when about ${ts.dec.expected} would by chance.`;
+  const el=document.getElementById('tchart');const Wd=560,H=400,m={l:44,r:16,t:16,b:40};
+  if(!TR.length){document.getElementById('tchart').innerHTML='<p class="note">No players with trends match this filter.</p>';document.getElementById('tlists').innerHTML='';return;}
+  const xs=TR.map(p=>p.tr[3]),ys=TR.map(p=>p.tr[1]);const pad=v=>Math.ceil(v/2)*2;
+  const x0=-pad(Math.max(2,-Math.min(...xs))),x1=pad(Math.max(2,...xs)),y0=-pad(Math.max(2,-Math.min(...ys))),y1=pad(Math.max(2,...ys));
+  const Xs=v=>m.l+(v-x0)/(x1-x0)*(Wd-m.l-m.r),Ys=v=>H-m.b-(v-y0)/(y1-y0)*(H-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Trend scatter">`;
+  const st=(x1-x0)>20?5:2;for(let v=Math.ceil(x0/st)*st;v<=x1;v+=st)s+=`<line x1="${Xs(v)}" x2="${Xs(v)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--grid)"/><text x="${Xs(v)}" y="${H-m.b+15}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="var(--mono)">${v>0?'+':''}${v}</text>`;
+  const sy=(y1-y0)>20?5:2;for(let v=Math.ceil(y0/sy)*sy;v<=y1;v+=sy)s+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${Ys(v)}" y2="${Ys(v)}" stroke="var(--grid)"/><text x="${m.l-6}" y="${Ys(v)+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="var(--mono)">${v>0?'+':''}${v}</text>`;
+  s+=`<line x1="${Xs(0)}" x2="${Xs(0)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--axis)" stroke-width="1.5"/><line x1="${m.l}" x2="${Wd-m.r}" y1="${Ys(0)}" y2="${Ys(0)}" stroke="var(--axis)" stroke-width="1.5"/>`;
+  s+=`<text x="${Wd-m.r}" y="${H-6}" text-anchor="end" font-size="11" fill="var(--ink2)">Execution trend per season →</text><text transform="translate(12 ${m.t}) rotate(90)" font-size="11" fill="var(--ink2)">Decisions trend →</text>`;
+  const real=p=>Math.abs(p.tr[2])>=2||Math.abs(p.tr[4])>=2;
+  const psel=TEAMS()?-1:state.sel;const ord=[...TR].sort((a,b)=>real(a)-real(b)||(a.id===psel)-(b.id===psel));
+  ord.forEach(p=>{const on=p.id===psel;s+=`<circle cx="${Xs(p.tr[3]).toFixed(1)}" cy="${Ys(p.tr[1]).toFixed(1)}" r="${on?6.5:4.5}" fill="${on?'var(--neg)':real(p)?'var(--pos)':'var(--surface)'}" stroke="${on?'var(--surface)':real(p)?'var(--surface)':'var(--axis)'}" stroke-width="${real(p)||on?2:1.2}"/>`;});
+  const lab=new Set([...TR].sort((a,b)=>Math.abs(b.tr[6])-Math.abs(a.tr[6])).slice(0,6).map(p=>p.id).concat([psel]));
+  TR.forEach(p=>{if(lab.has(p.id)){const x=Xs(p.tr[3]),r=x<Wd-120;s+=`<text x="${x+(r?8:-8)}" y="${Ys(p.tr[1])+4}" text-anchor="${r?'start':'end'}" font-size="11" fill="var(--ink)" paint-order="stroke" stroke="var(--surface)" stroke-width="3">${SN(p.n)}</text>`;}});
+  TR.forEach(p=>{s+=`<circle class="thit" data-id="${p.id}" cx="${Xs(p.tr[3]).toFixed(1)}" cy="${Ys(p.tr[1]).toFixed(1)}" r="9" fill="transparent" style="cursor:pointer"/>`;});
+  s+='</svg><div class="tip" hidden></div>';el.innerHTML=s;const tip=el.querySelector('.tip'),svg=el.querySelector('svg');
+  el.querySelectorAll('.thit').forEach(c=>{const p=PL[+c.dataset.id];c.onmouseenter=()=>{const sc=svg.getBoundingClientRect().width/Wd;tip.innerHTML=`<b>${p.n}</b>Decisions ${f1(p.tr[1])}/yr (z ${p.tr[2].toFixed(1)})<br>Execution ${f1(p.tr[3])}/yr (z ${p.tr[4].toFixed(1)})`;tip.style.left=(+c.getAttribute('cx')*sc)+'px';tip.style.top=(+c.getAttribute('cy')*sc)+'px';tip.hidden=false;};c.onmouseleave=()=>{tip.hidden=true;};c.onclick=()=>pickPlayer(p.id);});
+  document.getElementById('tlists').innerHTML=TLISTS.map(L=>{const ps=TR.filter(L.f).sort((a,b)=>L.key(b)-L.key(a)).slice(0,8);
+    return `<div class="tlist"><h4>${L.t}</h4><p>${L.d}</p><ol>${ps.map(p=>`<li><button type="button" data-id="${p.id}">${p.n}</button> <span class="n">${L.val(p)}</span>${Math.abs(L.z(p))>=2?'<span class="tag real">likely real</span>':'<span class="tag">leaning</span>'}</li>`).join('')||'<li>None meet the bar.</li>'}</ol></div>`;}).join('');
+  document.querySelectorAll('#tlists button').forEach(b=>b.onclick=()=>pickPlayer(+b.dataset.id));
+}
+
+function gradeTables(){
+  const g=GR,rows=[['Selection','sel'],['Alignment','ali'],['Foul drawing','foul'],['Decisions','dec'],['Making','mak'],['Execution','exe'],['Total','tot']];
+  document.getElementById('gtbl').innerHTML=`<thead><tr><th class="l">Part</th><th>Zones</th><th>+ shot type</th></tr></thead><tbody>${rows.map(([a,k])=>`<tr><td class="l">${a}</td><td class="num">${g.zone.yoy[k].toFixed(2)}</td><td class="num"><strong>${g.type.yoy[k].toFixed(2)}</strong></td></tr>`).join('')}
+   <tr><td class="l">Execution: share that is real signal</td><td class="num">${Math.round(g.zone.signal.exe*100)}%</td><td class="num"><strong>${Math.round(g.type.signal.exe*100)}%</strong></td></tr>
+   <tr><td class="l">Player-seasons with Execution clearly off average</td><td class="num">${Math.round(g.zone.clear.exe*100)}%</td><td class="num"><strong>${Math.round(g.type.clear.exe*100)}%</strong></td></tr>
+   <tr><td class="l dim">Player pairs</td><td class="num dim">${g.zone.yoy_n}</td><td class="num dim">${g.type.yoy_n}</td></tr></tbody>`;
+  const grade=r=>r>=0.4?'moderate':r>=0.3?'low':'very low';
+  document.getElementById('ctbl').innerHTML=`<thead><tr><th class="l">Shot type</th><th>Lg FG%</th><th>Pts / shot</th><th>Typical att / season</th><th>Signal at typical volume</th><th>Repeat r</th><th class="l">Grade</th></tr></thead><tbody>${ZT.map(z=>{const c=g.cells[z.k];return `<tr><td class="l">${z.name}</td><td class="num">${pc(c.lg_fg)}</td><td class="num">${c.lg_pps.toFixed(2)}</td><td class="num">${c.med_att}</td><td class="num">${Math.round(c.rel*100)}%</td><td class="num">${c.yoy.toFixed(2)}</td><td class="l">${grade(c.yoy)}</td></tr>`;}).join('')}</tbody>`;}
+function methodTables(){
+  const v=(state.mode==='type'?VKT:VK)[state.view],LB=v.LB.A,kt=(state.mode==='type'?DTM.meta.type:DTM.meta.zone).find(o=>o.key===state.view);const ZL={};CELLS().forEach(z=>ZL[z.k]=z.name);const vz=VK[state.view];
+  document.getElementById('ktbl').innerHTML=`<thead><tr><th class="l">Zone</th><th>Lg share</th><th>Lg FG%</th><th>k player</th><th>k team</th></tr></thead><tbody>${Object.keys(ZL).map(z=>`<tr><td class="l">${ZL[z]}</td><td class="num">${pc(LB.sh[z])}</td><td class="num">${pc(LB.fg[z])}</td><td class="num">${v.K[z]}</td><td class="num">${kt.K[z]}</td></tr>`).join('')}<tr><td class="l">Fouled trips</td><td class="num">${pc(LB.sh.trip)}</td><td class="num">FT ${pc(LB.ft)}</td><td class="num">${v.Kft}</td><td class="num">${kt.Kft}</td></tr></tbody>`;
+  const YP=[['s20s21','20-21 → 21-22'],['s21s22','21-22 → 22-23'],['s22s23','22-23 → 23-24'],['s23s24','23-24 → 24-25'],['s24s25','24-25 → 25-26']],Y=DTM.meta.yoy;document.getElementById('ttbl').innerHTML=`<thead><tr><th class="l">Part</th>${YP.map(p=>`<th>${p[1].replace(' → ','<br>→ ')}</th>`).join('')}</tr></thead><tbody>${[['Selection','sel'],['Decisions','dec'],['Making','mak'],['Execution','exe'],['Total','tot']].map(([a,k])=>`<tr><td class="l">${a}</td>${YP.map(p=>`<td class="num">${Y[p[0]][k].toFixed(2)}</td>`).join('')}</tr>`).join('')}<tr><td class="l dim">Teams</td>${YP.map(()=>'<td class="num dim">30</td>').join('')}</tr></tbody>`;
+  const SP=['01','12','23','34','45'],S=M.stability;document.getElementById('stbl').innerHTML=`<thead><tr><th class="l">Part</th>${YP.map(p=>`<th>${p[1].replace(' → ','<br>→ ')}</th>`).join('')}</tr></thead><tbody>${[['Decisions','dec'],['Execution','exe'],['Total','tot']].map(([a,k])=>`<tr><td class="l">${a}</td>${SP.map(q=>`<td class="num">${S[q][k].toFixed(2)}</td>`).join('')}</tr>`).join('')}<tr><td class="l dim">Players</td>${SP.map(q=>`<td class="num dim">${S[q].n}</td>`).join('')}</tr></tbody>`;
+  document.getElementById('defs').textContent=Object.entries(M.defenses).map(([y,l])=>`${+y}-${String(+y+1).slice(2)}: ${l.slice(0,10).map(d=>d[0]).join(', ')}.`).join(' ');
+  const n=vz.noise;document.getElementById('noisetxt').textContent=`In the ${vz.label} view, only ${Math.max(0,Math.round(n.signal_tot*100))}% of the spread in Total change and ${Math.max(0,Math.round(n.signal_dec*100))}% in Decisions change looks like real signal. ${n.flagged} of ${n.n} players cross the 2-standard-deviation line, when about ${Math.round(n.expected)} would by chance. Pooling three seasons doesn't change that, so player-specific "big game" differences are too small to detect with these data.`;
+}
+
+const KT={x_rcut:'Cuts, Lobs & Dunks',x_put:'Putbacks',x_rdrv:'Drives',x_roth:'Other Rim Finishes',x_pflt:'Floaters',x_ppost:'Post Shots',x_poth:'Other Paint Shots',x_mid:'the Mid-Range',x_c3:'the Corner 3',x_acs:'Catch-and-Shoot 3s',x_apull:'Pull-Up 3s',x_asb:'Step-Back 3s'};
+const KS={x_rcut:'Cut/Lob',x_put:'Putback',x_rdrv:'Drive',x_roth:'Rim other',x_pflt:'Floater',x_ppost:'Post',x_poth:'Paint other',x_mid:'Mid-range',x_c3:'Corner 3',x_acs:'C&S 3',x_apull:'Pull-up 3',x_asb:'Step-back 3'};
+const KFAM={x_rcut:'rim',x_put:'rim',x_rdrv:'rim',x_roth:'rim',x_pflt:'pnt',x_ppost:'pnt',x_poth:'pnt',x_mid:'mid',x_c3:'c3',x_acs:'ab3',x_apull:'ab3',x_asb:'ab3'};
+const PID={};PL.forEach(p=>{PID[p.pid]=p.id;});
+let kcell='x_c3';try{const s=localStorage.getItem('spl4k');if(s&&KINGS[s])kcell=s;}catch(e){}
+const kseg=document.getElementById('kseg');
+Object.keys(KT).forEach(k=>{const b=document.createElement('button');b.dataset.v=k;b.innerHTML=`<i style="background:var(${FAMC[KFAM[k]]})"></i>${KS[k]}`;b.onclick=()=>{kcell=k;try{localStorage.setItem('spl4k',k)}catch(e){};renderKings();};kseg.appendChild(b);});
+function renderKings(){
+  const K=KINGS[kcell];[...kseg.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===kcell));
+  document.getElementById('ktitle').textContent='Kings of '+KT[kcell];
+  const rows=K.rows.map((r,i)=>({r,rank:i+1})).filter(o=>posOK(o.r[3])&&(state.team==='all'||o.r[2]===state.team));
+  const filt=state.pos!=='all'||state.team!=='all';
+  document.getElementById('kcount').textContent=(filt?rows.length+' of ':'')+K.n+' qualifiers';
+  const lg=(K.lg*100).toFixed(1),rel=Math.round(K.rel*100);
+  const warn=K.rel<0.45?` <b class="kwarn">Treat this list with extra caution:</b> even at the minimum, only about ${rel}% of a player's gap from average is skill, so the order past the top few is loose.`:'';
+  document.getElementById('knote').innerHTML=`2023-24 to 2025-26 pooled, garbage time removed. Minimum <b>${K.min}</b> attempts over 3 seasons. League average ${lg}% on ${K.v}-point attempts. Ranked by <b>skill estimate</b>: each player's FG% pulled toward league average by ${K.k} average attempts, so small samples can't top the list on a hot streak. At ${K.min} attempts the estimate is about ${rel}% player and ${100-rel}% league average.${warn} <b>Likely real</b> means the raw FG% is more than 2 standard errors above average. Position and team filters apply; ranks stay league-wide.`;
+  const pc=x=>(x*100).toFixed(1);
+  document.getElementById('kbody').innerHTML=rows.length?rows.map(({r,rank})=>{const [pid,n,tm,pos,A,M,raw,est,z,pts]=r;const id=PID[pid];const d=(est-K.lg)*100;
+    return `<tr${id!=null?` class="click" data-id="${id}"`:''}><td class="num">${rank}</td><td class="l"><span class="pname">${n}</span><span class="meta">${tm||''}${pos?' · '+pos:''}</span></td><td class="num">${A}</td><td class="num">${M}</td><td class="num">${pc(raw)}</td><td class="num"><b>${pc(est)}</b></td><td class="num${d<0?' neg':''}">${d>=0?'+':''}${d.toFixed(1)}</td><td class="num${pts<0?' neg':''}">${pts>=0?'+':''}${pts.toFixed(0)}</td><td class="l">${z>=2?'<span class="tag real" title="z = '+z.toFixed(1)+'">likely real</span>':'<span class="tag" title="z = '+z.toFixed(1)+'">noise</span>'}</td></tr>`;}).join(''):'<tr><td colspan="9" class="l dim">No qualifiers match the position and team filters.</td></tr>';
+  document.querySelectorAll('#kbody tr.click').forEach(tr=>tr.onclick=()=>pickPlayer(+tr.dataset.id));
+}
+const _render=render;render=function(){_render();renderKings();};
+function fromHash(){const h=decodeURIComponent(location.hash.slice(1));if(!h)return false;
+  if(h.startsWith('team-')){const t=TM.find(x=>String(x.t).toLowerCase()===h.slice(5));if(!t)return false;if(!TEAMS()){selMem.players=state.sel;state.ent='teams';P=TM;}state.sel=t.id;return true;}
+  const p=PL.find(x=>SLUG(x.n)===h);if(!p)return false;if(TEAMS()){selMem.teams=state.sel;state.ent='players';P=PL;}state.sel=p.id;
+  if(!inView(p)){state.pos='all';state.team='all';posEl.value='all';teamEl.value='all';state.view=p.v.l3?'l3':Object.keys(p.v).slice(-1)[0];state.min=200;mf.value=200;}return true;}
+gradeTables();if(fromHash())openPop();render();
+window.addEventListener('hashchange',()=>{if(fromHash()){POP.hidden=true;openPop();render();}});
+
+})().catch(err=>{const m=document.createElement('p');m.className='load-err';m.textContent='The data for this page did not load. Refresh to try again.';document.querySelector('.app').prepend(m);console.error(err);});</script>
+</body></html>
