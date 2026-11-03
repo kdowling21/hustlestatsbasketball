@@ -216,7 +216,7 @@ function render(){
   document.getElementById('lbtitle').textContent=(tm?'Team leaderboard · ':'Leaderboard · ')+VL[state.view];
   const live=state.view==='s2026'?' The 2026-27 season is in progress, so numbers are early and mostly noise.':'';
   document.getElementById('chartnote').textContent=(state.view==='cur'?'Time-weighted, 2020-21 to now (550-day half-life).':VL[state.view]+' only.')+live;
-  document.getElementById('eyebrow').textContent=`NBA play-by-play + NBA.com player tracking · 2020-21 to now · data through ${M.ref}`;
+  document.getElementById('eyebrow').textContent=`NBA play-by-play + NBA.com player tracking · 2020-21 to now · data through ${M.through||M.ref}`;
   const list=tm?teamList():playerList();
   RKL=list;RKC={};
   const q=state.q.toLowerCase();const name=u=>tm?u.tm:u.p.n;const match=u=>q&&(name(u)+' '+(u.tm||'')).toLowerCase().includes(q);
