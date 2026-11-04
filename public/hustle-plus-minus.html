@@ -358,7 +358,7 @@ window.addEventListener('hashchange',()=>{if(fromHash()){posEl.value=state.pos;t
   function show(th){prep(th);const body=th.dataset.tip;if(!body)return;const t=TIPS[th.dataset.k];
     const head=t?t[0]:th.textContent.trim(),unit=th.closest('#tbl')?(UNITS[th.dataset.k]||UNITS['*']||''):'';
     box.innerHTML='<div class="hh"><span class="hl"></span>'+(unit?'<span class="hu"></span>':'')+'</div><div class="hb"></div>';
-    box.querySelector('.hl').textContent=head;if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=body;
+    box.querySelector('.hl').textContent=head;box.querySelector('.hl').innerHTML=box.querySelector('.hl').innerHTML.replace(/eFG%/g,'<span style="text-transform:none">eFG%</span>');if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=body;
     box.hidden=false;box.classList.remove('up');const r=th.getBoundingClientRect(),w=box.offsetWidth,h=box.offsetHeight,c=r.left+r.width/2;
     let x=Math.min(Math.max(8,c-w/2),innerWidth-w-8),y=r.bottom+9;if(y+h>innerHeight-8){y=Math.max(8,r.top-h-9);box.classList.add('up');}
     box.style.left=x+'px';box.style.top=y+'px';box.style.setProperty('--cx',Math.min(Math.max(12,c-x),w-12)+'px');}

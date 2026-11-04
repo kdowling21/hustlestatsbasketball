@@ -227,6 +227,7 @@ body.popped{overflow:hidden}
 .app #tbl td.xf0{box-shadow:inset 2px 0 0 var(--axis)}
 .app #tbl td.xf .zr{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:5px;vertical-align:middle}
 .app .xfnote b.v{color:var(--accent)}
+.app .nc{text-transform:none!important;letter-spacing:.02em}
 
 .app .khead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
 .app .kwinctl{grid-auto-flow:column;align-items:center;gap:8px}

@@ -514,7 +514,7 @@ renderKings=function(){
   if(!(kcell==='x_xmk'||kcell==='x_tough')){const th=document.querySelector('#kingtbl thead');if(th.innerHTML!==KHEAD)th.innerHTML=KHEAD;return _rk();}
   const K=KINGS[kcell];[...kseg.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===kcell));
   document.getElementById('ktitle').textContent='Kings of '+KT[kcell];
-  document.querySelector('#kingtbl thead').innerHTML='<tr><th>#</th><th class="l">Player</th><th>Shots</th><th>eFG%</th><th title="eFG% a league-average shooter would post on the same shots: same closest-defender distance, dribbles and shot type">Expected eFG%</th><th title="eFG% over expected, pulled toward zero by the noise in this many shots">Skill est.</th><th title="Points above expected on these shots, 3 seasons">Pts above exp.</th><th class="l">Signal</th></tr>';
+  document.querySelector('#kingtbl thead').innerHTML='<tr><th>#</th><th class="l">Player</th><th>Shots</th><th><span class="nc">eFG%</span></th><th title="eFG% a league-average shooter would post on the same shots: same closest-defender distance, dribbles and shot type">Expected <span class="nc">eFG%</span></th><th title="eFG% over expected, pulled toward zero by the noise in this many shots">Skill est.</th><th title="Points above expected on these shots, 3 seasons">Pts above exp.</th><th class="l">Signal</th></tr>';
   const rows=K.rows.map((r,i)=>({r,rank:i+1})).filter(o=>posOK(o.r[3])&&(state.team==='all'||o.r[2]===state.team));
   const filt=state.pos!=='all'||state.team!=='all';
   document.getElementById('kcount').textContent=(filt?rows.length+' of ':'')+K.n+' qualifiers';
@@ -557,7 +557,7 @@ window.addEventListener('hashchange',()=>{if(fromHash()){POP.hidden=true;openPop
   function show(th){prep(th);const body=th.dataset.tip;if(!body)return;const t=TIPS[th.dataset.k];
     const head=t?t[0]:th.textContent.trim(),unit=th.closest('#tbl')?(UNITS[th.dataset.k]||UNITS['*']||''):'';
     box.innerHTML='<div class="hh"><span class="hl"></span>'+(unit?'<span class="hu"></span>':'')+'</div><div class="hb"></div>';
-    box.querySelector('.hl').textContent=head;if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=body;
+    box.querySelector('.hl').textContent=head;box.querySelector('.hl').innerHTML=box.querySelector('.hl').innerHTML.replace(/eFG%/g,'<span style="text-transform:none">eFG%</span>');if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=body;
     box.hidden=false;box.classList.remove('up');const r=th.getBoundingClientRect(),w=box.offsetWidth,h=box.offsetHeight,c=r.left+r.width/2;
     let x=Math.min(Math.max(8,c-w/2),innerWidth-w-8),y=r.bottom+9;if(y+h>innerHeight-8){y=Math.max(8,r.top-h-9);box.classList.add('up');}
     box.style.left=x+'px';box.style.top=y+'px';box.style.setProperty('--cx',Math.min(Math.max(12,c-x),w-12)+'px');}
