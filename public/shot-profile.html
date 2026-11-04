@@ -40,7 +40,7 @@
   <div class="ctl"><span class="lab">Show</span><div class="seg" id="ent"></div></div>
   <div class="ctl"><label for="viewsf">Seasons</label><select id="viewsf"></select></div>
   <div class="ctl"><span class="lab">Shot detail</span><div class="seg" id="mode"></div></div>
-  <div class="ctl"><span class="lab">Games</span><div class="seg" id="games"></div></div>
+  <div class="seg" id="games" hidden style="display:none"></div>
   <div class="ctl"><span class="lab">Baseline</span><div class="seg" id="base"></div></div>
   <div class="ctl"><label for="posf">Position</label><select id="posf"><option value="all">All positions</option><option value="G">Guards (PG, SG)</option><option value="F">Forwards (SF, PF)</option><option value="B">Bigs (PF, C)</option><option value="PG">PG</option><option value="SG">SG</option><option value="SF">SF</option><option value="PF">PF</option><option value="C">C</option></select></div>
   <div class="ctl"><label for="teamf">Team</label><select id="teamf"><option value="all">All teams</option></select></div>
@@ -113,7 +113,7 @@
       <h3 class="sub">Teams</h3>
       <p>Team scores use the same five parts, built from every attempt by every player, not just the players on the leaderboard. <b>Teams include garbage time</b>, so every possession counts, the same way team ratings are usually reported; the team league baseline includes it too. Each attempt counts for the team the shooter played for <b>in that game</b>, so a player traded midseason splits his shots between both teams. Teams are measured against the league only; role peers don't apply. Team zone FG% and FT% are shrunk toward league average with their own <code>k</code> (table above). Team shooting differences in some zones, especially threes, are mostly luck even over thousands of attempts, so those estimates move a lot toward average. A team's noise range is roughly ±1 point per 100 attempts, so most team gaps of 2 or more are real. Team year-to-year correlation, single seasons:</p>
       <table id="ttbl"></table>
-      <h3 class="sub">Against top-10 defenses</h3>
+      <h3 class="sub">Against top-10 defenses (tested, not shown)</h3><p>We tested whether players shoot differently against the league's best defenses. They don't, at least not detectably: the gaps are no bigger than chance would produce, so the split was removed from the tool. The test:</p>
       <p>Defenses are ranked each season by points allowed per 100 possessions. <span id="defs"></span> Each split has its own league baseline. The noise test simulates each player as if he were identical against every opponent. <span id="noisetxt"></span></p>
       <h3 class="sub">Shot-type mode: how real is it?</h3>
       <p>Shot types come from the play-by-play's own descriptors (driving, cutting, floating, pull-up, step-back and so on), which scorekeepers enter by hand. Year-to-year correlation of single-season scores, players with 450+ attempts in both seasons:</p>
@@ -121,9 +121,10 @@
       <p>Each shot type on its own, Last 3 seasons. "Repeat r" is the year-to-year correlation of raw FG% for players with 40+ attempts of that type in both seasons. "Signal at typical volume" is how much of a typical player's raw FG% on that shot is skill rather than luck.</p>
       <div style="overflow-x:auto"><table id="ctbl"></table></div>
       <h3 class="sub">Positions before 2023-24</h3><p>Listed positions cover players active from 2023-24 on. For about 180 players whose careers ended earlier, position is estimated from their 10 most similar players on rebounding, blocks, assists, usage, screen assists, speed and shot locations. The estimate matches the listed position 68% of the time and is within one position 98% of the time.</p>
+      <h3 class="sub">Shot difficulty (NBA tracking)</h3><p>The last two leaderboard columns and the Shot-Making and Tough Shots Kings lists come from NBA.com shot tracking, separate from the play-by-play model above: nothing in Selection, Making or Total uses them. Every field-goal attempt gets an expected value from the league make rate for shots with the same closest-defender distance (0–2, 2–4, 4–6, 6+ ft), dribbles before the shot (0, 1, 2, 3–6, 7+) and shot type (3-pointer, 2 from 10+ ft, 2 inside 10 ft). <b>Difficulty</b> is league points per shot minus his expected points per shot, per 100 shots: positive means harder shots. <b>xMaking</b> is his actual points minus expected, per 100 shots, pulled toward zero by its noise; a gold dot marks a likely-real result. Difficulty repeats year to year at r = 0.91 to 0.93; xMaking at 0.59 to 0.69. Tracking splits include garbage time and are not split by opponent, so these columns show “–” for teams and for the top-10-defense split. NBA.com splits distance only at 10 feet, so a dunk and a floater share a bucket: rim-heavy bigs look like they take easier shots and floater-heavy guards harder ones. Zones above already handle location.</p>
       <h3 class="sub">Still not covered</h3>
       <ul>
-        <li>Shot difficulty within a zone: defender distance, pull-up vs catch-and-shoot, shot clock.</li>
+        <li>Shot clock, and how closely defenders contest (a hand up vs. a body nearby). Defender distance and dribbles are covered by the shot difficulty columns, from separate tracking data.</li>
         <li>Defenses decide which shots are available, so read Alignment as a signal, not a verdict.</li>
         <li>Age, team changes, injuries and role changes all drive trends. Check context before calling a trend development.</li>
       </ul>
@@ -158,11 +159,12 @@
 <div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
 </footer>
 <script>(async()=>{
-const [DATA,DT,DTM,KINGS]=await Promise.all([
+const [DATA,DT,DTM,KINGS,XF]=await Promise.all([
 fetch('data/shot_zone.json').then(r=>r.json()),
 fetch('data/shot_type.json').then(r=>r.json()),
 fetch('data/shot_team.json').then(r=>r.json()),
-fetch('data/shot_kings.json').then(r=>r.json())]);
+fetch('data/shot_kings.json').then(r=>r.json()),
+fetch('data/shot_xfg.json').then(r=>r.ok?r.json():null).catch(()=>null)]);
 
 const M=DATA.meta, VIEWS=M.views, VK={}; VIEWS.forEach(v=>VK[v.key]=v);
 const Z=[{k:'rim',name:'Rim',c:'--z1',v:2},{k:'pnt',name:'Paint',c:'--z2',v:2},{k:'mid',name:'Mid-range',c:'--z3',v:2},{k:'c3',name:'Corner 3',c:'--z4',v:3},{k:'ab3',name:'Above-break 3',c:'--z5',v:3}];
@@ -206,7 +208,7 @@ const pc=x=>x==null||isNaN(x)?'–':(x*100).toFixed(1)+'%';
 const LIVEDATE=()=>{if(!M.live||!M.live.through)return '';const d=new Date(M.live.through.slice(0,10)+'T12:00:00Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});};
 if(M.live)document.getElementById('eyebrow').textContent=`2020-21 to 2025-26 + 2026-27 through ${LIVEDATE()} · NBA play-by-play · updated weekly`;
 const W=()=>VK[state.view].wsum, multi=()=>state.view[0]!=='s';
-const GS=()=>state.mode==='type'?'A':state.games;
+state.games='A';const GS=()=>'A';
 const G=p=>U(p,state.view)[GS()];
 const BS=()=>TEAMS()?'L':state.base;
 const V=p=>G(p)[BS()+'o'];
@@ -227,7 +229,7 @@ document.getElementById('zlegend').innerHTML=Z.concat([TRIP]).map(z=>`<span><i s
 const COLS=[{k:'rank',l:'#',ns:1},{k:'name',l:'Player',cls:'l'},{k:'N',l:'Att'},{k:'mix',l:'Shot mix',cls:'l',ns:1},{k:'pps',l:'PPA'},
   {k:'sel',l:'Select',g:1},{k:'ali',l:'Align'},{k:'foul',l:'Foul draw'},{k:'dec',l:'Decisions'},
   {k:'mak',l:'Make',g:1},{k:'ftm',l:'FT make'},{k:'exe',l:'Execution'},
-  {k:'tot',l:'Total',g:1},{k:'pts',l:'Pts added'},{k:'pct',l:'Pctile',ns:1}];
+  {k:'tot',l:'Total',g:1},{k:'pts',l:'Pts added'},{k:'pct',l:'Pctile',ns:1},{k:'xdif',l:'Difficulty'},{k:'xmk',l:'xMaking'}];
 
 const SLUG=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function setHash(h){try{if(location.hash!=='#'+h)history.replaceState(null,'','#'+h);}catch(e){}}
@@ -247,7 +249,17 @@ const thead=document.getElementById('thead');
 COLS.forEach(c=>{const th=document.createElement('th');th.textContent=c.l;th.className=(c.cls||'')+(c.g?' grp':'');th.dataset.k=c.k;
   if(!c.ns){th.tabIndex=0;const go=()=>{if(state.sort===c.k)state.dir*=-1;else{state.sort=c.k;state.dir=c.k==='name'?1:-1;}save();render();};th.onclick=go;th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};}
   thead.appendChild(th);});
-const sv=(p,k)=>k==='name'?p.n:k==='N'?G(p).N:k==='pps'?nz(G(p).pps):k==='chg'?CH(p).tot:V(p)[k];
+
+const XV=p=>(!XF||p.team||GS()!=='A')?null:((XF.players[p.pid]||{})[state.view]||null);
+const XS=(p,k)=>{const v=XV(p);return v?v[k==='xdif'?1:2]:(state.dir<0?-1e9:1e9);};
+const XC=p=>{const v=XV(p);if(!v)return '<td class="num dim xf0">–</td><td class="num dim">–</td>';
+  const real=Math.abs(v[3])>=2;
+  return `<td class="num xf xf0" title="Expected points per 100 shots below league average, from defender distance, dribbles and shot type (${v[0]} tracked shots). Positive = harder shots.">${f1(v[1])}</td>`+
+    `<td class="num xf${v[2]<0?' neg':''}" title="Points per 100 shots above expected, skill estimate. ${real?'Likely real':'Could be noise'} (z = ${v[3].toFixed(1)}).">${f1(v[2])}${real?'<span class="zr"></span>':''}</td>`;};
+const XD=p=>{const v=XV(p);if(!v)return '';const real=Math.abs(v[3])>=2;
+  return `<div class="flag xfnote"><div><b>Shot difficulty (NBA tracking):</b> Difficulty <b class="v">${f1(v[1])}</b>: his shots are worth ${Math.abs(v[1]).toFixed(1)} ${v[1]>=0?'fewer':'more'} points per 100 than an average shot, given the closest defender, dribbles and shot type. xMaking <b class="v">${f1(v[2])}</b>: he scores ${Math.abs(v[2]).toFixed(1)} ${v[2]>=0?'more':'fewer'} points per 100 shots than expected on those shots (skill estimate, ${real?'likely real':'could be noise'}). ${v[0].toLocaleString()} tracked shots, garbage time included.</div></div>`;};
+{const t={xdif:'Shot difficulty from NBA tracking: expected points per 100 shots below league average. Positive = harder shots.',xmk:'Shot-making over expected from NBA tracking: points per 100 shots above expected, skill estimate. Gold dot = likely real.'};[...thead.children].forEach(th=>{if(t[th.dataset.k])th.title=t[th.dataset.k];});}
+const sv=(p,k)=>(k==='xdif'||k==='xmk')?XS(p,k):k==='name'?p.n:k==='N'?G(p).N:k==='pps'?nz(G(p).pps):k==='chg'?CH(p).tot:V(p)[k];
 function withPct(list){const s=list.map(p=>V(p).tot).sort((a,b)=>a-b),d=list.map(p=>V(p).dec).sort((a,b)=>a-b),n=list.length;
   const r=(arr,v)=>{let lo=0;while(lo<n&&arr[lo]<v)lo++;let hi=lo;while(hi<n&&arr[hi]===v)hi++;return Math.round(100*((lo+hi)/2)/n);};
   list.forEach(p=>{p.pT=r(s,V(p).tot);p.pD=r(d,V(p).dec);});return list;}
@@ -289,9 +301,9 @@ function render(){
     <td class="l"><span class="mix" title="${Z.map(z=>z.name+' '+Math.round(famA(g,z.k)/N*100)+'%').join(' · ')} · Fouled ${Math.round(g.T/N*100)}%">${Z.map(z=>`<span style="width:${famA(g,z.k)/N*100}%;background:var(${z.c})"></span>`).join('')}<span style="width:${g.T/N*100}%;background:var(${TRIP.c})"></span></span></td>
     <td class="num">${g.pps==null?'–':g.pps.toFixed(3)}${RKS('pps',q=>G(q).pps,p)}</td>
     ${cell(o.sel,1,0,LR(p,'sel'))}${cell(o.ali,0,0,LR(p,'ali'))}${cell(o.foul,0,0,LR(p,'foul'))}${cell(o.dec,0,1,LR(p,'dec'))}${cell(o.mak,1,0,LR(p,'mak'))}${cell(o.ftm,0,0,LR(p,'ftm'))}${cell(o.exe,0,1,LR(p,'exe'))}${cell(o.tot,1,1,LR(p,'tot'))}
-    <td class="num${o.pts<0?' neg':''}">${o.pts>0?'+':''}${o.pts.toFixed(0)}${LR(p,'pts')}</td><td class="pctc"><span class="pct ${p.pT>=90?'top':''}">${p.pT}</span></td></tr>`;}).join('');
+    <td class="num${o.pts<0?' neg':''}">${o.pts>0?'+':''}${o.pts.toFixed(0)}${LR(p,'pts')}</td><td class="pctc"><span class="pct ${p.pT>=90?'top':''}">${p.pT}</span></td>${XC(p)}</tr>`;}).join('');
   document.querySelectorAll('#tbody tr').forEach(tr=>{const go=()=>pick(+tr.dataset.id);tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go();};});
-  document.getElementById('chartnote').textContent=(state.view==='s26'&&M.live?`Season in progress: ${M.live.games} games through ${LIVEDATE()}, about ${Math.round(VK.s26.frac*82)} per team. Min FGA is prorated to ${Math.round(state.min*VK.s26.frac)}. Early-season samples are small, so most gaps are noise until roughly midseason. `:'')+`${state.mode==='type'?'Zones + shot type':'Zones'} · ${VK[state.view].label} · ${GAMES[GS()].toLowerCase()} · ${BS()==='L'?'league':'role-peer'} baseline.${TEAMS()?' Each dot is a team; every attempt counts for the team the shooter was on that night, garbage time included.':''} Across: Execution (Making + FT making). Up: Decisions (Selection + Alignment + Foul drawing).`;
+  document.getElementById('chartnote').textContent=(state.view==='s26'&&M.live?`Season in progress: ${M.live.games} games through ${LIVEDATE()}, about ${Math.round(VK.s26.frac*82)} per team. Min FGA is prorated to ${Math.round(state.min*VK.s26.frac)}. Early-season samples are small, so most gaps are noise until roughly midseason. `:'')+`${state.mode==='type'?'Zones + shot type':'Zones'} · ${VK[state.view].label} · ${BS()==='L'?'league':'role-peer'} baseline.${TEAMS()?' Each dot is a team; every attempt counts for the team the shooter was on that night, garbage time included.':''} Across: Execution (Making + FT making). Up: Decisions (Selection + Alignment + Foul drawing).`;
   drawChart(list,match);drawQuads(list);const cur=list.find(p=>p.id===state.sel);if(cur&&state.open)setHash(cur.team?'team-'+String(cur.t).toLowerCase():SLUG(cur.n));popBar();drawDetail(cur);drawTrends();methodTables();
 }
 
@@ -354,7 +366,7 @@ function drawDetail(p){
     <tr><td class="l">Total</td><td class="num">${f1(tO.tot)}</td><td class="num">${f1(rO.tot)}</td><td class="num"><strong>${f1(c.tot)}</strong></td><td class="num dim">${x.sdCt?(2*x.sdCt).toFixed(1):'–'}</td></tr>
     <tr><td class="l dim">Attempts</td><td class="num dim">${Math.round(u.T.N)}</td><td class="num dim">${Math.round(u.R.N)}</td><td></td><td></td></tr></tbody></table></div>
     <div class="verdict"><span class="pill ${(rD||rT)?'real':''}">${(rD||rT)?'Larger than noise':'Within noise'}</span> ${verdict}</div></div>`;
-  el.innerHTML=`<div class="eyebrow">${p.team?X(p).tm+' · '+Math.round(X(p).gp)+' games':X(p).tm+' · '+X(p).pos} · ${VK[state.view].label} · ${GAMES[state.games]} · ${Math.round(g.fga)} FGA · ${Math.round(g.T)} fouled trips</div><h3 id="popTitle">${p.n}</h3>
+  el.innerHTML=`<div class="eyebrow">${p.team?X(p).tm+' · '+Math.round(X(p).gp)+' games':X(p).tm+' · '+X(p).pos} · ${VK[state.view].label} · ${Math.round(g.fga)} FGA · ${Math.round(g.T)} fouled trips</div><h3 id="popTitle">${p.n}</h3>
   <div class="kpis"><div class="kpi hi"><div class="k">Decisions</div><div class="v">${f1(o.dec)}</div><div class="s">${p.team?RKS('odec',q=>V(q).dec,p)+'of '+RKL.length:OR(p.pD)+' pct'} ${NT(o.dec,x.sdA[0])}</div></div>
     <div class="kpi"><div class="k">Execution</div><div class="v">${f1(o.exe)}</div><div class="s">${p.team?RKS('oexe',q=>V(q).exe,p)+'of '+RKL.length:''} ${NT(o.exe,x.sdA[1])}</div></div>
     <div class="kpi hi"><div class="k">Total</div><div class="v">${f1(o.tot)}</div><div class="s">${p.team?RKS('otot',q=>V(q).tot,p)+'of '+RKL.length:OR(p.pT)+' pct'} ${NT(o.tot,x.sdA[2])}</div></div>
@@ -363,7 +375,7 @@ function drawDetail(p){
   <div class="dgrid wide"><div class="dcol"><div style="overflow-x:auto"><table><thead><tr><th class="l">Zone</th><th>Share<br>base · att</th><th>FG%<br>shrunk</th><th>Edge<br>vs base</th><th>Select</th><th>Make</th><th>Align</th></tr></thead><tbody>${rows}${trip}</tbody></table></div>
   <p class="note">${p.team?'#1 to #30 rank this team against the other 29 in the same view; higher is #1 in every column, including attempts and shares. ':''}${state.mode==='type'?'In shot-type mode each row is graded against the same shot type, so a step-back three is compared with other step-back threes. "Repeat r" is how well raw FG% on that shot type carries from one season to the next (0 = pure noise, 1 = fully stable). ':''}Edge is points per 100 shots above baseline in that zone, using the shrunk estimate; the line under it is the baseline FG%. In the Fouled row, FG% is FT%, Select holds Foul drawing and Make holds FT making.</p>
   </div><div class="dcol"><div class="splitbox seasons"><div class="eyebrow">Season by season</div>${seasonChart(p)}</div>
-  ${state.mode==='type'?'<p class="note">Against-top-defenses splits are shown in Zones mode.</p>':splitBox}
+  ${XD(p)}
   <div class="flag"><div>${p.team?`<b>Most attempts for this team:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}% (${c[2].toFixed(2)} PPA)`).join(', ')}. Players who changed teams count only for the games they played here.`:`<b>Role peers carrying the most weight:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}%`).join(', ')}. The baseline pools 20 peers, weighted by their attempts.`}</div></div>
   <div class="flag"><div><b>Not counted:</b> ${Math.round(x.ns)} non-shooting FTA in this view (${x.ns?pc(x.nsm/x.ns):'–'} made): bonus fouls, hacks, technicals and flagrants.</div></div></div></div>`;
 }
@@ -437,6 +449,8 @@ const KT={x_rcut:'Cuts, Lobs & Dunks',x_put:'Putbacks',x_rdrv:'Drives',x_roth:'O
 const KS={x_rcut:'Cut/Lob',x_put:'Putback',x_rdrv:'Drive',x_roth:'Rim other',x_pflt:'Floater',x_ppost:'Post',x_poth:'Paint other',x_mid:'Mid-range',x_c3:'Corner 3',x_acs:'C&S 3',x_apull:'Pull-up 3',x_asb:'Step-back 3'};
 const KFAM={x_rcut:'rim',x_put:'rim',x_rdrv:'rim',x_roth:'rim',x_pflt:'pnt',x_ppost:'pnt',x_poth:'pnt',x_mid:'mid',x_c3:'c3',x_acs:'ab3',x_apull:'ab3',x_asb:'ab3'};
 const PID={};PL.forEach(p=>{PID[p.pid]=p.id;});
+
+if(XF&&XF.kings){Object.assign(KINGS,XF.kings);KT.x_xmk='Shot-Making';KT.x_tough='Tough Shots';KS.x_xmk='Shot-making';KS.x_tough='Tough shots';KFAM.x_xmk='xfg';KFAM.x_tough='xfg';FAMC.xfg='--accent';}
 let kcell='x_c3';try{const s=localStorage.getItem('spl4k');if(s&&KINGS[s])kcell=s;}catch(e){}
 const kseg=document.getElementById('kseg');
 Object.keys(KT).forEach(k=>{const b=document.createElement('button');b.dataset.v=k;b.innerHTML=`<i style="background:var(${FAMC[KFAM[k]]})"></i>${KS[k]}`;b.onclick=()=>{kcell=k;try{localStorage.setItem('spl4k',k)}catch(e){};renderKings();};kseg.appendChild(b);});
@@ -454,6 +468,24 @@ function renderKings(){
     return `<tr${id!=null?` class="click" data-id="${id}"`:''}><td class="num">${rank}</td><td class="l"><span class="pname">${n}</span><span class="meta">${tm||''}${pos?' · '+pos:''}</span></td><td class="num">${A}</td><td class="num">${M}</td><td class="num">${pc(raw)}</td><td class="num"><b>${pc(est)}</b></td><td class="num${d<0?' neg':''}">${d>=0?'+':''}${d.toFixed(1)}</td><td class="num${pts<0?' neg':''}">${pts>=0?'+':''}${pts.toFixed(0)}</td><td class="l">${z>=2?'<span class="tag real" title="z = '+z.toFixed(1)+'">likely real</span>':'<span class="tag" title="z = '+z.toFixed(1)+'">noise</span>'}</td></tr>`;}).join(''):'<tr><td colspan="9" class="l dim">No qualifiers match the position and team filters.</td></tr>';
   document.querySelectorAll('#kbody tr.click').forEach(tr=>tr.onclick=()=>pickPlayer(+tr.dataset.id));
 }
+
+{const _rk=renderKings,KHEAD=document.querySelector('#kingtbl thead').innerHTML;
+renderKings=function(){
+  if(!(kcell==='x_xmk'||kcell==='x_tough')){const th=document.querySelector('#kingtbl thead');if(th.innerHTML!==KHEAD)th.innerHTML=KHEAD;return _rk();}
+  const K=KINGS[kcell];[...kseg.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===kcell));
+  document.getElementById('ktitle').textContent='Kings of '+KT[kcell];
+  document.querySelector('#kingtbl thead').innerHTML='<tr><th>#</th><th class="l">Player</th><th>Shots</th><th>eFG%</th><th title="eFG% a league-average shooter would post on the same shots: same closest-defender distance, dribbles and shot type">Expected eFG%</th><th title="eFG% over expected, pulled toward zero by the noise in this many shots">Skill est.</th><th title="Points above expected on these shots, 3 seasons">Pts above exp.</th><th class="l">Signal</th></tr>';
+  const rows=K.rows.map((r,i)=>({r,rank:i+1})).filter(o=>posOK(o.r[3])&&(state.team==='all'||o.r[2]===state.team));
+  const filt=state.pos!=='all'||state.team!=='all';
+  document.getElementById('kcount').textContent=(filt?rows.length+' of ':'')+K.n+' qualifiers';
+  const rel=Math.round(K.rel*100);
+  const what=kcell==='x_tough'?`<b>Tough Shots</b> are the hardest ${K.share}% of all shots by expected value: the combinations of closest-defender distance, dribbles and shot type with the lowest league eFG% (league ${K.lg}% on these). `:`Every field-goal attempt, graded against shots like it. `;
+  document.getElementById('knote').innerHTML=`${what}2023-24 to 2025-26 pooled, from NBA.com shot tracking (garbage time can't be removed from these splits). Each shot's expected value is the league make rate for shots with the same closest-defender distance, dribbles before the shot and shot type (3-pointer, 2 from 10+ ft, 2 inside 10 ft). Minimum <b>${K.min}</b> shots. Ranked by <b>skill estimate</b>: eFG% over expected, pulled toward zero by ${K.k} average shots, so at the minimum it is about ${rel}% player and ${100-rel}% average. <b>Likely real</b> means the raw gap is more than 2 standard errors above expected. Position and team filters apply; ranks stay league-wide.`;
+  const sg=x=>(x>=0?'+':'−')+Math.abs(x).toFixed(1);
+  document.getElementById('kbody').innerHTML=rows.length?rows.map(({r,rank})=>{const [pid,n,tm,pos,A,efg,xefg,est,z,pts]=r;const id=PID[pid];
+    return `<tr${id!=null?` class="click" data-id="${id}"`:''}><td class="num">${rank}</td><td class="l"><span class="pname">${n}</span><span class="meta">${tm||''}${pos?' · '+pos:''}</span></td><td class="num">${A}</td><td class="num">${efg.toFixed(1)}</td><td class="num">${xefg.toFixed(1)}</td><td class="num${est<0?' neg':''}"><b>${sg(est)}</b></td><td class="num${pts<0?' neg':''}">${pts>=0?'+':''}${pts.toFixed(0)}</td><td class="l">${z>=2?'<span class="tag real" title="z = '+z.toFixed(1)+'">likely real</span>':'<span class="tag" title="z = '+z.toFixed(1)+'">noise</span>'}</td></tr>`;}).join(''):'<tr><td colspan="8" class="l dim">No qualifiers match the position and team filters.</td></tr>';
+  document.querySelectorAll('#kbody tr.click').forEach(tr=>tr.onclick=()=>pickPlayer(+tr.dataset.id));
+};}
 const _render=render;render=function(){_render();renderKings();};
 function fromHash(){const h=decodeURIComponent(location.hash.slice(1));if(!h)return false;
   if(h.startsWith('team-')){const t=TM.find(x=>String(x.t).toLowerCase()===h.slice(5));if(!t)return false;if(!TEAMS()){selMem.players=state.sel;state.ent='teams';P=TM;}state.sel=t.id;return true;}

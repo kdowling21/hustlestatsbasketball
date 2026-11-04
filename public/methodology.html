@@ -25,7 +25,7 @@
 <section class="page-head"><div class="wrap"><div class="eyebrow">Methodology</div><h1>How the numbers work</h1>
 <p>Every metric on Hustle Stats, how it is built, and how much of it is skill versus noise. The full method notes, with live tables, also sit at the bottom of each tool.</p></div></section>
 <section class="section"><div class="wrap method-page">
-<nav class="toc" aria-label="On this page"><a href="#data">Data</a><a href="#shot-profile">Shot Profile</a><a href="#hpm">Hustle Plus-Minus</a><a href="#noise">Skill vs noise</a><a href="#peers">Role peers</a><a href="#limits">Limits</a></nav>
+<nav class="toc" aria-label="On this page"><a href="#data">Data</a><a href="#shot-profile">Shot Profile</a><a href="#shot-difficulty">Shot difficulty</a><a href="#hpm">Hustle Plus-Minus</a><a href="#noise">Skill vs noise</a><a href="#peers">Role peers</a><a href="#limits">Limits</a></nav>
 <div class="mdoc">
 
 <section id="data"><h2>Data</h2>
@@ -48,6 +48,16 @@
 <p>Player numbers drop garbage time: 4th-quarter margins of 25+ in the first 3 minutes, 20+ in the next 3, or 15+ in the last 6. Team numbers keep every possession, the way team ratings are usually reported.</p>
 <h3>Does it repeat?</h3>
 <p>Year-to-year correlation of single-season scores (players with 450+ attempts in both seasons), across all five season pairs since 2020-21: Decisions 0.83 to 0.88, Execution 0.65 to 0.72, Total 0.73 to 0.79. Shot choices are one of the most stable things a player does.</p></section>
+
+<section id="shot-difficulty"><h2>Shot difficulty</h2>
+<p>Shot Profile's last two leaderboard columns, and its Shot-Making and Tough Shots leaderboards, come from NBA.com shot tracking. They sit beside the play-by-play model and never feed into it.</p>
+<p>Every field-goal attempt gets an <b>expected value</b>: the league make rate for shots with the same closest-defender distance (0–2, 2–4, 4–6 or 6+ feet), dribbles before the shot (0, 1, 2, 3–6, 7+) and shot type (3-pointer, 2 from 10+ feet, 2 inside 10 feet).</p>
+<ul><li><b>Difficulty:</b> league points per shot minus his expected points per shot, per 100 shots. Positive means harder shots.</li>
+<li><b>xMaking:</b> his actual points minus expected points, per 100 shots, pulled toward zero by its noise.</li>
+<li><b>Tough Shots:</b> the hardest quarter of all shots by expected value, such as tightly guarded pull-up 3s and drives into a defender.</li></ul>
+<p>Defender distance matters most at the 4-foot line. With the shot mix held fixed, eFG% runs about 65% wide open, 59% at 4–6 feet, 51% at 2–4 feet and 49% inside 2 feet (2023-24 to 2025-26).</p>
+<h3>Does it repeat?</h3>
+<p>Difficulty is one of the most repeatable numbers on the site (year-to-year r = 0.91 to 0.93): a player's shot diet is a fingerprint. Shot-making over expected is real skill but noisier (0.59 to 0.69), so it is shrunk like every other rate here.</p></section>
 
 <section id="hpm"><h2>Hustle Plus-Minus</h2>
 <p>Hustle Plus-Minus (HPM) is the number of points per 100 possessions a player adds through hustle, compared with an average player, split into offense (O-HPM) and defense (D-HPM).</p>
@@ -77,7 +87,7 @@
 <p>Listed positions cover players active from 2023-24 on. For about 180 players whose careers ended earlier, position is estimated from their most similar players (within one position 98% of the time).</p></section>
 
 <section id="limits"><h2>Limits</h2>
-<ul><li>Shot difficulty inside a zone (defender distance, shot clock) isn't in the play-by-play.</li>
+<ul><li>Shot tracking measures the closest defender's distance, not how well he contests, and has no shot clock. Its splits include garbage time and can't be cut by opponent. Distance is split only at 10 feet, so dunks and floaters share a bucket.</li>
 <li>Defenses decide which shots are available, so read Alignment as a signal, not a verdict.</li>
 <li>Transition defense, closeouts and communication don't show up in either data source.</li>
 <li>Tracking stats exist only as player totals, so they can't be lineup-adjusted.</li>
