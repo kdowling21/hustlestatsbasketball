@@ -231,3 +231,39 @@ body.popped{overflow:hidden}
 .app .khead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
 .app .kwinctl{grid-auto-flow:column;align-items:center;gap:8px}
 .app .kss{color:var(--accent);font-weight:600}
+
+/* ---- density pass ---- */
+.app header{padding-bottom:4px}
+.app header h1{margin-bottom:6px}
+.app header .lede{max-width:none;margin:0;font-size:14.5px}
+.app .controls{margin-top:10px}
+.app #tbl th,.app #tbl td{padding:5px 5px}
+.app #tbl tbody td{line-height:1.25}
+.app #tbl .meta{display:inline!important;margin:0 0 0 6px;font-size:11px}
+.app #tbl td.num .rk{display:none}
+.app #tbl[data-sc="3"] td:nth-child(3) .rk,.app #tbl[data-sc="4"] td:nth-child(4) .rk,.app #tbl[data-sc="5"] td:nth-child(5) .rk,.app #tbl[data-sc="6"] td:nth-child(6) .rk,.app #tbl[data-sc="7"] td:nth-child(7) .rk,.app #tbl[data-sc="8"] td:nth-child(8) .rk,.app #tbl[data-sc="9"] td:nth-child(9) .rk,.app #tbl[data-sc="10"] td:nth-child(10) .rk,.app #tbl[data-sc="11"] td:nth-child(11) .rk,.app #tbl[data-sc="12"] td:nth-child(12) .rk,.app #tbl[data-sc="13"] td:nth-child(13) .rk,.app #tbl[data-sc="14"] td:nth-child(14) .rk,.app #tbl[data-sc="15"] td:nth-child(15) .rk,.app #tbl[data-sc="16"] td:nth-child(16) .rk,.app #tbl[data-sc="17"] td:nth-child(17) .rk,.app #tbl[data-sc="18"] td:nth-child(18) .rk,.app #tbl[data-sc="19"] td:nth-child(19) .rk,.app #tbl[data-sc="20"] td:nth-child(20) .rk,.app #tbl[data-sc="21"] td:nth-child(21) .rk{display:inline!important;margin:0 0 0 3px!important;font-size:9px}
+@media (min-width:1240px){.app #tbl td.num .rk{display:inline!important;margin:0 0 0 3px!important;font-size:9px;letter-spacing:-.02em}.app #tbl th,.app #tbl td{padding-left:3px!important;padding-right:3px!important}.app #tbl td.num .rk{font-size:8.5px!important;margin-left:2px!important}.app #tbl .mix{width:56px!important;min-width:56px}.app #tbl td:nth-child(2){max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+
+.app .tablewrap:has(> #tbl){max-height:max(480px,calc(100vh - 96px))}
+.app .chartpanel #chart svg{max-height:460px}
+.app .tablewrap:has(#kunit){max-width:680px}
+/* column pop-ups: Hustle Stats "spec card" */
+.htip{position:fixed;z-index:80;width:max-content;max-width:270px;background:#141415;border:1px solid #2c2a25;border-top:2px solid #d0b063;border-radius:3px;
+  padding:9px 12px 11px;box-shadow:0 14px 34px rgba(0,0,0,.6);pointer-events:none;--cx:50%}
+.htip::before{content:"";position:absolute;left:var(--cx);top:-8px;margin-left:-6px;border:6px solid transparent;border-bottom-color:#d0b063;border-top:0}
+.htip.up{border-top:1px solid #2c2a25;border-bottom:2px solid #d0b063}
+.htip.up::before{top:auto;bottom:-8px;border-bottom:0;border-top:6px solid #d0b063}
+.htip .hh{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:6px}
+.htip .hl{font:600 11px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.09em;text-transform:uppercase;color:#d0b063}
+.htip .hu{font:500 9.5px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#8d887d;border:1px solid #34322d;border-radius:2px;padding:2px 5px;white-space:nowrap}
+.htip .hb{font:400 12.5px/1.45 "IBM Plex Sans","Helvetica Neue",Arial,sans-serif;color:#d6d1c6}
+.htip[hidden]{display:none}
+.app th[data-tip]{text-decoration:underline dotted rgba(208,176,99,.45);text-underline-offset:3px}
+/* method notes behind a toggle */
+.app details.methodbox>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.app details.methodbox>summary::-webkit-details-marker{display:none}
+.app details.methodbox>summary h2{margin:0}
+.app details.methodbox>summary h2::before{content:"\25B8";display:inline-block;margin-right:10px;color:var(--accent);transition:transform .15s}
+.app details.methodbox[open]>summary h2::before{transform:rotate(90deg)}
+.app details.methodbox>summary .note{margin:0}
+.app details.methodbox[open]>summary{margin-bottom:12px}

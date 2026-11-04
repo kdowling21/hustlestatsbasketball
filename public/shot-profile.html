@@ -26,15 +26,8 @@
 <header>
   <div class="eyebrow" id="eyebrow">2020-21 to 2025-26 regular seasons · NBA play-by-play</div>
   <h1>Shot Profile Analysis</h1>
-  <p class="lede">Points per shot attempt above a baseline, split into five parts. An attempt is a field-goal attempt or a shooting-foul trip (a fouled miss). Three parts measure <strong>decisions</strong> and two measure <strong>execution</strong>, all in points per 100 attempts. Pick a single season or a multi-season view, compare against the league or each player's role peers, and look at performance against the 10 best defenses. Switch to <strong>Teams</strong> for the same breakdown for all 30 offenses.</p>
-  <div class="parts">
-    <div class="part dec"><span class="tag">Decision</span><b>Selection</b>Takes shot types worth more than an average attempt.</div>
-    <div class="part dec"><span class="tag">Decision</span><b>Alignment</b>Takes more shots where he beats the baseline, fewer where he doesn't.</div>
-    <div class="part dec"><span class="tag">Decision</span><b>Foul drawing</b>Gets to the line on shots, valued at baseline FT%.</div>
-    <div class="part"><span class="tag">Execution</span><b>Making</b>Finishing by zone, on a baseline shot mix.</div>
-    <div class="part"><span class="tag">Execution</span><b>FT making</b>His FT% vs baseline, times his shooting-foul FT volume.</div>
-  </div>
-</header>
+  <p class="lede">Points per shot attempt above a baseline, split into <strong>decisions</strong> (what he shoots) and <strong>execution</strong> (how well he converts), in points per 100 attempts. Hover any column for a definition; the full method is on the <a href="/methodology#shot-profile">Methodology</a> page.</p>
+  </header>
 
 <div class="controls" role="group" aria-label="Filters">
   <div class="ctl"><span class="lab">Show</span><div class="seg" id="ent"></div></div>
@@ -89,8 +82,7 @@
   </div>
 </section>
 
-<section class="panel">
-  <h2>Method</h2>
+<details class="panel methodbox"><summary><h2>Method notes</h2><span class="note">How every number here is built. Click to expand; the full write-up is on the Methodology page.</span></summary>
   <div class="method">
     <div>
       <h3 class="sub">Data</h3>
@@ -130,7 +122,7 @@
       </ul>
     </div>
   </div>
-</section>
+</details>
 <div class="app-foot" style="display:grid;gap:4px;padding:4px 2px 0;font-size:12px;color:var(--muted);max-width:90ch">
   <div><b style="color:var(--ink2)">Data source:</b> NBA play-by-play from NBA.com's live data feed, 2020-21 to 2025-26 regular seasons, retrieved through the public <a href="https://github.com/shufinskiy/nba_data" style="color:var(--accent)">nba_data</a> archive (shufinskiy, GitHub). Player names come from NBA.com shot data in the same archive. Totals were checked against official box scores.</div>
   <div>Independent analysis. Not affiliated with or endorsed by the NBA.</div>
@@ -275,7 +267,7 @@ posEl.onchange=()=>{state.pos=posEl.value;save();render();};teamEl.onchange=()=>
 
 let RKL=null,RKC={};
 function rkN(key,fn,p){if(!RKL)return 0;let a=RKC[key];if(!a){a=RKL.map(fn).filter(v=>v!=null&&!isNaN(v)).sort((x,y)=>y-x);RKC[key]=a;}const v=fn(p);if(v==null||isNaN(v))return 0;let r=1;for(const x of a){if(x>v+1e-9)r++;else break;}return r;}
-function RKS(key,fn,p,pre){const r=rkN(key,fn,p);if(!r)return '';const n=RKL.length;return `${pre||''}<span class="rk ${r<=5?'hi':r>n-5?'lo':''}" title="Rank among ${n} teams">#${r}</span>`;}
+function RKS(key,fn,p,pre){const r=rkN(key,fn,p);if(!r)return '';const n=RKL.length;return `${pre||''}<span class="rk ${r<=5?'hi':r>n-5?'lo':''}" title="Rank among ${n} ${TEAMS()?'teams':'players shown'}">#${r}</span>`;}
 function render(){
   const want=TEAMS()?TM:PL;if(P!==want){selMem[P===TM?'teams':'players']=state.sel;P=want;state.sel=selMem[state.ent];}
   const tm=TEAMS();[posEl,teamEl,mf].forEach(e=>{e.disabled=tm;e.title=tm?'Player filters. Switch to Players to use them.':'';});
@@ -286,14 +278,14 @@ function render(){
   [...gamesEl.children].forEach(b=>{b.disabled=state.mode==='type'&&b.dataset.v!=='A';b.title=b.disabled?'Opponent splits are available in Zones mode':'';});
   viewsEl.value=state.view;
   document.getElementById('minfgaV').textContent=state.min;
-  const list=withPct(P.filter(inView));RKL=TEAMS()?list:null;RKC={};
+  const list=withPct(P.filter(inView));RKL=list;RKC={};
   const q=state.q.toLowerCase(),match=p=>q&&(p.n+' '+p.t).toLowerCase().includes(q);
   const shown=q?list.filter(match):list;
   document.getElementById('count').textContent=`${shown.length} of ${list.length} ${tm?'teams':'players'}`+(!tm&&(state.pos!=='all'||state.team!=='all')?' · percentiles within this filter':'');
   if(state.sel==null||!list.find(p=>p.id===state.sel)){const t=[...list].sort((a,b)=>V(b).tot-V(a).tot)[0];state.sel=t?t.id:null;}
   const k=state.sort;const sorted=[...shown].sort((a,b)=>k==='name'?a.n.localeCompare(b.n)*state.dir:(sv(a,k)-sv(b,k))*state.dir);
   ORDER=sorted.map(p=>p.id);
-  [...thead.children].forEach(th=>th.classList.toggle('sorted',th.dataset.k===k));
+  [...thead.children].forEach(th=>th.classList.toggle('sorted',th.dataset.k===k));{const ix=[...thead.children].findIndex(th=>th.dataset.k===k);document.getElementById('tbl').dataset.sc=ix>=0?ix+1:0;}
   const cell=(v,g,bold,rk)=>`<td class="num${g?' grp':''}${v<0?' neg':''}">${bold?'<strong>':''}${f1(v)}${bold?'</strong>':''}${rk||''}</td>`;
   const LR=(p,k)=>RKS('o'+k,q=>V(q)[k],p);
   document.getElementById('tbody').innerHTML=sorted.map((p,i)=>{const o=V(p),g=G(p),N=g.N||1;return `<tr data-id="${p.id}" tabindex="0" class="${p.id===state.sel?'sel':''}">
@@ -322,7 +314,7 @@ function drawChart(list,match){
   s+=ql(Wd-m.r-6,m.t+14,'end','GOOD DECISIONS, MADE')+ql(m.l+8,m.t+14,'start','GOOD DECISIONS, MISSED')+ql(Wd-m.r-6,H-m.b-8,'end','BAD DECISIONS, MADE')+ql(m.l+8,H-m.b-8,'start','BAD DECISIONS, MISSED');
   const lab=new Set([...list].sort((a,b)=>V(b).tot-V(a).tot).slice(0,5).map(p=>p.id).concat([...list].sort((a,b)=>V(a).tot-V(b).tot).slice(0,3).map(p=>p.id)));
   const ord=[...list].sort((a,b)=>(a.id===state.sel)-(b.id===state.sel)||(!!match(a))-(!!match(b)));const nm=list.filter(match).length;
-  ord.forEach(p=>{const on=p.id===state.sel,dim=nm&&!match(p)&&!on;s+=`<circle cx="${Xs(V(p).exe).toFixed(1)}" cy="${Ys(V(p).dec).toFixed(1)}" r="${on?7:5}" fill="${on?'var(--neg)':'var(--pos)'}" fill-opacity="${dim?0.15:on?1:0.7}" stroke="var(--surface)" stroke-width="2"/>`;});
+  ord.forEach(p=>{const on=p.id===state.sel,dim=nm&&!match(p)&&!on;s+=`<circle cx="${Xs(V(p).exe).toFixed(1)}" cy="${Ys(V(p).dec).toFixed(1)}" r="${on?7:5}" fill="${on?'var(--ink)':'var(--pos)'}" fill-opacity="${dim?0.15:on?1:0.7}" stroke="var(--surface)" stroke-width="2"/>`;});
   ord.forEach(p=>{if(p.team||lab.has(p.id)||p.id===state.sel||(match(p)&&nm<=6)){const x=Xs(V(p).exe),r=x<Wd-140;s+=`<text x="${x+(r?9:-9)}" y="${Ys(V(p).dec)+4}" text-anchor="${r?'start':'end'}" font-size="11" fill="var(--ink)" paint-order="stroke" stroke="var(--surface)" stroke-width="3">${p.team?p.t:SN(p.n)}</text>`;}});
   ord.forEach(p=>{s+=`<circle class="hit" data-id="${p.id}" cx="${Xs(V(p).exe).toFixed(1)}" cy="${Ys(V(p).dec).toFixed(1)}" r="11" fill="transparent" style="cursor:pointer"/>`;});
   s+='</svg><div class="tip" id="tip" hidden></div>';el.innerHTML=s;
@@ -417,7 +409,7 @@ function drawTrends(){
   s+=`<text x="${Wd-m.r}" y="${H-6}" text-anchor="end" font-size="11" fill="var(--ink2)">Execution trend per season →</text><text transform="translate(12 ${m.t}) rotate(90)" font-size="11" fill="var(--ink2)">Decisions trend →</text>`;
   const real=p=>Math.abs(p.tr[2])>=2||Math.abs(p.tr[4])>=2;
   const psel=TEAMS()?-1:state.sel;const ord=[...TR].sort((a,b)=>real(a)-real(b)||(a.id===psel)-(b.id===psel));
-  ord.forEach(p=>{const on=p.id===psel;s+=`<circle cx="${Xs(p.tr[3]).toFixed(1)}" cy="${Ys(p.tr[1]).toFixed(1)}" r="${on?6.5:4.5}" fill="${on?'var(--neg)':real(p)?'var(--pos)':'var(--surface)'}" stroke="${on?'var(--surface)':real(p)?'var(--surface)':'var(--axis)'}" stroke-width="${real(p)||on?2:1.2}"/>`;});
+  ord.forEach(p=>{const on=p.id===psel;s+=`<circle cx="${Xs(p.tr[3]).toFixed(1)}" cy="${Ys(p.tr[1]).toFixed(1)}" r="${on?6.5:4.5}" fill="${on?'var(--ink)':real(p)?'var(--pos)':'var(--surface)'}" stroke="${on?'var(--accent)':real(p)?'var(--surface)':'var(--axis)'}" stroke-width="${real(p)||on?2:1.2}"/>`;});
   const lab=new Set([...TR].sort((a,b)=>Math.abs(b.tr[6])-Math.abs(a.tr[6])).slice(0,6).map(p=>p.id).concat([psel]));
   TR.forEach(p=>{if(lab.has(p.id)){const x=Xs(p.tr[3]),r=x<Wd-120;s+=`<text x="${x+(r?8:-8)}" y="${Ys(p.tr[1])+4}" text-anchor="${r?'start':'end'}" font-size="11" fill="var(--ink)" paint-order="stroke" stroke="var(--surface)" stroke-width="3">${SN(p.n)}</text>`;}});
   TR.forEach(p=>{s+=`<circle class="thit" data-id="${p.id}" cx="${Xs(p.tr[3]).toFixed(1)}" cy="${Ys(p.tr[1]).toFixed(1)}" r="9" fill="transparent" style="cursor:pointer"/>`;});
@@ -508,5 +500,27 @@ function fromHash(){const h=decodeURIComponent(location.hash.slice(1));if(!h)ret
 gradeTables();if(fromHash())openPop();render();
 window.addEventListener('hashchange',()=>{if(fromHash()){POP.hidden=true;openPop();render();}});
 
-})().catch(err=>{const m=document.createElement('p');m.className='load-err';m.textContent='The data for this page did not load. Refresh to try again.';document.querySelector('.app').prepend(m);console.error(err);});</script>
+})().catch(err=>{const m=document.createElement('p');m.className='load-err';m.textContent='The data for this page did not load. Refresh to try again.';document.querySelector('.app').prepend(m);console.error(err);});
+
+(function(){const TIPS={"N": ["Attempts", "Attempts: field-goal attempts plus shooting-foul trips (fouled misses) in this view."], "pps": ["Points per attempt", "Points per attempt: points scored per field-goal attempt or shooting-foul trip."], "sel": ["Selection", "Selection: points from taking shot types worth more (or less) than an average attempt."], "ali": ["Alignment", "Alignment: points from taking more of the shots where he beats the baseline, and fewer where he doesn’t."], "foul": ["Foul drawing", "Foul drawing: points from getting to the line on his shots, valued at baseline FT%."], "dec": ["Decisions", "Selection + Alignment + Foul drawing: how many points his shot choices add."], "mak": ["Making", "Making: finishing by zone versus the baseline, scored on a baseline shot mix."], "ftm": ["FT making", "FT making: his FT% versus baseline, times his shooting-foul free throws."], "exe": ["Execution", "Making + FT making: how many points his conversion adds."], "tot": ["Total", "Decisions + Execution: his edge over the baseline (league or role peers)."], "pts": ["Points added", "Points added per season versus the baseline, at his actual volume."], "pct": ["Percentile", "Percentile of Total among the players shown with the current filters."], "xdif": ["Shot difficulty", "From NBA shot tracking: how much harder his shots are than average, given the closest defender, dribbles and shot type. Positive means harder shots."], "xmk": ["Shot-making vs expected", "From NBA shot tracking: points per 100 shots above what an average shooter would score on the same shots. Skill estimate; a gold dot means likely real."]},UNITS={"N": "attempts", "pps": "pts / attempt", "pts": "pts / season", "pct": "percentile", "xdif": "pts / 100 shots", "xmk": "pts / 100 shots", "*": "pts / 100 att"};const box=document.createElement('div');box.className='htip';box.hidden=true;box.setAttribute('role','tooltip');document.body.appendChild(box);
+  const hov=matchMedia('(hover:hover)').matches;
+  function prep(th){if(th.dataset.tipReady)return;th.dataset.tipReady=1;const t=TIPS[th.dataset.k];const body=t?t[1]:(th.title||'');if(!body)return;
+    th.dataset.tip=body;th.removeAttribute('title');}
+  function show(th){prep(th);const body=th.dataset.tip;if(!body)return;const t=TIPS[th.dataset.k];
+    const head=t?t[0]:th.textContent.trim(),unit=th.closest('#tbl')?(UNITS[th.dataset.k]||UNITS['*']||''):'';
+    box.innerHTML='<div class="hh"><span class="hl"></span>'+(unit?'<span class="hu"></span>':'')+'</div><div class="hb"></div>';
+    box.querySelector('.hl').textContent=head;if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=body;
+    box.hidden=false;box.classList.remove('up');const r=th.getBoundingClientRect(),w=box.offsetWidth,h=box.offsetHeight,c=r.left+r.width/2;
+    let x=Math.min(Math.max(8,c-w/2),innerWidth-w-8),y=r.bottom+9;if(y+h>innerHeight-8){y=Math.max(8,r.top-h-9);box.classList.add('up');}
+    box.style.left=x+'px';box.style.top=y+'px';box.style.setProperty('--cx',Math.min(Math.max(12,c-x),w-12)+'px');}
+  const hide=()=>{box.hidden=true;};
+  document.querySelectorAll('#thead,#kingtbl thead').forEach(h=>{
+    const pick=e=>e.target.closest('th');
+    if(hov){h.addEventListener('mouseover',e=>{const th=pick(e);if(th)show(th);});h.addEventListener('mouseleave',hide);}
+    h.addEventListener('focusin',e=>{const th=pick(e);if(th)show(th);});h.addEventListener('focusout',hide);
+    h.querySelectorAll('th').forEach(prep);});
+  new MutationObserver(()=>document.querySelectorAll('#thead th,#kingtbl thead th').forEach(prep)).observe(document.querySelector('.app'),{subtree:true,childList:true});
+  addEventListener('scroll',hide,{passive:true});
+})();
+</script>
 </body></html>

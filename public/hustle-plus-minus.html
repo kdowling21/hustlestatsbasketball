@@ -26,14 +26,8 @@
 <header>
   <div class="eyebrow" id="eyebrow">NBA play-by-play + NBA.com player tracking · 2020-21 to now</div>
   <h1>Hustle Plus-Minus</h1>
-  <p class="lede">How many points per 100 possessions a player adds through hustle: winning extra possessions, ending the other team's, and the small effort plays in between. Every play is valued by what it is worth on the scoreboard. Plays we can't value directly (deflections, screens, loose balls, contests) get the weight the data says they earn in winning, and most earn very little. <strong>Positive = more hustle value than an average player.</strong></p>
-  <div class="parts">
-    <div class="part"><span class="tag">Offensive hustle</span><b>O-HPM</b>Offensive rebounding impact, screen assists, offensive loose balls.</div>
-    <div class="part dec"><span class="tag">Defensive hustle</span><b>D-HPM</b>Steals, blocks (recovered blocks count most), charges and offensive fouls drawn, defensive rebounding impact, deflections, loose balls, fouls.</div>
-    <div class="part"><span class="tag">Time-weighted</span><b>Current view</b>Six seasons, with games 550 days old counting half. Single seasons are also available.</div>
-    <div class="part"><span class="tag">Fair comparisons</span><b>Role peers</b>Every stat is pulled toward the average of his 25 most similar players, so small samples can't top the list.</div>
-  </div>
-</header>
+  <p class="lede">Points per 100 possessions a player adds through hustle, versus an average player. <strong>Positive = more hustle value.</strong> Hover any column for a definition; the full method is on the <a href="/methodology#hpm">Methodology</a> page.</p>
+  </header>
 
 <div class="controls" role="group" aria-label="Filters">
   <div class="ctl"><span class="lab">Show</span><div class="seg" id="ent"></div></div>
@@ -73,8 +67,7 @@
   <div class="tablewrap" style="max-height:560px"><table id="kingtbl"><thead><tr><th>#</th><th class="l">Player</th><th id="kunit">Value</th></tr></thead><tbody id="kbody"></tbody></table></div>
 </section>
 
-<section class="panel">
-  <h2>Method</h2>
+<details class="panel methodbox"><summary><h2>Method notes</h2><span class="note">How every number here is built. Click to expand; the full write-up is on the Methodology page.</span></summary>
   <div class="method">
     <div>
       <h3 class="sub">Data</h3>
@@ -108,7 +101,7 @@
       </ul>
     </div>
   </div>
-</section>
+</details>
 <div class="app-foot" style="display:grid;gap:4px;padding:4px 2px 0;font-size:12px;color:var(--muted);max-width:90ch">
   <div><b style="color:var(--ink2)">Data sources:</b> NBA.com live play-by-play (2020-21 to 2025-26 via the public <a href="https://github.com/shufinskiy/nba_data" style="color:var(--accent)">nba_data</a> archive; 2026-27 pulled weekly) and NBA.com player-tracking hustle, rebounding and speed/distance stats.</div>
   <div>Independent analysis by Hustle Stats. Not affiliated with or endorsed by the NBA.</div>
@@ -233,7 +226,7 @@ function render(){
   if(state.sel==null||!list.find(u=>sid(u)===state.sel)){const t=[...list].sort((a,b)=>b.HPM-a.HPM)[0];state.sel=t?sid(t):null;}
   const k=state.sort;const sorted=[...shown].sort((a,b)=>k==='name'?name(a).localeCompare(name(b))*state.dir:((val(a,k)??-1e9)-(val(b,k)??-1e9))*state.dir);
   ORDER=sorted.map(sid);
-  [...thead.children].forEach(th=>th.classList.toggle('sorted',th.dataset.k===k));
+  [...thead.children].forEach(th=>th.classList.toggle('sorted',th.dataset.k===k));{const ix=[...thead.children].findIndex(th=>th.dataset.k===k);document.getElementById('tbl').dataset.sc=ix>=0?ix+1:0;}
   const cell=(v,g,b,rk)=>`<td class="num${g?' grp':''}${v<0?' neg':''}">${b?'<strong>':''}${f1(v)}${b?'</strong>':''}${rk||''}</td>`;
   const R=(key,u)=>RKS(key,x=>val(x,key),u);
   document.getElementById('tbody').innerHTML=sorted.map((u,i)=>`<tr data-id="${sid(u)}" tabindex="0" class="${sid(u)===state.sel?'sel':''}">
@@ -269,7 +262,7 @@ function drawChart(list,match,sid,name){
   const ord=[...list].sort((a,b)=>(sid(a)===state.sel)-(sid(b)===state.sel)||(!!match(a))-(!!match(b)));
   const lab=new Set(tm?list.map(sid):[...list].sort((a,b)=>b.HPM-a.HPM).slice(0,7).map(sid).concat([...list].sort((a,b)=>b.D-a.D).slice(0,3).map(sid)));
   ord.forEach(u=>{const on=sid(u)===state.sel,dim=nm&&!match(u)&&!on,real=tm||REAL(u.HPM,u.sd);
-    s+=`<circle cx="${Xs(u.O).toFixed(1)}" cy="${Ys(u.D).toFixed(1)}" r="${on?7:4.5}" fill="${on?'var(--neg)':real?'var(--pos)':'var(--surface)'}" fill-opacity="${dim?0.15:1}" stroke="${on||real?'var(--surface)':'var(--axis)'}" stroke-width="${on||real?2:1.2}"/>`;});
+    s+=`<circle cx="${Xs(u.O).toFixed(1)}" cy="${Ys(u.D).toFixed(1)}" r="${on?7:4.5}" fill="${on?'var(--ink)':real?'var(--pos)':'var(--surface)'}" fill-opacity="${dim?0.15:1}" stroke="${on?'var(--accent)':real?'var(--surface)':'var(--axis)'}" stroke-width="${on||real?2:1.2}"/>`;});
   ord.forEach(u=>{if(lab.has(sid(u))||sid(u)===state.sel||(match(u)&&nm<=6)){const x=Xs(u.O),r=x<Wd-120;s+=`<text x="${x+(r?8:-8)}" y="${Ys(u.D)+4}" text-anchor="${r?'start':'end'}" font-size="11" fill="var(--ink)" paint-order="stroke" stroke="var(--surface)" stroke-width="3">${tm?u.tm:SN(u.p.n)}</text>`;}});
   ord.forEach(u=>{s+=`<circle class="hit" data-id="${sid(u)}" cx="${Xs(u.O).toFixed(1)}" cy="${Ys(u.D).toFixed(1)}" r="10" fill="transparent" style="cursor:pointer"/>`;});
   s+='</svg><div class="tip" hidden></div>';el.innerHTML=s;
@@ -356,6 +349,28 @@ function methodTables(){
 }
 if(fromHash()){state.open=false;openPop();}posEl.value=state.pos;teamEl.value=state.team;mpEl.value=state.minp;methodTables();render();
 window.addEventListener('hashchange',()=>{if(fromHash()){posEl.value=state.pos;teamEl.value=state.team;mpEl.value=state.minp;POP.hidden=true;openPop();render();}});
+
+
+(function(){const TIPS={"poss": ["Possessions", "Possessions played in this view."], "HPM": ["Hustle Plus-Minus", "Points he adds through hustle versus an average player. O-HPM + D-HPM."], "O": ["O-HPM", "Offensive hustle: offensive rebounding impact, screen assists and offensive loose balls."], "D": ["D-HPM", "Defensive hustle: steals, blocks, charges and offensive fouls drawn, defensive rebounding impact, deflections, loose balls and fouls."], "c:oREB Impact": ["oREB impact", "Offensive rebounding impact, lineup-adjusted: how much his team’s offensive rebound rate rises with him on the floor, in points."], "c:dREB Impact": ["dREB impact", "Defensive rebounding impact, lineup-adjusted: how well he keeps opponents off the offensive glass, in points."], "c:Steals": ["Steals", "Points from steals, valued by the possession each one starts."], "c:Blocks": ["Blocks", "Points from blocks. A block his team recovers is worth far more than one that goes back to the offense."], "c:Charges": ["Charges", "Points from charges drawn."], "c:Off. fouls drawn": ["Offensive fouls drawn", "Points from offensive fouls he draws other than charges."], "c:Screen assists": ["Screen assists", "Points from screen assists, at the small weight the data says they earn beyond the other parts."], "lb": ["Loose balls", "Points from offensive and defensive loose balls recovered."], "fouls": ["Fouls", "Points lost to loose-ball fouls and other non-shooting fouls. Fewer ranks higher."], "pct": ["Peer percentile", "Share of his 25 closest role peers whose HPM is below his."]},UNITS={"poss": "possessions", "pct": "percentile", "*": "pts / 100 poss"};const box=document.createElement('div');box.className='htip';box.hidden=true;box.setAttribute('role','tooltip');document.body.appendChild(box);
+  const hov=matchMedia('(hover:hover)').matches;
+  function prep(th){if(th.dataset.tipReady)return;th.dataset.tipReady=1;const t=TIPS[th.dataset.k];const body=t?t[1]:(th.title||'');if(!body)return;
+    th.dataset.tip=body;th.removeAttribute('title');}
+  function show(th){prep(th);const body=th.dataset.tip;if(!body)return;const t=TIPS[th.dataset.k];
+    const head=t?t[0]:th.textContent.trim(),unit=th.closest('#tbl')?(UNITS[th.dataset.k]||UNITS['*']||''):'';
+    box.innerHTML='<div class="hh"><span class="hl"></span>'+(unit?'<span class="hu"></span>':'')+'</div><div class="hb"></div>';
+    box.querySelector('.hl').textContent=head;if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=body;
+    box.hidden=false;box.classList.remove('up');const r=th.getBoundingClientRect(),w=box.offsetWidth,h=box.offsetHeight,c=r.left+r.width/2;
+    let x=Math.min(Math.max(8,c-w/2),innerWidth-w-8),y=r.bottom+9;if(y+h>innerHeight-8){y=Math.max(8,r.top-h-9);box.classList.add('up');}
+    box.style.left=x+'px';box.style.top=y+'px';box.style.setProperty('--cx',Math.min(Math.max(12,c-x),w-12)+'px');}
+  const hide=()=>{box.hidden=true;};
+  document.querySelectorAll('#thead,#kingtbl thead').forEach(h=>{
+    const pick=e=>e.target.closest('th');
+    if(hov){h.addEventListener('mouseover',e=>{const th=pick(e);if(th)show(th);});h.addEventListener('mouseleave',hide);}
+    h.addEventListener('focusin',e=>{const th=pick(e);if(th)show(th);});h.addEventListener('focusout',hide);
+    h.querySelectorAll('th').forEach(prep);});
+  new MutationObserver(()=>document.querySelectorAll('#thead th,#kingtbl thead th').forEach(prep)).observe(document.querySelector('.app'),{subtree:true,childList:true});
+  addEventListener('scroll',hide,{passive:true});
+})();
 
 
 })().catch(err=>{const m=document.createElement("p");m.className="load-err";m.textContent="The data for this page did not load. Refresh to try again.";document.querySelector(".app").prepend(m);console.error(err);});</script>
