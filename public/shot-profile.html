@@ -342,34 +342,82 @@ function seasonChart(p){
 }
 
 const NT=(v,sd)=>sd==null?'':(Math.abs(v)>2*sd?'<span class="tag real" title="More than twice its noise range (±'+(2*sd).toFixed(1)+')">likely real</span>':'<span class="tag" title="Within ±'+(2*sd).toFixed(1)+' noise range">noise</span>');
+const HEATP=[226,169,74],HEATN=[224,105,92],HEAT0=[35,35,37];
+function heat(e,cap){const t=Math.max(-1,Math.min(1,(e||0)/(cap||15))),c=t>=0?HEATP:HEATN,k=Math.pow(Math.abs(t),.8);
+  return 'rgb('+HEAT0.map((v,i)=>Math.round(v+(c[i]-v)*k)).join(',')+')';}
+const heatGrad=cap=>'linear-gradient(90deg,'+[-1,-.75,-.5,-.25,0,.25,.5,.75,1].map(t=>heat(t*cap,cap)+' '+((t+1)*50)+'%').join(',')+')';
+function courtCard(p){
+  const m=state.mode;state.mode='zone';const uz=U(p,state.view);state.mode=m;if(!uz)return '';
+  const g=uz.A,b=p.team?'L':BS(),bz=g[b+'z'],UL=b==='L'&&!p.team,LBz=VK[state.view].LB.A,bft=UL?LBz.ft:g.rb.ft,N=g.N||1;
+  const s=9,W=50*s,H=30.5*s,X=x=>((x+25)*s).toFixed(1),Y=y=>(y*s).toFixed(1),R=(23.75*s).toFixed(1),yc=5.25+Math.sqrt(23.75*23.75-22*22);
+  const cap=p.team?8:15,ed=k=>bz[k]?bz[k][0]:0,fill=k=>heat(ed(k),cap);
+  const desc=['rim','pnt','mid','c3','ab3'].map(k=>{const d=g.z[k]||[0,0];return `${{rim:'Rim',pnt:'Paint',mid:'Mid-range',c3:'Corner 3',ab3:'Above-break 3'}[k]} ${d[0]?(100*d[1]/d[0]).toFixed(1)+'%':'no attempts'} on ${Math.round(d[0])}, edge ${f1(ed(k))}`;}).join('; ');
+  let v=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Shot chart. ${desc}.">`;
+  v+=`<rect x="0" y="0" width="${W}" height="${H}" fill="${fill('ab3')}"/>`;
+  v+=`<rect x="0" y="0" width="${3*s}" height="${Y(yc)}" fill="${fill('c3')}"/><rect x="${X(22)}" y="0" width="${3*s}" height="${Y(yc)}" fill="${fill('c3')}"/>`;
+  v+=`<path d="M${X(-22)} 0 L${X(-22)} ${Y(yc)} A${R} ${R} 0 0 0 ${X(22)} ${Y(yc)} L${X(22)} 0 Z" fill="${fill('mid')}"/>`;
+  v+=`<rect x="${X(-8)}" y="0" width="${16*s}" height="${Y(19)}" fill="${fill('pnt')}"/>`;
+  v+=`<path d="M${X(-4)} 0 L${X(-4)} ${Y(5.25)} A${4*s} ${4*s} 0 0 0 ${X(4)} ${Y(5.25)} L${X(4)} 0 Z" fill="${fill('rim')}"/>`;
+  const L='stroke="#0b0b0c" stroke-width="2.2" fill="none"';
+  v+=`<path ${L} d="M${X(-22)} 0 L${X(-22)} ${Y(yc)} A${R} ${R} 0 0 0 ${X(22)} ${Y(yc)} L${X(22)} 0"/><rect ${L} x="${X(-8)}" y="0" width="${16*s}" height="${Y(19)}"/>`;
+  v+=`<path ${L} d="M${X(-4)} 0 L${X(-4)} ${Y(5.25)} A${4*s} ${4*s} 0 0 0 ${X(4)} ${Y(5.25)} L${X(4)} 0"/>`;
+  v+=`<path stroke="#0b0b0c" stroke-width="1.4" fill="none" d="M${X(-6)} ${Y(19)} A${6*s} ${6*s} 0 0 0 ${X(6)} ${Y(19)}"/><path stroke="#0b0b0c" stroke-width="1.4" stroke-dasharray="5 5" fill="none" d="M${X(-6)} ${Y(19)} A${6*s} ${6*s} 0 0 1 ${X(6)} ${Y(19)}"/>`;
+  v+=`<line x1="${X(-3)}" x2="${X(3)}" y1="${Y(4)}" y2="${Y(4)}" stroke="#0b0b0c" stroke-width="2.5"/><circle cx="${X(0)}" cy="${Y(5.25)}" r="${(0.75*s).toFixed(1)}" stroke="#0b0b0c" stroke-width="2" fill="none"/>`;
+  v+=`<rect x="1" y="1" width="${W-2}" height="${H-2}" rx="3" stroke="#0b0b0c" stroke-width="2" fill="none"/>`;
+  const T=(x,y,sz,col,txt,extra)=>`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-family="var(--mono)" font-size="${sz}" fill="${col}"${extra||''}>${txt}</text>`;
+  const chip=(k,lab,cx,cy)=>{const d=g.z[k]||[0,0,0],A=Math.round(d[0]),M=Math.round(d[1]),e=ed(k),w=100,h=52,mx=(cx+25)*s,x0=mx-w/2,y0=cy*s-h/2,sh=Math.round(100*d[0]/N);
+    const ec=Math.abs(e)<0.05?'#c9c2b4':e>0?'#f0c879':'#f08a7e';
+    return `<g><rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${w}" height="${h}" rx="6" fill="rgba(11,11,12,.84)" stroke="rgba(255,255,255,.08)"/>`+
+      T(mx,y0+13,9.5,'#a39d90',`${lab} · ${sh}%`,' letter-spacing=".6"')+
+      T(mx,y0+31,15.5,'#f2efe8',A?(100*d[1]/d[0]).toFixed(1)+'%':'–',' font-weight="600"')+
+      T(mx,y0+45,10,'#8f897d',`${M}/${A} <tspan fill="${ec}" font-weight="600">${A?f1(e):''}</tspan>`)+'</g>';};
+  v+=chip('rim','RIM',0,5.7)+chip('pnt','PAINT',0,14.7)+chip('mid','MID',14.4,10.2)+chip('c3','CORNERS',-19.6,5.5)+chip('ab3','ABOVE BREAK',0,26.1);
+  v+='</svg>';
+  const bl=UL||p.team?'league':'role peers';
+  let xb='';const xv=(!p.team&&typeof XV==='function')?XV(p):null;
+  if(xv&&xv.length>5){const mx=Math.max(70,xv[4],xv[5]),bw=q=>(100*q/mx).toFixed(1)+'%',real=Math.abs(xv[3])>=2;
+    xb=`<div class="xb"><div class="eyebrow" style="margin:0 0 6px" title="Expected = what an average shooter makes on the same shots, given the closest defender, dribbles and shot type. NBA.com shot tracking, garbage time included.">Shot-making vs expected · NBA tracking</div>
+      <div class="xr"><span>eFG%</span><div class="bar a" style="width:${bw(xv[4])}"></div><b>${xv[4].toFixed(1)}</b></div>
+      <div class="xr"><span>expected</span><div class="bar" style="width:${bw(xv[5])}"></div><b style="color:var(--muted)">${xv[5].toFixed(1)}</b></div>
+      <div class="xn" title="Difficulty: positive = harder shots than average. xMaking: points per 100 shots above expected, noise-adjusted.">Difficulty <b>${f1(xv[1])}</b> · xMaking <b>${f1(xv[2])}</b> (${real?'likely real':'could be noise'}) · ${xv[0].toLocaleString()} shots</div></div>`;}
+  return `<div class="court"><div class="ch"><div class="eyebrow">Shot chart · ${VK[state.view].label}</div><span class="dim">color = edge vs ${bl}</span></div>${v}
+    <div class="lg"><span>colder</span><div class="gb" style="background:${heatGrad(cap)}"></div><span>hotter</span><span style="margin-left:6px">±${cap}+ pts/100</span></div>
+    <div class="ft">Fouled trips ${Math.round(g.T)} · FT ${pc(g.ftraw)} <span style="color:var(--muted)">(base ${pc(bft)})</span></div>
+    <div class="cn" title="Labels show raw FG%, makes/attempts and share of his attempts. Color uses the noise-adjusted edge, so a hot streak on a few shots stays pale. Corner 3s combine both corners.">Labels: raw FG% · makes/att · share of attempts. Color is noise-adjusted. Corners are combined.</div>${xb}</div>`;
+}
 function drawDetail(p){
   const el=document.getElementById('detail');if(!p){el.innerHTML='<p class="note">Nothing matches these filters.</p>';return;}
   const b=BS(),o=V(p),g=G(p),x=X(p),bz=g[b+'z'],LB=(state.mode==='type'?VKT:VK)[state.view].LB[GS()];
   const UL=b==='L'&&!p.team,bsh=z=>UL?LB.sh[z]:g.rb.sh[z],bfg=z=>UL?LB.fg[z]:g.rb.fg[z],bft=UL?LB.ft:g.rb.ft,N=g.N||1;
-  const sw=c=>`<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(${c});margin-right:6px"></span>`;
-  const BR='<br>',zr=(k,j)=>RKS('z'+k+j,q=>{const gq=G(q);return gq[b+'z'][k][j];},p,BR);
-  const rows=CELLS().map(z=>{const d=g.z[z.k],e=bz[z.k],gc=state.mode==='type'?GR.cells[z.k]:null;return `<tr><td class="l">${sw(z.c)}${z.name}${gc?`<br><span class="dim" style="font-size:11px">repeat r ${gc.yoy.toFixed(2)}</span>`:''}</td><td class="num">${Math.round(d[0]/N*100)}%<br><span class="dim">${Math.round(bsh(z.k)*100)}% · ${Math.round(d[0])}</span>${RKS('sh'+z.k,q=>{const gq=G(q);return gq.z[z.k][0]/(gq.N||1);},p,BR)}</td><td class="num">${d[0]?pc(d[1]/d[0]):'–'}<br><span class="dim">est ${pc(d[2])}</span>${RKS('fg'+z.k,q=>{const a=G(q).z[z.k];return a[0]?a[1]/a[0]:null;},p,BR)}</td><td class="num">${f1(e[0])}<br><span class="dim">vs ${pc(bfg(z.k))}</span>${zr(z.k,0)}</td><td class="num">${f1(e[1])}${zr(z.k,1)}</td><td class="num">${f1(e[2])}${zr(z.k,2)}</td><td class="num">${f1(e[3])}${zr(z.k,3)}</td></tr>`;}).join('');
-  const trip=`<tr><td class="l">${sw(TRIP.c)}Fouled</td><td class="num">${Math.round(g.T/N*100)}%<br><span class="dim">${Math.round(bsh('trip')*100)}% · ${Math.round(g.T)}</span>${RKS('shtrip',q=>G(q).T/(G(q).N||1),p,BR)}</td><td class="num">${pc(g.ftraw)}<br><span class="dim">est ${pc(g.ft)}</span>${RKS('ftraw',q=>G(q).ftraw,p,BR)}</td><td class="num dim">–<br>vs ${pc(bft)}</td><td class="num">${f1(o.foul)}${RKS('ofoul',q=>V(q).foul,p,BR)}</td><td class="num">${f1(o.ftm)}${RKS('oftm',q=>V(q).ftm,p,BR)}</td><td class="num dim">–</td></tr>`;
-  const u=U(p,state.view),tO=u.T[b+'o'],rO=u.R[b+'o'],c=CH(p),rD=REAL(c.dec,x.sdCd),rT=REAL(c.tot,x.sdCt);
-  const verdict=(rD||rT)?`<b>Larger than normal noise.</b> ${c.tot>0?'Better than usual against top defenses':'A bigger drop than usual against top defenses'}. About 1 in 20 players shows a gap this size by chance, and across the league the count of flagged players matches chance, so check it on film before trusting it.`:`<b>Within normal noise.</b> No evidence ${p.team?'this team plays':'he plays'} differently against top defenses.`;
-  const splitBox=`<div class="splitbox"><div class="eyebrow">Against top-10 defenses · ${VK[state.view].label}</div><div style="overflow-x:auto"><table><thead><tr><th class="l"></th><th>vs top 10</th><th>vs other 20</th><th>Change</th><th>Noise ±</th></tr></thead><tbody>
-    <tr><td class="l">Decisions</td><td class="num">${f1(tO.dec)}</td><td class="num">${f1(rO.dec)}</td><td class="num"><strong>${f1(c.dec)}</strong></td><td class="num dim">${x.sdCd?(2*x.sdCd).toFixed(1):'–'}</td></tr>
-    <tr><td class="l">Execution</td><td class="num">${f1(tO.exe)}</td><td class="num">${f1(rO.exe)}</td><td class="num">${f1(c.exe)}</td><td class="num dim">–</td></tr>
-    <tr><td class="l">Total</td><td class="num">${f1(tO.tot)}</td><td class="num">${f1(rO.tot)}</td><td class="num"><strong>${f1(c.tot)}</strong></td><td class="num dim">${x.sdCt?(2*x.sdCt).toFixed(1):'–'}</td></tr>
-    <tr><td class="l dim">Attempts</td><td class="num dim">${Math.round(u.T.N)}</td><td class="num dim">${Math.round(u.R.N)}</td><td></td><td></td></tr></tbody></table></div>
-    <div class="verdict"><span class="pill ${(rD||rT)?'real':''}">${(rD||rT)?'Larger than noise':'Within noise'}</span> ${verdict}</div></div>`;
-  el.innerHTML=`<div class="eyebrow">${p.team?X(p).tm+' · '+Math.round(X(p).gp)+' games':X(p).tm+' · '+X(p).pos} · ${VK[state.view].label} · ${Math.round(g.fga)} FGA · ${Math.round(g.T)} fouled trips</div><h3 id="popTitle">${p.n}</h3>
-  <div class="kpis"><div class="kpi hi"><div class="k">Decisions</div><div class="v">${f1(o.dec)}</div><div class="s">${p.team?RKS('odec',q=>V(q).dec,p)+'of '+RKL.length:OR(p.pD)+' pct'} ${NT(o.dec,x.sdA[0])}</div></div>
-    <div class="kpi"><div class="k">Execution</div><div class="v">${f1(o.exe)}</div><div class="s">${p.team?RKS('oexe',q=>V(q).exe,p)+'of '+RKL.length:''} ${NT(o.exe,x.sdA[1])}</div></div>
-    <div class="kpi hi"><div class="k">Total</div><div class="v">${f1(o.tot)}</div><div class="s">${p.team?RKS('otot',q=>V(q).tot,p)+'of '+RKL.length:OR(p.pT)+' pct'} ${NT(o.tot,x.sdA[2])}</div></div>
-    <div class="kpi"><div class="k">Pts added</div><div class="v">${o.pts>0?'+':''}${o.pts.toFixed(0)}</div><div class="s">${p.team?RKS('opts',q=>V(q).pts,p):''}${multi()?'per season':state.view==='s26'?'season to date':'season'}${state.games==='A'?'':', these games'}</div></div></div>
-  <div class="five"><div><div class="k">Select</div><div class="v">${f1(o.sel)}</div>${p.team?RKS('osel',q=>V(q).sel,p,'<div>')+'</div>':''}</div><div><div class="k">Align</div><div class="v">${f1(o.ali)}</div>${p.team?RKS('oali',q=>V(q).ali,p,'<div>')+'</div>':''}</div><div><div class="k">Foul draw</div><div class="v">${f1(o.foul)}</div>${p.team?RKS('ofoul',q=>V(q).foul,p,'<div>')+'</div>':''}</div><div><div class="k">Make</div><div class="v">${f1(o.mak)}</div>${p.team?RKS('omak',q=>V(q).mak,p,'<div>')+'</div>':''}</div><div><div class="k">FT make</div><div class="v">${f1(o.ftm)}</div>${p.team?RKS('oftm',q=>V(q).ftm,p,'<div>')+'</div>':''}</div></div>
-  <div class="dgrid wide"><div class="dcol"><div style="overflow-x:auto"><table><thead><tr><th class="l">Zone</th><th>Share<br>base · att</th><th>FG%<br>shrunk</th><th>Edge<br>vs base</th><th>Select</th><th>Make</th><th>Align</th></tr></thead><tbody>${rows}${trip}</tbody></table></div>
-  <p class="note">${p.team?'#1 to #30 rank this team against the other 29 in the same view; higher is #1 in every column, including attempts and shares. ':''}${state.mode==='type'?'In shot-type mode each row is graded against the same shot type, so a step-back three is compared with other step-back threes. "Repeat r" is how well raw FG% on that shot type carries from one season to the next (0 = pure noise, 1 = fully stable). ':''}Edge is points per 100 shots above baseline in that zone, using the shrunk estimate; the line under it is the baseline FG%. In the Fouled row, FG% is FT%, Select holds Foul drawing and Make holds FT making.</p>
-  </div><div class="dcol"><div class="splitbox seasons"><div class="eyebrow">Season by season</div>${seasonChart(p)}</div>
-  ${XD(p)}
-  <div class="flag"><div>${p.team?`<b>Most attempts for this team:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}% (${c[2].toFixed(2)} PPA)`).join(', ')}. Players who changed teams count only for the games they played here.`:`<b>Role peers carrying the most weight:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}%`).join(', ')}. The baseline pools 20 peers, weighted by their attempts.`}</div></div>
-  <div class="flag"><div><b>Not counted:</b> ${Math.round(x.ns)} non-shooting FTA in this view (${x.ns?pc(x.nsm/x.ns):'–'} made): bonus fouls, hacks, technicals and flagrants.</div></div></div></div>`;
+  const sw=c=>`<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(${c});margin-right:7px"></span>`;
+  const TY=state.mode==='type';
+  const p1=v=>v==null||isNaN(v)?'–':(v*100).toFixed(1);
+  const zr=(k,j)=>RKS('z'+k+j,q=>{const gq=G(q);return gq[b+'z'][k][j];},p);
+  const cell=(v,rk,bold,cls)=>`<td class="${cls||''}${v<0?' neg':''}">${bold?'<b>':''}${f1(v)}${bold?'</b>':''}${rk||''}</td>`;
+  const rows=CELLS().map(z=>{const d=g.z[z.k],e=bz[z.k],gc=TY?GR.cells[z.k]:null;
+    return `<tr><td class="l"${gc?` title="Repeat r ${gc.yoy.toFixed(2)}: how well raw FG% on this shot type carries from one season to the next"`:''}>${sw(z.c)}${z.name}</td>`+
+      `<td class="gs">${Math.round(d[0])}</td><td>${Math.round(d[0]/N*100)}%${RKS('sh'+z.k,q=>{const gq=G(q);return gq.z[z.k][0]/(gq.N||1);},p)}</td><td class="b">${Math.round(bsh(z.k)*100)}%</td>`+
+      `<td class="gs">${d[0]?p1(d[1]/d[0]):'–'}${RKS('fg'+z.k,q=>{const a=G(q).z[z.k];return a[0]?a[1]/a[0]:null;},p)}</td><td class="b">${p1(d[2])}</td><td class="b">${p1(bfg(z.k))}</td>`+
+      `${cell(e[0],zr(z.k,0),1,'gs')}${cell(e[1],zr(z.k,1))}${cell(e[2],zr(z.k,2))}${cell(e[3],zr(z.k,3))}</tr>`;}).join('');
+  const trip=`<tr><td class="l">${sw(TRIP.c)}Fouled (FT%)</td><td class="gs">${Math.round(g.T)}</td><td>${Math.round(g.T/N*100)}%${RKS('shtrip',q=>G(q).T/(G(q).N||1),p)}</td><td class="b">${Math.round(bsh('trip')*100)}%</td>`+
+    `<td class="gs">${p1(g.ftraw)}${RKS('ftraw',q=>G(q).ftraw,p)}</td><td class="b">${p1(g.ft)}</td><td class="b">${p1(bft)}</td><td class="gs b">–</td>${cell(o.foul,RKS('ofoul',q=>V(q).foul,p))}${cell(o.ftm,RKS('oftm',q=>V(q).ftm,p))}<td class="b">–</td></tr>`;
+  const part=(l,k)=>`<span>${l}<b class="${o[k]<0?'neg':''}">${f1(o[k])}${RKS('o'+k,q=>V(q)[k],p)}</b></span>`;
+  const kp=`<div class="kp4">
+    <div class="kpg hi"><div class="k">Decisions</div><div class="v">${f1(o.dec)}${RKS('odec',q=>V(q).dec,p)}</div><div class="s">${p.team?'':OR(p.pD)+' pct '}${NT(o.dec,x.sdA[0])}</div><div class="kparts">${part('Select','sel')}${part('Align','ali')}${part('Foul draw','foul')}</div></div>
+    <div class="kpg"><div class="k">Execution</div><div class="v">${f1(o.exe)}${RKS('oexe',q=>V(q).exe,p)}</div><div class="s">${NT(o.exe,x.sdA[1])}</div><div class="kparts">${part('Make','mak')}${part('FT make','ftm')}</div></div>
+    <div class="kpg hi"><div class="k">Total</div><div class="v">${f1(o.tot)}${RKS('otot',q=>V(q).tot,p)}</div><div class="s">${p.team?'':OR(p.pT)+' pct '}${NT(o.tot,x.sdA[2])}</div></div>
+    <div class="kpg"><div class="k">Pts added</div><div class="v">${o.pts>0?'+':''}${o.pts.toFixed(0)}${RKS('opts',q=>V(q).pts,p)}</div><div class="s">${multi()?'per season':state.view==='s26'?'season to date':'season'}</div></div></div>`;
+  const bl=UL||p.team?'League':'Peers';
+  const tbl=`<div class="ztw"><table class="ztbl"><thead>
+    <tr><th></th><th colspan="3"><span>Shot diet</span></th><th colspan="3"><span>Finishing</span></th><th colspan="4"><span>Points per 100 shots vs baseline</span></th></tr>
+    <tr><th class="l">${TY?'Shot type':'Zone'}</th><th>Att</th><th>Share</th><th class="b">${bl}</th><th title="Raw FG% (FT% in the Fouled row)">FG%</th><th class="b" title="FG% pulled toward the baseline by its noise; this is what Edge uses">Adjusted</th><th class="b">${bl}</th>
+    <th title="Adjusted FG% vs baseline, in points per 100 shots in this zone">Edge</th><th title="Points from taking this shot more or less often than the baseline">Select</th><th title="Points from finishing, on a baseline shot mix">Make</th><th title="Points from leaning into the shots where he beats the baseline">Align</th></tr></thead>
+    <tbody>${rows}${trip}</tbody></table></div>
+    <p class="note zn">${p.team?'Ranks are #1 to #30 among teams.':'Ranks are among players shown with the current filters.'}${TY?' Each shot type is graded against the same shot type; hover a name for how well it repeats year to year.':''} Fouled row: FT%, with foul drawing under Select and FT making under Make.</p>`;
+  const notes=`<div class="flag"><div>${p.team?`<b>Most attempts for this team:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}% (${c[2].toFixed(2)} PPA)`).join(', ')}. Players who changed teams count only for the games they played here.`:`<b>Role peers carrying the most weight:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}%`).join(', ')}. The baseline pools 20 peers, weighted by their attempts.`}</div></div>
+    <div class="flag"><div><b>Not counted:</b> ${Math.round(x.ns)} non-shooting FTA in this view (${x.ns?pc(x.nsm/x.ns):'–'} made): bonus fouls, hacks, technicals and flagrants.</div></div>`;
+  el.innerHTML=`<div class="eyebrow">${p.team?X(p).tm+' · '+Math.round(X(p).gp)+' games':X(p).tm+' · '+X(p).pos} · ${VK[state.view].label} · ${Math.round(g.fga)} FGA · ${Math.round(g.T)} fouled trips · ${BS()==='L'?'league':'role-peer'} baseline</div><h3 id="popTitle">${p.n}</h3>
+  ${kp}<div class="cgrid"><div class="ccol">${courtCard(p)}</div><div class="ccol"><div class="splitbox seasons"><div class="eyebrow">Season by season</div>${seasonChart(p)}</div>${notes}</div></div>${tbl}`;
 }
 
 const QUADS=[

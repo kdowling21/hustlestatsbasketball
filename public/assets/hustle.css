@@ -257,6 +257,7 @@ body.popped{overflow:hidden}
 
 .app .tablewrap:has(> #tbl){max-height:max(480px,calc(100vh - 96px))}
 .app .chartpanel #chart svg{max-height:460px}
+@media (max-width:820px){.app .pop-card{align-self:start}}
 .app .tablewrap:has(#kunit){max-width:680px}
 /* column pop-ups: Hustle Stats "spec card" */
 .htip{position:fixed;z-index:80;width:max-content;max-width:270px;background:#141415;border:1px solid #2c2a25;border-top:2px solid #d0b063;border-radius:3px;
