@@ -70,13 +70,13 @@
 
 <section class="panel" id="kings">
   <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
-    <h2 id="ktitle">Kings of</h2>
+    <div class="khead"><h2 id="ktitle">Kings of</h2><div class="ctl kwinctl"><label for="kwin">Seasons</label><select id="kwin"><option value="l2">Last 2 seasons</option><option value="l3" selected>Last 3 seasons</option><option value="l6">Last 6 seasons</option><option value="ss">All single seasons</option></select></div></div>
     <span class="count" id="kcount"></span>
   </div>
   <div class="seg kseg" id="kseg" role="group" aria-label="Shot type"></div>
   <p class="note" id="knote"></p>
   <div class="tablewrap" style="max-height:520px"><table id="kingtbl"><thead><tr>
-    <th>#</th><th class="l">Player</th><th>Att</th><th>Made</th><th>FG%</th><th title="FG% shrunk toward league average by the noise in this many attempts">Skill est.</th><th>vs league</th><th title="Points above a league-average shooter on the same attempts, 3 seasons">Pts above avg</th><th class="l">Signal</th>
+    <th>#</th><th class="l">Player</th><th>Att</th><th>Made</th><th>FG%</th><th title="FG% shrunk toward league average by the noise in this many attempts">Skill est.</th><th>vs league</th><th title="Points above a league-average shooter on the same attempts, over the seasons selected">Pts above avg</th><th class="l">Signal</th>
   </tr></thead><tbody id="kbody"></tbody></table></div>
 </section>
 
@@ -462,11 +462,11 @@ function renderKings(){
   document.getElementById('kcount').textContent=(filt?rows.length+' of ':'')+K.n+' qualifiers';
   const lg=(K.lg*100).toFixed(1),rel=Math.round(K.rel*100);
   const warn=K.rel<0.45?` <b class="kwarn">Treat this list with extra caution:</b> even at the minimum, only about ${rel}% of a player's gap from average is skill, so the order past the top few is loose.`:'';
-  document.getElementById('knote').innerHTML=`2023-24 to 2025-26 pooled, garbage time removed. Minimum <b>${K.min}</b> attempts over 3 seasons. League average ${lg}% on ${K.v}-point attempts. Ranked by <b>skill estimate</b>: each player's FG% pulled toward league average by ${K.k} average attempts, so small samples can't top the list on a hot streak. At ${K.min} attempts the estimate is about ${rel}% player and ${100-rel}% league average.${warn} <b>Likely real</b> means the raw FG% is more than 2 standard errors above average. Position and team filters apply; ranks stay league-wide.`;
+  document.getElementById('knote').innerHTML=`${KWL[kwin][0]}, garbage time removed. Minimum <b>${K.min}</b> attempts${KWL[kwin][1]}. League average ${lg}% on ${K.v}-point attempts. Ranked by <b>skill estimate</b>: each player's FG% pulled toward league average by ${K.k} average attempts, so small samples can't top the list on a hot streak. At ${K.min} attempts the estimate is about ${rel}% player and ${100-rel}% league average.${warn} <b>Likely real</b> means the raw FG% is more than 2 standard errors above average. Position and team filters apply; ranks stay league-wide.`;
   const pc=x=>(x*100).toFixed(1);
   document.getElementById('kbody').innerHTML=rows.length?rows.map(({r,rank})=>{const [pid,n,tm,pos,A,M,raw,est,z,pts]=r;const id=PID[pid];const d=(est-K.lg)*100;
-    return `<tr${id!=null?` class="click" data-id="${id}"`:''}><td class="num">${rank}</td><td class="l"><span class="pname">${n}</span><span class="meta">${tm||''}${pos?' · '+pos:''}</span></td><td class="num">${A}</td><td class="num">${M}</td><td class="num">${pc(raw)}</td><td class="num"><b>${pc(est)}</b></td><td class="num${d<0?' neg':''}">${d>=0?'+':''}${d.toFixed(1)}</td><td class="num${pts<0?' neg':''}">${pts>=0?'+':''}${pts.toFixed(0)}</td><td class="l">${z>=2?'<span class="tag real" title="z = '+z.toFixed(1)+'">likely real</span>':'<span class="tag" title="z = '+z.toFixed(1)+'">noise</span>'}</td></tr>`;}).join(''):'<tr><td colspan="9" class="l dim">No qualifiers match the position and team filters.</td></tr>';
-  document.querySelectorAll('#kbody tr.click').forEach(tr=>tr.onclick=()=>pickPlayer(+tr.dataset.id));
+    return `<tr${id!=null?` class="click" data-id="${id}"`:''}${r[10]?` data-ss="${r[10]}"`:''}><td class="num">${rank}</td><td class="l"><span class="pname">${n}</span><span class="meta">${r[10]?'<b class="kss">'+r[10]+'</b> · ':''}${tm||''}${pos?' · '+pos:''}</span></td><td class="num">${A}</td><td class="num">${M}</td><td class="num">${pc(raw)}</td><td class="num"><b>${pc(est)}</b></td><td class="num${d<0?' neg':''}">${d>=0?'+':''}${d.toFixed(1)}</td><td class="num${pts<0?' neg':''}">${pts>=0?'+':''}${pts.toFixed(0)}</td><td class="l">${z>=2?'<span class="tag real" title="z = '+z.toFixed(1)+'">likely real</span>':'<span class="tag" title="z = '+z.toFixed(1)+'">noise</span>'}</td></tr>`;}).join(''):'<tr><td colspan="9" class="l dim">No qualifiers match the position and team filters.</td></tr>';
+  document.querySelectorAll('#kbody tr.click').forEach(tr=>tr.onclick=()=>kpick(tr));
 }
 
 {const _rk=renderKings,KHEAD=document.querySelector('#kingtbl thead').innerHTML;
@@ -480,13 +480,27 @@ renderKings=function(){
   document.getElementById('kcount').textContent=(filt?rows.length+' of ':'')+K.n+' qualifiers';
   const rel=Math.round(K.rel*100);
   const what=kcell==='x_tough'?`<b>Tough Shots</b> are the hardest ${K.share}% of all shots by expected value: the combinations of closest-defender distance, dribbles and shot type with the lowest league eFG% (league ${K.lg}% on these). `:`Every field-goal attempt, graded against shots like it. `;
-  document.getElementById('knote').innerHTML=`${what}2023-24 to 2025-26 pooled, from NBA.com shot tracking (garbage time can't be removed from these splits). Each shot's expected value is the league make rate for shots with the same closest-defender distance, dribbles before the shot and shot type (3-pointer, 2 from 10+ ft, 2 inside 10 ft). Minimum <b>${K.min}</b> shots. Ranked by <b>skill estimate</b>: eFG% over expected, pulled toward zero by ${K.k} average shots, so at the minimum it is about ${rel}% player and ${100-rel}% average. <b>Likely real</b> means the raw gap is more than 2 standard errors above expected. Position and team filters apply; ranks stay league-wide.`;
+  document.getElementById('knote').innerHTML=`${what}${KWL[kwin][0]}, from NBA.com shot tracking (garbage time can't be removed from these splits). Each shot's expected value is the league make rate for shots with the same closest-defender distance, dribbles before the shot and shot type (3-pointer, 2 from 10+ ft, 2 inside 10 ft). Minimum <b>${K.min}</b> shots${KWL[kwin][1]}. Ranked by <b>skill estimate</b>: eFG% over expected, pulled toward zero by ${K.k} average shots, so at the minimum it is about ${rel}% player and ${100-rel}% average. <b>Likely real</b> means the raw gap is more than 2 standard errors above expected. Position and team filters apply; ranks stay league-wide.${K.rel<0.45?` <b class="kwarn">Treat this list with extra caution:</b> at the minimum, only about ${rel}% of the estimate is the player, so the order past the top few is loose.`:''}`;
   const sg=x=>(x>=0?'+':'−')+Math.abs(x).toFixed(1);
   document.getElementById('kbody').innerHTML=rows.length?rows.map(({r,rank})=>{const [pid,n,tm,pos,A,efg,xefg,est,z,pts]=r;const id=PID[pid];
-    return `<tr${id!=null?` class="click" data-id="${id}"`:''}><td class="num">${rank}</td><td class="l"><span class="pname">${n}</span><span class="meta">${tm||''}${pos?' · '+pos:''}</span></td><td class="num">${A}</td><td class="num">${efg.toFixed(1)}</td><td class="num">${xefg.toFixed(1)}</td><td class="num${est<0?' neg':''}"><b>${sg(est)}</b></td><td class="num${pts<0?' neg':''}">${pts>=0?'+':''}${pts.toFixed(0)}</td><td class="l">${z>=2?'<span class="tag real" title="z = '+z.toFixed(1)+'">likely real</span>':'<span class="tag" title="z = '+z.toFixed(1)+'">noise</span>'}</td></tr>`;}).join(''):'<tr><td colspan="8" class="l dim">No qualifiers match the position and team filters.</td></tr>';
-  document.querySelectorAll('#kbody tr.click').forEach(tr=>tr.onclick=()=>pickPlayer(+tr.dataset.id));
+    return `<tr${id!=null?` class="click" data-id="${id}"`:''}${r[10]?` data-ss="${r[10]}"`:''}><td class="num">${rank}</td><td class="l"><span class="pname">${n}</span><span class="meta">${r[10]?'<b class="kss">'+r[10]+'</b> · ':''}${tm||''}${pos?' · '+pos:''}</span></td><td class="num">${A}</td><td class="num">${efg.toFixed(1)}</td><td class="num">${xefg.toFixed(1)}</td><td class="num${est<0?' neg':''}"><b>${sg(est)}</b></td><td class="num${pts<0?' neg':''}">${pts>=0?'+':''}${pts.toFixed(0)}</td><td class="l">${z>=2?'<span class="tag real" title="z = '+z.toFixed(1)+'">likely real</span>':'<span class="tag" title="z = '+z.toFixed(1)+'">noise</span>'}</td></tr>`;}).join(''):'<tr><td colspan="8" class="l dim">No qualifiers match the position and team filters.</td></tr>';
+  document.querySelectorAll('#kbody tr.click').forEach(tr=>tr.onclick=()=>kpick(tr));
 };}
+
+const KWL={l2:['2024-25 and 2025-26 pooled',' over 2 seasons'],l3:['2023-24 to 2025-26 pooled',' over 3 seasons'],l6:['2020-21 to 2025-26 pooled',' over 6 seasons'],
+  ss:['Every single season from 2020-21 to 2025-26 is its own row, so seasons can be compared side by side',' in one season']};
+const SSV={'2020-21':'s20','2021-22':'s21','2022-23':'s22','2023-24':'s23','2024-25':'s24','2025-26':'s25'};
+const KW={l3:Object.assign({},KINGS)};let kwin='l3',KWP=null;
+const kwinEl=document.getElementById('kwin');
+function setKwin(w){const go=()=>{if(!KW[w])w='l3';kwin=w;kwinEl.value=w;Object.assign(KINGS,KW[w]);try{localStorage.setItem('spl4kw',w)}catch(e){};renderKings();};
+  if(KW[w])return go();
+  KWP=KWP||fetch('data/shot_kings_win.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
+  KWP.then(d=>{Object.keys(d||{}).forEach(k=>{KW[k]=d[k];});go();});}
+kwinEl.onchange=()=>setKwin(kwinEl.value);
+function kpick(tr){if(tr.dataset.ss&&SSV[tr.dataset.ss]){if(TEAMS()){selMem.teams=state.sel;state.ent='players';P=PL;}state.view=SSV[tr.dataset.ss];
+  if(state.min>200){state.min=200;mf.value=200;}save();}pickPlayer(+tr.dataset.id);}
 const _render=render;render=function(){_render();renderKings();};
+{let w0='l3';try{w0=localStorage.getItem('spl4kw')||'l3';}catch(e){}if(w0!=='l3')setKwin(w0);}
 function fromHash(){const h=decodeURIComponent(location.hash.slice(1));if(!h)return false;
   if(h.startsWith('team-')){const t=TM.find(x=>String(x.t).toLowerCase()===h.slice(5));if(!t)return false;if(!TEAMS()){selMem.players=state.sel;state.ent='teams';P=TM;}state.sel=t.id;return true;}
   const p=PL.find(x=>SLUG(x.n)===h);if(!p)return false;if(TEAMS()){selMem.teams=state.sel;state.ent='players';P=PL;}state.sel=p.id;
