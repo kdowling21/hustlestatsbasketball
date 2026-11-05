@@ -53,5 +53,6 @@
 .app .atbl tr.dim td{color:var(--muted)}
 .app .atbl td a{color:var(--ink)}
 .app #tbl td .pos{color:var(--accent);font-family:var(--mono)}
+.app #tbl td span.neg{color:var(--neg);font-family:var(--mono)}
 .app #tbl td .dim{color:var(--muted);font-family:var(--mono);font-size:11px}
 @media (max-width:820px){.app .mk4{grid-template-columns:repeat(2,minmax(0,1fr))}.app .mgrid{grid-template-columns:1fr}.app .mk .kp{grid-template-columns:repeat(2,minmax(0,1fr))}.app .mk .kp>span{white-space:normal;font-size:9px}.app .atbl .tag{white-space:nowrap}}
