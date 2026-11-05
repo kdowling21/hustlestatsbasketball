@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Toughest Defenders · Hustle Stats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Who takes the hardest defensive assignments, how scorers fare against them, and how much they lower what their team allows.">
+<link rel="canonical" href="https://hustlestatsbasketball.com/matchups">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Hustle Stats">
+<meta property="og:title" content="Toughest Defenders · Hustle Stats"><meta property="og:description" content="Who takes the hardest defensive assignments, how scorers fare against them, and how much they lower what their team allows.">
+<meta property="og:url" content="https://hustlestatsbasketball.com/matchups"><meta property="og:image" content="https://hustlestatsbasketball.com/assets/og/matchups.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Toughest Defenders · Hustle Stats: Hustle Stats basketball analytics">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@HustleStatsBall">
+<meta name="twitter:title" content="Toughest Defenders · Hustle Stats"><meta name="twitter:description" content="Who takes the hardest defensive assignments, how scorers fare against them, and how much they lower what their team allows."><meta name="twitter:image" content="https://hustlestatsbasketball.com/assets/og/matchups.png">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="/assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/icon_180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/hustle.css"><link rel="stylesheet" href="/assets/matchups.css">
+</head><body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
+    <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups" aria-current="page">Matchups</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+</div></header>
+<main>
+<div class="app">
+<header>
+  <div class="eyebrow" id="eyebrow">NBA.com matchup tracking + play-by-play · 2020-21 to now</div>
+  <h1>Toughest Defenders</h1>
+  <p class="lede">Who takes the hardest assignments, how scorers fare against them, and how much they lower what their team allows. Hover any column for a definition; the full method is on the <a href="/methodology#matchups">Methodology</a> page.</p>
+</header>
+<details class="caveat" id="caveat" open><summary><b>What this can't see</b><span>Matchup data is useful but imperfect. Read this before leaning on any single number.</span></summary>
+<ul>
+<li><b>Help defense lands on the helper.</b> NBA.com credits a shot to whoever is guarding the shooter when he shoots. If a guard gets beat and the center rotates over, the shot counts against the center. That's why raw points allowed isn't used here, and why the lineup-adjusted part (D-RAPM) carries a third of the index.</li>
+<li><b>No contest quality.</b> These totals don't record how close the defender was or how good the shot was. A tight contest on a tough make counts the same as an open one. Contest quality is a separate research project.</li>
+<li><b>Switches and schemes blur assignments.</b> Matchups are split by time on the floor, so switching teams spread credit around and drop coverages put bigs on a lot of drives. Role and scheme still shape these numbers after comparing within position.</li>
+<li><b>Assignment difficulty isn't defense by itself.</b> Guarding stars is a coach's vote of confidence, not proof of stopping them. It's one third of the index, alongside results and D-RAPM.</li>
+<li><b>Noise.</b> Single seasons are noisy. D-RAPM starts each season from the player's prior estimate and last season's D-HPM, which steadies it (it repeats year to year at about r = 0.8), but that also means a breakout or a decline shows up gradually. Last 3 seasons is the most reliable view; early in the live season, treat everything as a first look.</li>
+<li><b>Coverage.</b> NBA.com's matchup tracking covers about 97% of shots. Off-ball work that never leads to a shot or turnover (denials, deterrence, communication) isn't counted.</li>
+</ul></details>
+<div class="controls" role="group" aria-label="Filters">
+  <div class="ctl"><label for="viewsf">Seasons</label><select id="viewsf"></select></div>
+  <div class="ctl"><label for="posf">Position</label><select id="posf"><option value="all">All</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select></div>
+  <div class="ctl"><label for="teamf">Team</label><select id="teamf"><option value="all">All teams</option></select></div>
+  <div class="ctl"><label for="q">Find player</label><input id="q" type="search" placeholder="Name or team"></div>
+  <div class="count" id="count"></div>
+</div>
+<section style="display:grid;gap:10px">
+  <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
+    <div><h2>Leaderboard</h2><p class="note" style="margin:4px 0 0">Click a player for his full breakdown. Index = average of his percentiles on the three parts.</p></div>
+  </div>
+  <div class="tablewrap"><table id="tbl"><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+</section>
+<section class="panel chartpanel">
+  <h2>Who they guard vs what they take away</h2>
+  <div class="chartrow2"><div id="mchart" style="position:relative"></div>
+    <div class="mside"><p id="mnote"></p><p><b>Across:</b> assignment difficulty. <b>Up:</b> D-RAPM. Dot size = matchup possessions.</p><p><b>Top right:</b> takes the hardest jobs and his team defends better with him on the floor.</p><p>Click any dot to open that player's breakdown.</p></div></div>
+</section>
+
+<div class="pop" id="pop" hidden>
+  <div class="pop-back" id="popBack"></div>
+  <div class="pop-card" role="dialog" aria-modal="true" aria-labelledby="popTitle">
+    <div class="pop-bar">
+      <button type="button" class="pop-nav" id="popPrev" aria-label="Previous in leaderboard">‹ Prev</button>
+      <span class="pop-pos" id="popPos"></span>
+      <button type="button" class="pop-nav" id="popNext" aria-label="Next in leaderboard">Next ›</button>
+      <button type="button" class="pop-x" id="popClose" aria-label="Close">✕</button>
+    </div>
+    <div class="pop-body"><div class="detail" id="detail" aria-live="polite"></div></div>
+  </div>
+</div>
+</div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+    <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
+</div>
+<div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
+</footer>
+<script>
+(async()=>{
+const D=await fetch('data/matchups.json').then(r=>r.json());
+const TIPS={"poss": ["Matchup possessions", "Possessions he spent as the primary defender on a scorer, per NBA.com matchup tracking."], "tdi": ["Toughest Defender Index", "Average of his percentiles on assignment difficulty, matchup results and D-RAPM among qualified defenders in this view. 100 = best."], "diff": ["Assignment difficulty", "How many more points per 100 possessions the players he guards normally score than a typical assignment for his position."], "star": ["Star share", "Share of his matchup possessions spent on the league’s 50 highest-scoring players that season."], "res": ["Matchup results", "Shot-making allowed + free throws allowed + turnovers forced, vs each scorer’s norm and vs defenders at his position, pulled toward zero for noise. Points per 100 matchup possessions."], "mak": ["Shot-making allowed", "Field-goal points his matchups scored below their norm on the same number of shots. Positive = they shot worse against him."], "ftv": ["Free throws allowed", "Free-throw points his matchups got below their norm. Positive = fewer trips to the line."], "tov": ["Turnovers forced", "Turnovers by his matchups above their norm, valued at an average possession."], "rapm": ["D-RAPM", "Lineup-adjusted defense: points per 100 possessions his team allows less with him on the floor, controlling for all ten players, starting each season from his prior estimate and last season’s D-HPM. Counts help defense no matter who gets credited with the shot."], "dhpm": ["D-HPM", "Defensive Hustle Plus-Minus from the Hustle Plus-Minus page, for context."]},UNITS={"poss": "possessions", "tdi": "percentile avg", "star": "% of possessions", "diff": "pts / 100 poss", "res": "pts / 100 poss", "mak": "pts / 100 poss", "ftv": "pts / 100 poss", "tov": "pts / 100 poss", "rapm": "pts / 100 poss", "dhpm": "pts / 100 poss"};
+const M=D.meta,V=D.views;
+const f1=x=>x==null||isNaN(x)?'–':(x>0?'+':x<0?'−':'')+Math.abs(x).toFixed(1);
+const SLUG=n=>n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const PG={G:['PG','SG'],F:['SF','PF'],C:['C']};
+let state={view:'l3',pos:'all',team:'all',q:'',sort:'tdi',dir:-1,sel:null,open:false};
+try{const s=JSON.parse(localStorage.getItem('mu1')||'{}');['view','pos','team','sort','dir'].forEach(k=>{if(s[k]!=null)state[k]=s[k];});}catch(e){}
+if(!V[state.view])state.view='l3';
+const save=()=>{try{localStorage.setItem('mu1',JSON.stringify({view:state.view,pos:state.pos,team:state.team,sort:state.sort,dir:state.dir}))}catch(e){}};
+const viewsEl=document.getElementById('viewsf');M.views.forEach(v=>{const o=document.createElement('option');o.value=v.key;o.textContent=v.label;viewsEl.appendChild(o);});
+viewsEl.onchange=()=>{state.view=viewsEl.value;save();render();};
+const posEl=document.getElementById('posf'),teamEl=document.getElementById('teamf');
+[...new Set(Object.values(V).flatMap(v=>Object.values(v.rows).map(r=>r.tm)).filter(Boolean))].sort().forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;teamEl.appendChild(o);});
+posEl.onchange=()=>{state.pos=posEl.value;save();render();};teamEl.onchange=()=>{state.team=teamEl.value;save();render();};
+document.getElementById('q').oninput=e=>{state.q=e.target.value;render();};
+const COLS=[{k:'rank',l:'#',ns:1},{k:'name',l:'Player',cls:'l'},{k:'poss',l:'Matchup poss'},{k:'tdi',l:'Index'},{k:'diff',l:'Difficulty'},{k:'star',l:'Star share'},
+  {k:'res',l:'Results'},{k:'mak',l:'Shot-making'},{k:'ftv',l:'FTs'},{k:'tov',l:'TOs'},{k:'rapm',l:'D-RAPM'},{k:'dhpm',l:'D-HPM'}];
+const thead=document.getElementById('thead');
+COLS.forEach(c=>{const th=document.createElement('th');th.textContent=c.l;th.className=c.cls||'';th.dataset.k=c.k;
+  if(!c.ns){th.tabIndex=0;const go=()=>{if(state.sort===c.k)state.dir*=-1;else{state.sort=c.k;state.dir=c.k==='name'?1:-1;}save();render();};th.onclick=go;th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};}
+  thead.appendChild(th);});
+const cur=()=>V[state.view];
+const rowsOf=v=>Object.entries(v.rows).map(([pid,r])=>Object.assign({pid},r));
+const fOK=r=>(state.pos==='all'||PG[state.pos].includes(r.pos))&&(state.team==='all'||r.tm===state.team);
+let RK={};
+function ranks(list){RK={};['poss','tdi','diff','star','res','mak','ftv','tov','rapm','dhpm'].forEach(k=>{const a=list.map(r=>r[k]).filter(v=>v!=null).sort((x,y)=>y-x);RK[k]=a;});}
+const rk=(k,v,n)=>{if(v==null||!RK[k])return '';let r=1;for(const x of RK[k]){if(x>v+1e-9)r++;else break;}return `<span class="rk ${r<=5?'hi':r>RK[k].length-5?'lo':''}" title="Rank among ${RK[k].length} qualified defenders">#${r}</span>`;};
+const POP=document.getElementById('pop');let ORDER=[],LAST=null;
+function openPop(){if(!POP.hidden)return;LAST=document.activeElement;state.open=true;POP.hidden=false;document.body.classList.add('popped');setTimeout(()=>document.getElementById('popClose').focus(),0);}
+function closePop(){state.open=false;POP.hidden=true;document.body.classList.remove('popped');try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}if(LAST&&LAST.focus)LAST.focus();}
+function pick(pid){state.sel=pid;openPop();render();}
+function step(d){const i=ORDER.indexOf(state.sel),j=i+d;if(i<0||j<0||j>=ORDER.length)return;state.sel=ORDER[j];render();document.querySelector('.pop').scrollTop=0;}
+document.getElementById('popClose').onclick=closePop;document.getElementById('popBack').onclick=closePop;
+document.getElementById('popPrev').onclick=()=>step(-1);document.getElementById('popNext').onclick=()=>step(1);
+document.addEventListener('keydown',e=>{if(POP.hidden)return;if(e.key==='Escape')closePop();else if(e.key==='ArrowLeft')step(-1);else if(e.key==='ArrowRight')step(1);});
+function render(){
+  viewsEl.value=state.view;posEl.value=state.pos;teamEl.value=state.team;
+  const v=cur(),all=rowsOf(v),Q=all.filter(r=>r.q);ranks(Q);
+  const list=Q.filter(fOK),q=state.q.toLowerCase();const shown=q?list.filter(r=>(r.n+' '+r.tm).toLowerCase().includes(q)):list;
+  document.getElementById('count').textContent=`${shown.length} of ${Q.length} defenders · min ${v.min.toLocaleString()} matchup possessions`;
+  document.getElementById('eyebrow').textContent=`NBA.com matchup tracking + play-by-play · ${v.label}`;
+  const k=state.sort,sv=r=>k==='name'?r.n:(r[k]==null?(state.dir<0?-1e9:1e9):r[k]);
+  const sorted=[...shown].sort((a,b)=>k==='name'?a.n.localeCompare(b.n)*state.dir:(sv(a)-sv(b))*state.dir);
+  ORDER=sorted.map(r=>r.pid);
+  [...thead.children].forEach(th=>th.classList.toggle('sorted',th.dataset.k===k));
+  const ix=[...thead.children].findIndex(th=>th.dataset.k===k);document.getElementById('tbl').dataset.sc=ix>=0?ix+1:0;
+  const c=(x,key,cls)=>`<td class="num${cls?' '+cls:''}${x<0?' neg':''}">${f1(x)}${rk(key,x)}</td>`;
+  document.getElementById('tbody').innerHTML=sorted.map((r,i)=>`<tr data-id="${r.pid}" tabindex="0" class="${r.pid===state.sel?'sel':''}"><td class="num dim">${i+1}</td>
+    <td class="l"><span class="pname">${r.n}</span><span class="meta">${r.tm||''}${r.pos?' · '+r.pos:''}</span></td>
+    <td class="num">${r.poss.toLocaleString()}${rk('poss',r.poss)}</td><td class="num tdi">${r.tdi==null?'–':Math.round(r.tdi)}${rk('tdi',r.tdi)}</td>
+    ${c(r.diff,'diff')}<td class="num">${r.star.toFixed(0)}%${rk('star',r.star)}</td>${c(r.res,'res')}${c(r.mak,'mak')}${c(r.ftv,'ftv')}${c(r.tov,'tov')}${c(r.rapm,'rapm')}${c(r.dhpm,'dhpm')}</tr>`).join('')||'<tr><td colspan="12" class="l dim">No defenders match these filters.</td></tr>';
+  document.querySelectorAll('#tbody tr[data-id]').forEach(tr=>{const go=()=>pick(tr.dataset.id);tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go();};});
+  drawChart(list);
+  const sel=v.rows[state.sel];if(sel&&state.open){try{history.replaceState(null,'','#'+SLUG(sel.n));}catch(e){}}
+  popBar();drawCard(state.sel);
+}
+function popBar(){const i=ORDER.indexOf(state.sel);document.getElementById('popPrev').disabled=i<=0;document.getElementById('popNext').disabled=i<0||i>=ORDER.length-1;
+  document.getElementById('popPos').textContent=i<0?'Not in the current list':`${i+1} of ${ORDER.length} · leaderboard order`;}
+function drawChart(list){
+  const el=document.getElementById('mchart'),W=640,H=430,m={l:44,r:16,t:16,b:44};const pts=list.filter(r=>r.rapm!=null);
+  if(!pts.length){el.innerHTML='';return;}
+  const xs=pts.map(r=>r.diff),ys=pts.map(r=>r.rapm),pad=v=>Math.ceil(v);
+  const x0=-pad(Math.max(1,-Math.min(...xs))),x1=pad(Math.max(1,...xs)),y0=-pad(Math.max(1,-Math.min(...ys))),y1=pad(Math.max(1,...ys));
+  const X=v=>m.l+(v-x0)/(x1-x0)*(W-m.l-m.r),Y=v=>H-m.b-(v-y0)/(y1-y0)*(H-m.t-m.b);
+  const mx=Math.max(...pts.map(r=>r.poss));let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scatter of assignment difficulty versus D-RAPM">`;
+  for(let v=x0;v<=x1;v++)s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--grid)"/><text x="${X(v)}" y="${H-m.b+16}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">${v>0?'+':''}${v}</text>`;
+  for(let v=y0;v<=y1;v++)s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${m.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">${v>0?'+':''}${v}</text>`;
+  s+=`<line x1="${X(0)}" x2="${X(0)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--axis)" stroke-width="1.5"/><line x1="${m.l}" x2="${W-m.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--axis)" stroke-width="1.5"/>`;
+  const ql=(x,y,a,t)=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="11" fill="var(--muted)" font-family="var(--mono)">${t}</text>`;
+  s+=ql(W-m.r-6,m.t+14,'end','TOUGH JOBS, TEAM DEFENDS BETTER')+ql(m.l+8,m.t+14,'start','EASIER JOBS, TEAM DEFENDS BETTER')+ql(W-m.r-6,H-m.b-8,'end','TOUGH JOBS, TEAM DEFENDS WORSE')+ql(m.l+8,H-m.b-8,'start','EASIER JOBS, TEAM DEFENDS WORSE');
+  s+=`<text x="${W-m.r}" y="${H-6}" text-anchor="end" font-size="11" fill="var(--ink2)">Assignment difficulty (pts / 100) →</text><text transform="translate(12 ${m.t}) rotate(90)" font-size="11" fill="var(--ink2)">D-RAPM →</text>`;
+  const lab=new Set([...pts].sort((a,b)=>(b.tdi||0)-(a.tdi||0)).slice(0,8).map(r=>r.pid));
+  const q=state.q.toLowerCase(),hit=r=>q&&(r.n+' '+r.tm).toLowerCase().includes(q);
+  const ord=[...pts].sort((a,b)=>(a.pid===state.sel)-(b.pid===state.sel));
+  ord.forEach(r=>{const on=r.pid===state.sel,dim=q&&!hit(r)&&!on,rad=on?7:2.5+4*Math.sqrt(r.poss/mx);
+    s+=`<circle cx="${X(r.diff).toFixed(1)}" cy="${Y(r.rapm).toFixed(1)}" r="${rad.toFixed(1)}" fill="${on?'var(--ink)':'var(--pos)'}" fill-opacity="${dim?0.12:on?1:0.65}" stroke="${on?'var(--accent)':'var(--surface)'}" stroke-width="${on?2.5:1}"/>`;});
+  const placed=[];ord.forEach(r=>{if(lab.has(r.pid)||r.pid===state.sel||(hit(r)&&pts.filter(hit).length<=6)){const x=X(r.diff),y=Y(r.rapm),rt=x<W-150;if(r.pid!==state.sel&&placed.some(([px,py])=>Math.abs(px-x)<70&&Math.abs(py-y)<13))return;placed.push([x,y]);s+=`<text x="${x+(rt?9:-9)}" y="${Y(r.rapm)+4}" text-anchor="${rt?'start':'end'}" font-size="11" fill="var(--ink)" paint-order="stroke" stroke="var(--surface)" stroke-width="3">${r.n.split(' ').slice(-1)[0]}</text>`;}});
+  ord.forEach(r=>{s+=`<circle class="hit" data-id="${r.pid}" cx="${X(r.diff).toFixed(1)}" cy="${Y(r.rapm).toFixed(1)}" r="10" fill="transparent" style="cursor:pointer"/>`;});
+  el.innerHTML=s+'</svg><div class="mtip" hidden></div>';
+  const tip=el.querySelector('.mtip'),svg=el.querySelector('svg');
+  el.querySelectorAll('.hit').forEach(c=>{const r=cur().rows[c.dataset.id];c.onmouseenter=()=>{const sc=svg.getBoundingClientRect().width/W;tip.innerHTML=`<b>${r.n} · ${r.tm}</b>Difficulty ${f1(r.diff)} · D-RAPM ${f1(r.rapm)} · Index ${Math.round(r.tdi)}`;tip.style.left=(+c.getAttribute('cx')*sc)+'px';tip.style.top=(+c.getAttribute('cy')*sc)+'px';tip.hidden=false;};
+    c.onmouseleave=()=>{tip.hidden=true;};c.onclick=()=>pick(c.dataset.id);});
+  document.getElementById('mnote').textContent=`${cur().label} · ${pts.length} qualified defenders${state.pos!=='all'||state.team!=='all'?' (filtered)':''}.`;
+}
+function seasonsChart(pid){
+  const ks=['s2020','s2021','s2022','s2023','s2024','s2025','s2026'].filter(k=>V[k]);const W=300,H=120,m={l:26,r:8,t:12,b:20};
+  const pts=ks.map((k,i)=>[i,V[k].rows[pid]]).filter(([i,r])=>r&&r.tdi!=null&&r.q);
+  if(!pts.length)return '<p class="note">Not enough matchup possessions in any single season.</p>';
+  const X=i=>m.l+(i+0.5)/ks.length*(W-m.l-m.r),Y=v=>H-m.b-v/100*(H-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Toughest Defender Index by season">`;
+  [0,50,100].forEach(v=>{s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v===50?'var(--axis)':'var(--grid)'}"/><text x="${m.l-4}" y="${Y(v)+3}" text-anchor="end" font-size="9" fill="var(--muted)" font-family="var(--mono)">${v}</text>`;});
+  ks.forEach((k,i)=>{s+=`<text x="${X(i)}" y="${H-5}" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="var(--mono)">${String(+k.slice(1)).slice(2)}-${String(+k.slice(1)+1).slice(2)}</text>`;});
+  if(pts.length>1)s+=`<polyline points="${pts.map(([i,r])=>X(i)+','+Y(r.tdi)).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
+  pts.forEach(([i,r])=>{s+=`<circle cx="${X(i)}" cy="${Y(r.tdi)}" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="1.5"><title>${r.tdi.toFixed(0)}</title></circle>`;});
+  return s+'</svg>';
+}
+function drawCard(pid){
+  const el=document.getElementById('detail'),v=cur(),r=v.rows[pid];if(!r){el.innerHTML='';return;}
+  const tag=(x,se)=>se==null||x==null?'':(Math.abs(x)>2*se?'<span class="tag real" title="More than twice its noise range (±'+(2*se).toFixed(1)+')">likely real</span>':'<span class="tag" title="Within ±'+(2*se).toFixed(1)+' noise range">noise</span>');
+  const part=(l,k)=>`<span>${l}<b class="${r[k]<0?'neg':''}">${f1(r[k])}${rk(k,r[k])}</b></span>`;
+  const pc=p=>p==null?'–':p+(['th','st','nd','rd'][p%10>3||Math.floor(p%100/10)===1?0:p%10]||'th');
+  const top=(r.top||[]).map(t=>{const[opid,nm,ps,pts,xp,fga,fgm,ofg]=t;const d=100*(xp-pts)/Math.max(1,ps),fg=fga?fgm/fga:null;
+    return `<tr><td class="l">${nm}</td><td>${ps.toLocaleString()}</td><td>${pts}</td><td class="b">${xp.toFixed(0)}</td><td class="${d>0?'pos':d<0?'neg':''}">${f1(d)}</td><td>${fg==null?'–':(100*fg).toFixed(1)}</td><td class="b">${ofg==null?'–':(100*ofg).toFixed(1)}</td></tr>`;}).join('');
+  el.innerHTML=`<div class="eyebrow">${r.tm||''}${r.pos?' · '+r.pos:''} · ${v.label} · ${r.poss.toLocaleString()} matchup possessions${r.q?'':' · below the qualifying minimum'}</div><h3 id="popTitle">${r.n}</h3>
+  <div class="mk4">
+    <div class="mk hi"><div class="k">Toughest Defender Index</div><div class="v">${r.tdi==null?'–':Math.round(r.tdi)}${rk('tdi',r.tdi)}</div><div class="s">average of three percentiles</div>
+      <div class="kp"><span>Difficulty<b>${pc(r.p[0])}</b></span><span>Results<b>${pc(r.p[1])}</b></span><span>D-RAPM<b>${pc(r.p[2])}</b></span></div></div>
+    <div class="mk"><div class="k">Assignment difficulty</div><div class="v">${f1(r.diff)}${rk('diff',r.diff)}</div><div class="s">pts/100 his matchups normally score above typical</div>
+      <div class="kp"><span>Star share<b>${r.star.toFixed(0)}%${rk('star',r.star)}</b></span><span>Raw<b>${f1(r.diff_raw)}</b></span></div></div>
+    <div class="mk"><div class="k">Matchup results</div><div class="v">${f1(r.res)}${rk('res',r.res)}</div><div class="s">pts/100 kept off vs their norm ${tag(r.res,r.res_se)}</div>
+      <div class="kp">${part('Shot-making','mak')}${part('FTs','ftv')}${part('TOs','tov')}</div></div>
+    <div class="mk"><div class="k">D-RAPM</div><div class="v">${f1(r.rapm)}${rk('rapm',r.rapm)}</div><div class="s">lineup-adjusted ${tag(r.rapm,r.rapm_se)}</div>
+      <div class="kp"><span>D-HPM<b>${f1(r.dhpm)}</b></span><span>Profile<b><a href="/hustle-plus-minus#${SLUG(r.n)}">Hustle ›</a></b></span></div></div>
+  </div>
+  <div class="mgrid"><div><div class="eyebrow" style="margin-bottom:8px">Who he guarded most · ${v.label}</div>
+    <div style="overflow-x:auto"><table class="atbl"><thead><tr><th class="l">Scorer</th><th>Poss</th><th>Pts</th><th title="What that scorer normally scores in that many possessions against everyone else">Expected</th><th title="Points per 100 possessions kept below his norm. Positive = held him under.">Held to</th><th>FG% vs him</th><th>FG% usual</th></tr></thead><tbody>${top||'<tr><td class="l dim" colspan="7">No matchups.</td></tr>'}</tbody></table></div>
+    <p class="note mn">Raw totals, not adjusted for noise: a few hot or cold nights swing these a lot. Expected uses each scorer's scoring against all other defenders that season.</p></div>
+    <div class="sbox"><div class="eyebrow" style="margin-bottom:6px">Index by season</div>${seasonsChart(pid)}</div></div>`;
+}
+function fromHash(){const h=decodeURIComponent(location.hash.slice(1));if(!h)return false;const e=Object.entries(cur().rows).find(([p,r])=>SLUG(r.n)===h)||Object.entries(V.l3.rows).find(([p,r])=>SLUG(r.n)===h);
+  if(!e)return false;if(!cur().rows[e[0]])state.view='l3';state.pos='all';state.team='all';state.sel=e[0];return true;}
+if(fromHash())openPop();render();
+window.addEventListener('hashchange',()=>{if(fromHash()){POP.hidden=true;openPop();render();}});
+// column pop-ups (same design as the other tools)
+(function(){const box=document.createElement('div');box.className='htip';box.hidden=true;box.setAttribute('role','tooltip');document.body.appendChild(box);const hov=matchMedia('(hover:hover)').matches;
+  thead.querySelectorAll('th').forEach(th=>{if(TIPS[th.dataset.k])th.dataset.tip=1;});
+  function show(th){const t=TIPS[th.dataset.k];if(!t)return;const unit=UNITS[th.dataset.k]||'';
+    box.innerHTML='<div class="hh"><span class="hl"></span>'+(unit?'<span class="hu"></span>':'')+'</div><div class="hb"></div>';
+    box.querySelector('.hl').textContent=t[0];if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=t[1];
+    box.hidden=false;box.classList.remove('up');const r=th.getBoundingClientRect(),w=box.offsetWidth,h=box.offsetHeight,c=r.left+r.width/2;
+    let x=Math.min(Math.max(8,c-w/2),innerWidth-w-8),y=r.bottom+9;if(y+h>innerHeight-8){y=Math.max(8,r.top-h-9);box.classList.add('up');}
+    box.style.left=x+'px';box.style.top=y+'px';box.style.setProperty('--cx',Math.min(Math.max(12,c-x),w-12)+'px');}
+  const hide=()=>{box.hidden=true;};
+  if(hov){thead.addEventListener('mouseover',e=>{const th=e.target.closest('th');if(th)show(th);});thead.addEventListener('mouseleave',hide);}
+  thead.addEventListener('focusin',e=>{const th=e.target.closest('th');if(th)show(th);});thead.addEventListener('focusout',hide);addEventListener('scroll',hide,{passive:true});})();
+})().catch(err=>{const m=document.createElement('p');m.className='load-err';m.textContent='The data for this page did not load. Refresh to try again.';document.querySelector('.app').prepend(m);console.error(err);});
+</script>
+</body></html>

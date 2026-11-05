@@ -19,13 +19,13 @@
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
-  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology" aria-current="page">Methodology</a><a href="/about">About</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology" aria-current="page">Methodology</a><a href="/about">About</a></nav>
 </div></header>
 <main>
 <section class="page-head"><div class="wrap"><div class="eyebrow">Methodology</div><h1>How the numbers work</h1>
 <p>Every metric on Hustle Stats, how it is built, and how much of it is skill versus noise. The full method notes, with live tables, also sit at the bottom of each tool.</p></div></section>
 <section class="section"><div class="wrap method-page">
-<nav class="toc" aria-label="On this page"><a href="#data">Data</a><a href="#shot-profile">Shot Profile</a><a href="#shot-difficulty">Shot difficulty</a><a href="#hpm">Hustle Plus-Minus</a><a href="#noise">Skill vs noise</a><a href="#peers">Role peers</a><a href="#limits">Limits</a></nav>
+<nav class="toc" aria-label="On this page"><a href="#data">Data</a><a href="#shot-profile">Shot Profile</a><a href="#shot-difficulty">Shot difficulty</a><a href="#hpm">Hustle Plus-Minus</a><a href="#matchups">Matchups</a><a href="#noise">Skill vs noise</a><a href="#peers">Role peers</a><a href="#limits">Limits</a></nav>
 <div class="mdoc">
 
 <section id="data"><h2>Data</h2>
@@ -79,6 +79,22 @@
 <h3>Does it repeat?</h3>
 <p>Year-to-year correlation of single-season HPM (2,000+ possessions in both seasons): 0.69 to 0.71. Blocks (0.87 to 0.92) and screen assists (0.93 to 0.96) repeat most; rebounding impact (0.39 to 0.54) least.</p></section>
 
+<section id="matchups"><h2>Matchups (Toughest Defenders)</h2>
+<p>The Matchups page ranks defenders on three parts, each turned into a percentile among qualified defenders in the view. The <b>Toughest Defender Index</b> is their average.</p>
+<h3>1. Assignment difficulty</h3>
+<p>From NBA.com's matchup tracking, which records who guarded whom on every possession. For each defender: how many points per 100 possessions the players he guarded normally score, compared with a typical assignment for his position. Each scorer's norm is his scoring against everyone else that season, so a defender's own results don't feed his difficulty. <b>Star share</b> is the share of his matchup time on the league's 50 highest-scoring players. Difficulty repeats strongly from season to season (r = 0.71 to 0.77).</p>
+<h3>2. Matchup results</h3>
+<p>Points per 100 matchup possessions kept off the board, compared with each scorer's norm and with defenders at the same position: <b>shot-making allowed</b> (field-goal points below the scorer's norm on the same number of shots), <b>free throws allowed</b> and <b>turnovers forced</b>. Each part is pulled toward zero by its noise; shot-making is the noisiest, so it is pulled the most and a tough make over a good contest barely moves a defender. <b>Shots allowed is left out on purpose:</b> NBA.com credits a shot to whoever is guarding the shooter at that moment, so help defenders absorb shots their teammates gave up. Results repeat at r = 0.46 to 0.68, and the full index at 0.65 to 0.79.</p>
+<h3>3. D-RAPM</h3>
+<p>Lineup-adjusted defense: a ridge regression of every possession's points on all ten players, with score margin and home court as controls (the same possession data as Hustle Plus-Minus). It credits help defense no matter who gets the shot on his line.</p>
+<p><b>Prior-informed.</b> A plain single-season fit starts every player at zero and barely repeats from one season to the next (r about 0.3). Like DARKO and LEBRON, this version starts each season from what we already know: 60% of the player's previous estimate, plus a box-score-style starting point from last season's D-HPM (steals, blocks, charges, rebounding, deflections). We chose those settings by predicting each next season's possessions from 2021-22 to 2025-26. Carrying 100% of the previous estimate forward repeats the most but predicts worse, a reminder that a metric agreeing with itself isn't the same as being accurate. The chosen version repeats at about r = 0.8.</p>
+<p><b>Checked against DARKO.</b> On the same next-season test, using DARKO's start-of-season defense ratings (darko.app, by Kostya Medvedovsky), our version predicted better in 2023-24, 2024-25 and 2025-26 and worse in 2021-22 and 2022-23, when it had only one or two seasons of history to build on. One caution: a few D-HPM weights were learned from all seasons, so our side of that test carries a little hindsight. The Last 3 seasons view averages the 2023-24 to 2025-26 estimates.</p>
+<h3>What it can't see</h3>
+<ul><li>Contest quality: matchup totals don't record how close the defender was. That is a separate research project with 2025-26 positional tracking.</li>
+<li>Switches, schemes and roles still shape the numbers after comparing within position.</li>
+<li>Guarding stars is a coach's vote of confidence, not proof of stopping them, so difficulty is one third of the index, not all of it.</li>
+<li>Off-ball work that never ends in a shot or turnover (denials, deterrence, communication) isn't counted.</li></ul></section>
+
 <section id="noise"><h2>Skill vs noise</h2>
 <p>Every number on the site is an estimate from a limited sample, so two ideas run through all of it.</p>
 <h3>Shrinkage</h3>
@@ -103,7 +119,7 @@
 <footer class="site-footer"><div class="wrap">
   <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
     <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
-  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
   <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
 </div>
 <div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
