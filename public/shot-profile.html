@@ -35,6 +35,7 @@
   <div class="ctl"><span class="lab">Shot detail</span><div class="seg" id="mode"></div></div>
   <div class="seg" id="games" hidden style="display:none"></div>
   <div class="ctl"><span class="lab">Baseline</span><div class="seg" id="base"></div></div>
+  <div class="ctl"><span class="lab">Numbers</span><div class="seg" id="adj"></div></div>
   <div class="ctl"><label for="posf">Position</label><select id="posf"><option value="all">All positions</option><option value="G">Guards (PG, SG)</option><option value="F">Forwards (SF, PF)</option><option value="B">Bigs (PF, C)</option><option value="PG">PG</option><option value="SG">SG</option><option value="SF">SF</option><option value="PF">PF</option><option value="C">C</option></select></div>
   <div class="ctl"><label for="teamf">Team</label><select id="teamf"><option value="all">All teams</option></select></div>
   <div class="ctl"><label for="minfga">Min FGA per season: <span id="minfgaV">400</span></label><input id="minfga" type="range" min="200" max="1200" step="50" value="400"></div>
@@ -44,7 +45,7 @@
 
 <section style="display:grid;gap:10px">
   <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
-    <div><h2 id="lbtitle">Leaderboard</h2><p class="note" style="margin:4px 0 0">Click a player to open his full breakdown. Total = Decisions + Execution.</p></div>
+    <div><h2 id="lbtitle">Leaderboard</h2><p class="note" style="margin:4px 0 0">Click a player to open his full breakdown. Total = Decisions + Execution.</p><p class="note" id="adjnote" hidden style="margin:4px 0 0;color:var(--accent)">Raw numbers: his actual FG% and FT% with no sample-size adjustment, so small samples swing more. Alignment is folded into Making in Raw. Switch to Adjusted for the default view.</p></div>
     <div class="legend" id="zlegend"></div>
   </div>
   <div class="tablewrap"><table id="tbl"><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
@@ -183,8 +184,8 @@ function U(p,vk){
   const out={x:Object.assign({},zraw.x,{sdA})};
   (state.mode==='type'?['A']:['A','T','R']).forEach(S=>{const [b,z,Lc,Rc,Lz,Rz,rb]=raw[S];const nc=cells.length;
     const s={N:nz(b[0]),T:nz(b[1]),fga:nz(b[2]),and1:nz(b[3]),pps:b[4],ft:b[5],ftraw:b[6],phi:b[7],z:{},Lz:{},Rz:{},rb:{sh:{trip:rb[nc]},fg:{},phi:rb[2*nc+1],ft:rb[2*nc+2]}};
-    cells.forEach((zz,j)=>{s.z[zz.k]=z[j];s.Lz[zz.k]=Lz[j];s.Rz[zz.k]=Rz[j];s.rb.sh[zz.k]=rb[j];s.rb.fg[zz.k]=rb[nc+1+j];});
-    [['L',Lc],['R',Rc]].forEach(([k,c])=>{const o={sel:nz(c[0]),foul:nz(c[1]),mak:nz(c[2]),ali:nz(c[3]),ftm:nz(c[4])};o.dec=o.sel+o.ali+o.foul;o.exe=o.mak+o.ftm;o.tot=o.dec+o.exe;o.pts=o.tot*s.N/100/VK[vk].wsum;s[k+'o']=o;});
+    cells.forEach((zz,j)=>{s.z[zz.k]=z[j];s.Lz[zz.k]=window.SP_RAW&&Lz[j]?[Lz[j][0],Lz[j][1],Lz[j][2],null]:Lz[j];s.Rz[zz.k]=window.SP_RAW&&Rz[j]?[Rz[j][0],Rz[j][1],Rz[j][2],null]:Rz[j];s.rb.sh[zz.k]=rb[j];s.rb.fg[zz.k]=rb[nc+1+j];});
+    [['L',Lc],['R',Rc]].forEach(([k,c])=>{const o={sel:nz(c[0]),foul:nz(c[1]),mak:nz(c[2]),ali:nz(c[3]),ftm:nz(c[4])};o.dec=o.sel+o.ali+o.foul;o.exe=o.mak+o.ftm;o.tot=o.dec+o.exe;o.pts=o.tot*s.N/100/VK[vk].wsum;if(window.SP_RAW)o.ali=null;s[k+'o']=o;});
     out[S]=s;});
   if(state.mode==='type'){out.T=out.A;out.R=out.A;}
   return p._c[ck]=out;}
@@ -214,6 +215,21 @@ const modeEl=seg('mode',[['zone','Zones'],['type','Zones + shot type']],'mode');
 const viewsEl=document.getElementById('viewsf');{const ORDV=['s26','s25','s24','s23','s22','s21','s20','w3','l3','l2','l6'];const og1=document.createElement('optgroup'),og2=document.createElement('optgroup');og1.label='Single season';og2.label='Combined seasons';ORDV.filter(k=>VK[k]).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k==='s26'?'2026-27 (live)':VK[k].label;(k[0]==='s'?og1:og2).appendChild(o);});viewsEl.append(og1,og2);}viewsEl.onchange=()=>{state.view=viewsEl.value;save();render();};
 const gamesEl=seg('games',[['A','All games'],['T','vs top-10 D'],['R','vs other 20']],'games');
 const baseEl=seg('base',[['L','League'],['R','Role peers']],'base');
+state.adj='adj';window.SP_RAW=false;
+const adjEl=document.getElementById('adj');let RAWD=null;const ADJ=new Map();
+[['adj','Adjusted','Default. Zone FG% and FT% pulled toward role peers by sample size, so small samples move less.'],['raw','Raw','His actual makes, with no sample-size adjustment.']].forEach(([v,l,t])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.title=t;b.onclick=()=>setAdj(v);adjEl.appendChild(b);});
+async function setAdj(v){if(v===state.adj)return;
+  if(v==='raw'&&!RAWD){adjEl.setAttribute('aria-busy','true');
+    try{RAWD=await Promise.all(['zone','type','team'].map(k=>fetch('data/shot_'+k+'_raw.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json();})));}
+    catch(e){adjEl.removeAttribute('aria-busy');const b=adjEl.querySelector('[data-v=raw]');b.disabled=true;b.title='Raw numbers are not available right now.';console.error(e);return;}
+    adjEl.removeAttribute('aria-busy');}
+  state.adj=v;window.SP_RAW=v==='raw';const raw=v==='raw';
+  PL.forEach(p=>{if(!ADJ.has(p))ADJ.set(p,{v:p.v,dt:p.dt,sl:p.sl,tr:p.tr});const a=ADJ.get(p);
+    if(raw){const r=RAWD[0].players[p.pid]||{};p.v=r.v||a.v;p.sl=r.sl||a.sl;p.tr=r.tr||a.tr;p.dt=RAWD[1].players[p.pid]||a.dt;}else{p.v=a.v;p.dt=a.dt;p.sl=a.sl;p.tr=a.tr;}p._c={};});
+  TM.forEach(p=>{if(!ADJ.has(p))ADJ.set(p,{v:p.v,dt:p.dt,sl:p.sl});const a=ADJ.get(p);
+    if(raw){const r=RAWD[2].teams[p.t]||{};p.v=r.v||a.v;p.dt=r.dt||a.dt;p.sl=r.sl||a.sl;}else{p.v=a.v;p.dt=a.dt;p.sl=a.sl;}p._c={};});
+  document.getElementById('adjnote').hidden=!raw;render();}
+
 const mf=document.getElementById('minfga');mf.value=state.min;mf.oninput=()=>{state.min=+mf.value;save();render();};
 document.getElementById('q').oninput=e=>{state.q=e.target.value;render();};
 document.getElementById('zlegend').innerHTML=Z.concat([TRIP]).map(z=>`<span><i style="background:var(${z.c})"></i>${z.name}</span>`).join('');
@@ -274,7 +290,7 @@ function render(){
   [...baseEl.children].forEach(b=>{b.disabled=tm&&b.dataset.v==='R';b.title=b.disabled?'Teams are measured against the league':'';});
   document.getElementById('qlab').textContent=tm?'Find team':'Find player';document.getElementById('q').placeholder=tm?'Name or abbreviation':'Name or team';
   document.getElementById('tbl').classList.toggle('teams',tm);document.getElementById('lbtitle').textContent=tm?'Team leaderboard':'Leaderboard';thead.querySelector('[data-k=name]').textContent=tm?'Team':'Player';
-  [[entEl,'ent'],[modeEl,'mode'],[gamesEl,'games'],[baseEl,'base']].forEach(([el,k])=>[...el.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===(k==='games'?GS():k==='base'?BS():state[k]))));
+  [[entEl,'ent'],[modeEl,'mode'],[gamesEl,'games'],[baseEl,'base'],[adjEl,'adj']].forEach(([el,k])=>[...el.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===(k==='games'?GS():k==='base'?BS():state[k]))));
   [...gamesEl.children].forEach(b=>{b.disabled=state.mode==='type'&&b.dataset.v!=='A';b.title=b.disabled?'Opponent splits are available in Zones mode':'';});
   viewsEl.value=state.view;
   document.getElementById('minfgaV').textContent=state.min;
@@ -550,11 +566,11 @@ window.addEventListener('hashchange',()=>{if(fromHash()){POP.hidden=true;openPop
 
 })().catch(err=>{const m=document.createElement('p');m.className='load-err';m.textContent='The data for this page did not load. Refresh to try again.';document.querySelector('.app').prepend(m);console.error(err);});
 
-(function(){const TIPS={"N": ["Attempts", "Attempts: field-goal attempts plus shooting-foul trips (fouled misses) in this view."], "pps": ["Points per attempt", "Points per attempt: points scored per field-goal attempt or shooting-foul trip."], "sel": ["Selection", "Selection: points from taking shot types worth more (or less) than an average attempt."], "ali": ["Alignment", "Alignment: points from taking more of the shots where he beats the baseline, and fewer where he doesn’t."], "foul": ["Foul drawing", "Foul drawing: points from getting to the line on his shots, valued at baseline FT%."], "dec": ["Decisions", "Selection + Alignment + Foul drawing: how many points his shot choices add."], "mak": ["Making", "Making: finishing by zone versus the baseline, scored on a baseline shot mix."], "ftm": ["FT making", "FT making: his FT% versus baseline, times his shooting-foul free throws."], "exe": ["Execution", "Making + FT making: how many points his conversion adds."], "tot": ["Total", "Decisions + Execution: his edge over the baseline (league or role peers)."], "pts": ["Points added", "Points added per season versus the baseline, at his actual volume."], "pct": ["Percentile", "Percentile of Total among the players shown with the current filters."], "xdif": ["Shot difficulty", "From NBA shot tracking: how much harder his shots are than average, given the closest defender, dribbles and shot type. Positive means harder shots."], "xmk": ["Shot-making vs expected", "From NBA shot tracking: points per 100 shots above what an average shooter would score on the same shots. Skill estimate; a gold dot means likely real."]},UNITS={"N": "attempts", "pps": "pts / attempt", "pts": "pts / season", "pct": "percentile", "xdif": "pts / 100 shots", "xmk": "pts / 100 shots", "*": "pts / 100 att"};const box=document.createElement('div');box.className='htip';box.hidden=true;box.setAttribute('role','tooltip');document.body.appendChild(box);
+(function(){const TIPS={"N": ["Attempts", "Attempts: field-goal attempts plus shooting-foul trips (fouled misses) in this view."], "pps": ["Points per attempt", "Points per attempt (field-goal attempt or shooting-foul trip), with zone FG% and FT% adjusted toward role peers for sample size. Garbage time removed. Switch Numbers to Raw for his actual makes."], "pps:raw": ["Points per attempt (raw)", "Points per attempt (field-goal attempt or shooting-foul trip) from his actual makes, with no sample-size adjustment. Garbage time removed."], "sel": ["Selection", "Selection: points from taking shot types worth more (or less) than an average attempt."], "ali": ["Alignment", "Alignment: points from taking more of the shots where he beats the baseline, and fewer where he doesn’t."], "foul": ["Foul drawing", "Foul drawing: points from getting to the line on his shots, valued at baseline FT%."], "dec": ["Decisions", "Selection + Alignment + Foul drawing: how many points his shot choices add."], "mak": ["Making", "Making: finishing by zone versus the baseline, scored on a baseline shot mix. Zone FG% adjusted toward role peers for sample size."], "mak:raw": ["Making (raw)", "Making: his actual makes by zone versus the baseline, on his own shot mix, with no sample-size adjustment. Includes Alignment in Raw."], "ali:raw": ["Alignment (raw)", "Folded into Making in Raw. With unadjusted makes, a 0-for-3 in a zone he rarely uses swings Making and Alignment by 30+ points in opposite directions, so the split means little."], "dec:raw": ["Decisions (raw)", "Selection + Foul drawing. In Raw, Alignment is part of Making."], "ftm": ["FT making", "FT making: his FT% versus baseline, times his shooting-foul free throws. FT% adjusted toward role peers for sample size."], "ftm:raw": ["FT making (raw)", "FT making: his actual FT% versus baseline, times his shooting-foul free throws."], "exe": ["Execution", "Making + FT making: how many points his conversion adds."], "tot": ["Total", "Decisions + Execution: his edge over the baseline (league or role peers)."], "pts": ["Points added", "Points added per season versus the baseline, at his actual volume."], "pct": ["Percentile", "Percentile of Total among the players shown with the current filters."], "xdif": ["Shot difficulty", "From NBA shot tracking: how much harder his shots are than average, given the closest defender, dribbles and shot type. Positive means harder shots."], "xmk": ["Shot-making vs expected", "From NBA shot tracking: points per 100 shots above what an average shooter would score on the same shots. Skill estimate; a gold dot means likely real."]},UNITS={"N": "attempts", "pps": "pts / attempt", "pts": "pts / season", "pct": "percentile", "xdif": "pts / 100 shots", "xmk": "pts / 100 shots", "*": "pts / 100 att"};const box=document.createElement('div');box.className='htip';box.hidden=true;box.setAttribute('role','tooltip');document.body.appendChild(box);
   const hov=matchMedia('(hover:hover)').matches;
   function prep(th){if(th.dataset.tipReady)return;th.dataset.tipReady=1;const t=TIPS[th.dataset.k];const body=t?t[1]:(th.title||'');if(!body)return;
     th.dataset.tip=body;th.removeAttribute('title');}
-  function show(th){prep(th);const body=th.dataset.tip;if(!body)return;const t=TIPS[th.dataset.k];
+  function show(th){prep(th);const rk=window.SP_RAW&&TIPS[th.dataset.k+':raw']?th.dataset.k+':raw':th.dataset.k;const t=TIPS[rk];const body=rk!==th.dataset.k?t[1]:th.dataset.tip;if(!body)return;
     const head=t?t[0]:th.textContent.trim(),unit=th.closest('#tbl')?(UNITS[th.dataset.k]||UNITS['*']||''):'';
     box.innerHTML='<div class="hh"><span class="hl"></span>'+(unit?'<span class="hu"></span>':'')+'</div><div class="hb"></div>';
     box.querySelector('.hl').textContent=head;box.querySelector('.hl').innerHTML=box.querySelector('.hl').innerHTML.replace(/eFG%/g,'<span style="text-transform:none">eFG%</span>');if(unit)box.querySelector('.hu').textContent=unit;box.querySelector('.hb').textContent=body;
