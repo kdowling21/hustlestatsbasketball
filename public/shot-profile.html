@@ -15,7 +15,7 @@
 <meta name="theme-color" content="#0b0b0c">
 <link rel="icon" href="/assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/icon_180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/shot.css">
-</head><body>
+<script>function FOLD(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[łŁ]/g,'l').replace(/[đĐ]/g,'d').replace(/[øØ]/g,'o').replace(/ß/g,'ss').replace(/[æÆ]/g,'ae').toLowerCase();}</script></head><body>
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
@@ -275,7 +275,7 @@ const POSG={G:['PG','SG'],F:['SF','PF'],B:['PF','C']};
 const posOK=pos=>state.pos==='all'||(POSG[state.pos]?POSG[state.pos].includes(pos):pos===state.pos);
 const fOK=x=>posOK(x.pos)&&(state.team==='all'||x.tm===state.team);
 const latestX=p=>{for(const k of ['s26','s25','w3','l3','l2','s24','s23'])if(p.v[k])return p.v[k].x;return {pos:'',tm:''};};
-const inView=p=>p.team?!!(p.v[state.view]&&(state.mode!=='type'||p.dt[state.view])):p.v[state.view]&&(state.mode!=='type'||p.dt[state.view])&&U(p,state.view).A.fga>=state.min*W()*(VK[state.view].frac||1)*(multi()?0.67:1)&&fOK(p.v[state.view].x);
+const inView=p=>p.team?!!(p.v[state.view]&&(state.mode!=='type'||p.dt[state.view])):p.v[state.view]&&(state.mode!=='type'||p.dt[state.view])&&((state.q.trim()&&FOLD(p.n).includes(FOLD(state.q.trim())))||U(p,state.view).A.fga>=state.min*W()*(VK[state.view].frac||1)*(multi()?0.67:1))&&fOK(p.v[state.view].x);
 const posEl=document.getElementById('posf'),teamEl=document.getElementById('teamf');
 [...new Set(PL.flatMap(p=>Object.values(p.v).map(v=>v.x.tm)).filter(Boolean))].sort().forEach(tm=>{const o=document.createElement('option');o.value=tm;o.textContent=tm;teamEl.appendChild(o);});
 posEl.value=state.pos;teamEl.value=state.team;if(teamEl.value!==state.team){state.team='all';teamEl.value='all';}
@@ -295,7 +295,7 @@ function render(){
   viewsEl.value=state.view;
   document.getElementById('minfgaV').textContent=state.min;
   const list=withPct(P.filter(inView));RKL=list;RKC={};
-  const q=state.q.toLowerCase(),match=p=>q&&(p.n+' '+p.t).toLowerCase().includes(q);
+  const q=FOLD(state.q),match=p=>q&&FOLD(p.n+' '+p.t).includes(q);
   const shown=q?list.filter(match):list;
   document.getElementById('count').textContent=`${shown.length} of ${list.length} ${tm?'teams':'players'}`+(!tm&&(state.pos!=='all'||state.team!=='all')?' · percentiles within this filter':'');
   if(state.sel==null||!list.find(p=>p.id===state.sel)){const t=[...list].sort((a,b)=>V(b).tot-V(a).tot)[0];state.sel=t?t.id:null;}

@@ -15,7 +15,7 @@
 <meta name="theme-color" content="#0b0b0c">
 <link rel="icon" href="/assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/icon_180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/hustle.css">
-</head><body>
+<script>function FOLD(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[łŁ]/g,'l').replace(/[đĐ]/g,'d').replace(/[øØ]/g,'o').replace(/ß/g,'ss').replace(/[æÆ]/g,'ae').toLowerCase();}</script></head><body>
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
@@ -203,7 +203,7 @@ function rkN(key,fn,p){if(!RKL)return 0;let a=RKC[key];if(!a){a=RKL.map(fn).filt
 function RKS(key,fn,p,pre){const r=rkN(key,fn,p);if(!r)return '';const n=RKL.length;return `${pre||''}<span class="rk ${r<=Math.max(5,Math.round(n*.05))?'hi':r>n-Math.max(5,Math.round(n*.05))?'lo':''}" title="Rank among ${n}">#${r}</span>`;}
 
 function playerList(){const vk=state.view,mn=minFor(vk);
-  return PL.map(p=>{const u=U(p,vk);if(!u)return null;u.p=p;return u;}).filter(u=>u&&u.poss>=mn&&(state.pos==='all'||u.pos===state.pos)&&(state.team==='all'||u.tm===state.team));}
+  return PL.map(p=>{const u=U(p,vk);if(!u)return null;u.p=p;return u;}).filter(u=>u&&(u.poss>=mn||(state.q.trim()&&FOLD(u.p.n).includes(FOLD(state.q.trim()))))&&(state.pos==='all'||u.pos===state.pos)&&(state.team==='all'||u.tm===state.team));}
 function teamList(){return (D.teams[state.view]||[]).map(TU);}
 
 function render(){
@@ -219,7 +219,7 @@ function render(){
   document.getElementById('eyebrow').textContent=`NBA play-by-play + NBA.com player tracking · 2020-21 to now · data through ${M.through||M.ref}`;
   const list=tm?teamList():playerList();
   RKL=list;RKC={};
-  const q=state.q.toLowerCase();const name=u=>tm?u.tm:u.p.n;const match=u=>q&&(name(u)+' '+(u.tm||'')).toLowerCase().includes(q);
+  const q=FOLD(state.q);const name=u=>tm?u.tm:u.p.n;const match=u=>q&&FOLD(name(u)+' '+(u.tm||'')).includes(q);
   const shown=q?list.filter(match):list;
   document.getElementById('count').textContent=`${shown.length} of ${list.length} ${tm?'teams':'players'}`;
   const sid=u=>tm?u.tm:u.p.id;

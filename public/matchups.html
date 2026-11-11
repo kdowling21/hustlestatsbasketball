@@ -15,7 +15,7 @@
 <meta name="theme-color" content="#0b0b0c">
 <link rel="icon" href="/assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/icon_180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/hustle.css"><link rel="stylesheet" href="/assets/matchups.css">
-</head><body>
+<script>function FOLD(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[łŁ]/g,'l').replace(/[đĐ]/g,'d').replace(/[øØ]/g,'o').replace(/ß/g,'ss').replace(/[æÆ]/g,'ae').toLowerCase();}</script></head><body>
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
@@ -136,21 +136,21 @@ function teams(){const v=cur(),all=rowsOf(v).filter(r=>r.tm&&r.z&&r.z.every(x=>x
 function render(){
   viewsEl.value=state.view;posEl.value=state.pos;teamEl.value=state.team;
   [...entEl.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.ent));
-  const v=cur(),E=state.ent,q=state.q.toLowerCase();
+  const v=cur(),E=state.ent,q=FOLD(state.q);
   posEl.disabled=E==='team';teamEl.disabled=E==='team';mpEl.disabled=E==='team';
   document.getElementById('minpV').textContent=minP().toLocaleString();
   document.getElementById('qlab').textContent=E==='team'?'Find team':'Find player';
   document.getElementById('eyebrow').textContent=`NBA.com matchup tracking + play-by-play · ${v.label}`;
   document.getElementById('chartsec').hidden=E!=='def';
   let list,keys;
-  if(E==='def'){const Q=rowsOf(v).filter(r=>r.q);ranks(Q,['tdi','diff','star','res','rapm','dhpm']);list=Q.filter(r=>posOK(r)&&tmOK(r)&&r.poss>=minP());
+  if(E==='def'){const Q=rowsOf(v).filter(r=>r.q);ranks(Q,['tdi','diff','star','res','rapm','dhpm']);list=Q.filter(r=>posOK(r)&&tmOK(r)&&(r.poss>=minP()||(state.q.trim()&&FOLD(r.n).includes(FOLD(state.q.trim())))));
     document.getElementById('lbtitle').textContent='Defenders';document.getElementById('lbnote').textContent='Click a player for his full breakdown, including the three parts of Results. Ranks are among all qualified defenders.';}
   else if(E==='sco'){const S=SC[state.view]||{};const A=Object.entries(S).map(([pid,r])=>{const pos=(v.rows[pid]||{}).pos||'';const ds=r.d.map(d=>({id:d[0],n:d[1],poss:d[2],pts:d[3],xp:d[4],sv:100*(d[4]-d[3])/d[2]}));
       const big=ds.filter(d=>d.poss>=100).sort((a,b)=>b.sv-a.sv);return Object.assign({pid,pos,most:ds[0]||null,tough:big[0]||null},r);});
-    ranks(A,['p100','fg']);list=A.filter(r=>tmOK(r)&&r.poss>=minP()&&(state.pos==='all'||!r.pos||PG[state.pos].includes(r.pos)));
+    ranks(A,['p100','fg']);list=A.filter(r=>tmOK(r)&&(r.poss>=minP()||(state.q.trim()&&FOLD(r.n).includes(FOLD(state.q.trim()))))&&(state.pos==='all'||!r.pos||PG[state.pos].includes(r.pos)));
     document.getElementById('lbtitle').textContent='Scorers';document.getElementById('lbnote').textContent='Who guarded each scorer most, and who slowed him down. Click a scorer for every defender with 60+ possessions on him.';}
   else{list=teams();ranks(list,['tindex','diff','res','rapm']);document.getElementById('lbtitle').textContent='Teams';document.getElementById('lbnote').textContent='Possession-weighted averages of each team’s defenders. Players count for their current or last team in this view.';}
-  const shown=q?list.filter(r=>(r.n+' '+(r.tm||'')).toLowerCase().includes(q)):list;
+  const shown=q?list.filter(r=>FOLD(r.n+' '+(r.tm||'')).includes(q)):list;
   document.getElementById('count').textContent=E==='team'?`${shown.length} teams`:`${shown.length} ${E==='def'?'defenders':'scorers'} · min ${minP().toLocaleString()} matchup possessions`;
   const k=state.sort,sv=r=>k==='name'?r.n:(r[k]==null?(state.dir<0?-1e9:1e9):r[k]);
   const sorted=[...shown].sort((a,b)=>k==='name'?a.n.localeCompare(b.n)*state.dir:(sv(a)-sv(b))*state.dir);
@@ -192,7 +192,7 @@ function drawChart(list){
   s+=ql(W-m.r-6,m.t+14,'end','TOUGH JOBS, TEAM DEFENDS BETTER')+ql(m.l+8,m.t+14,'start','EASIER JOBS, TEAM DEFENDS BETTER')+ql(W-m.r-6,H-m.b-8,'end','TOUGH JOBS, TEAM DEFENDS WORSE')+ql(m.l+8,H-m.b-8,'start','EASIER JOBS, TEAM DEFENDS WORSE');
   s+=`<text x="${W-m.r}" y="${H-6}" text-anchor="end" font-size="11" fill="var(--ink2)">Assignment difficulty (pts / 100) →</text><text transform="translate(12 ${m.t}) rotate(90)" font-size="11" fill="var(--ink2)">Team Defense Impact →</text>`;
   const lab=new Set([...pts].sort((a,b)=>(b.tdi||0)-(a.tdi||0)).slice(0,8).map(r=>r.pid));
-  const q=state.q.toLowerCase(),hit=r=>q&&(r.n+' '+r.tm).toLowerCase().includes(q);
+  const q=FOLD(state.q),hit=r=>q&&FOLD(r.n+' '+r.tm).includes(q);
   const ord=[...pts].sort((a,b)=>(a.pid===state.sel)-(b.pid===state.sel)||(a.tdi||0)-(b.tdi||0));
   ord.forEach(r=>{const on=r.pid===state.sel,dim=q&&!hit(r)&&!on,rad=on?7:2.5+4*Math.sqrt(r.poss/mx);
     s+=`<circle cx="${X(r.diff).toFixed(1)}" cy="${Y(r.rapm).toFixed(1)}" r="${rad.toFixed(1)}" fill="${on?'var(--ink)':GOLD((r.tdi||0)/100)}" fill-opacity="${dim?0.12:on?1:0.85}" stroke="${on?'var(--accent)':'var(--surface)'}" stroke-width="${on?2.5:1}"/>`;});
