@@ -43,12 +43,25 @@
 .tw-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;font:500 13px var(--f-body);color:var(--faint)}
 .tw-hist{display:grid;gap:34px}
 .tw-hist h3.tw-date{font:600 12px/1.3 var(--f-data);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 12px}
+
+.wn{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--court)}
+.wn .wrap{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:14px 28px;padding-top:18px;padding-bottom:18px;align-items:start}
+@media (max-width:900px){.wn .wrap{grid-template-columns:1fr}}
+.wn .wn-h{font:600 11px/1.4 var(--f-data);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);white-space:nowrap;padding-top:2px}
+.wn .wn-i{font:400 14px/1.5 var(--f-body);color:var(--mute);min-width:0}
+.wn .wn-i b{display:block;font:600 10.5px/1.3 var(--f-data);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+.wn .wn-li{padding-left:12px;position:relative;margin-bottom:4px}.wn .wn-li::before{content:'';position:absolute;left:0;top:.6em;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.wn .wn-i a{color:var(--text)}.wn .wn-i a:hover{color:var(--gold-hi)}
+
+.dl-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1.5px solid var(--gold);color:var(--gold);border-radius:8px;padding:9px 14px;font:600 13.5px/1 var(--f-body);cursor:pointer}
+.dl-btn:hover{background:rgba(208,176,99,.12);color:var(--gold-hi)}
+.dl-btn[disabled]{opacity:.5;cursor:wait}
 </style>
 </head><body>
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
-  <nav class="nav" aria-label="Main"><a href="/" aria-current="page">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/" aria-current="page">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/players">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
 </div></header>
 <main>
 
@@ -67,6 +80,12 @@
       <path d="M62 300 V120 A138 138 0 0 1 338 120 V300"/></svg>
     <img src="/assets/shield_md.png" alt="Hustle Stats shield logo" width="354" height="400">
   </div>
+</div></section>
+<section class="wn" aria-label="What changed this week"><div class="wrap">
+  <div class="wn-h">This week</div>
+  <div class="wn-i"><b>Data</b>197 games through Nov 15, 2026</div>
+  <div class="wn-i"><b>Trend Watch</b>Desmond Bane: 3PT share 33.0% → 65.4% · Orlando Magic: 3PT share 34.9% → 44.3% <a href="#trend-watch-home">See cards ↓</a></div>
+  <div class="wn-i"><b>New on the site</b><div class="wn-li"><a href="/players">Player pages: one link per player with Shot Profile, Hustle Plus-Minus and Matchups together</a></div><div class="wn-li"><a href="/about">About page is live</a></div><div class="wn-li"><a href="/research#trend-watch">Trend Watch: the week&#x27;s biggest shot-diet shifts, with history on Research</a></div></div>
 </div></section>
 
 <section class="section"><div class="wrap">
@@ -92,7 +111,7 @@
   </div>
 </div></section>
 
-<section class="section"><div class="wrap">
+<section class="section" id="trend-watch-home"><div class="wrap">
   <div class="section-head"><div><div class="eyebrow">Trend Watch</div><h2>This week's biggest shot-diet shifts</h2></div>
     <p>The player and team whose shot diet changed most, and what it did to their points per attempt. Data through Nov 15, 2026.</p></div>
   <div class="tw-grid"><article class="tw">
@@ -107,6 +126,7 @@
     <div><div class="k">From shooting</div><div class="v">−0.036</div><div class="s">everything else</div></div>
   </div>
   <ul><li>11 games this season, garbage time removed.</li><li>Biggest change of any qualified player this week compared with last season.</li><li>Shooting now: 7 of 16 (43.8%) at the rim, 60.5% before; 44 of 106 (41.5%) from 3PT, 38.6% before.</li></ul>
+  <div><button type="button" class="dl-btn" data-share-trend="2026-11-15|player">Download share image</button></div>
 </article><article class="tw">
   <div class="tw-top"><span class="tw-kind">Trend Watch · Team</span><span class="tw-per">2025-26 → 2026-27 through Nov 15</span></div>
   <h3><a href="/shot-profile#team-orl">Orlando Magic</a></h3>
@@ -119,6 +139,7 @@
     <div><div class="k">From shooting</div><div class="v">+0.020</div><div class="s">everything else</div></div>
   </div>
   <ul><li>12 games this season.</li><li>Biggest change of any qualified team this week compared with last season.</li><li>Shooting now: 156 of 227 (68.7%) at the rim, 64.7% before; 166 of 493 (33.7%) from 3PT, 34.3% before.</li></ul>
+  <div><button type="button" class="dl-btn" data-share-trend="2026-11-15|team">Download share image</button></div>
 </article></div>
   <div class="tw-foot"><span>Raw makes, garbage time removed. Attempts = FGA + shooting-foul trips.</span><a class="more" href="/research#trend-watch">Past trends →</a></div>
 </div></section>
@@ -145,11 +166,65 @@
 <footer class="site-footer"><div class="wrap">
   <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
     <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
-  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
   <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
 </div>
 <div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
 </footer>
+<script>
+window.HSShare=(()=>{
+const W=1600,H=900,BG='#0b0b0c',GOLD='#d0b063',HI='#ecd28a',TXT='#efe9dc',MUTE='#a29b8e',FAINT='#6f695f',LINE='#2b2822',DOWN='#c9826b';
+const SANS='"IBM Plex Sans",Inter,Arial,sans-serif',MONO='"IBM Plex Mono",Menlo,monospace';
+const COL={rim:'#ecd28a',pnt:'#b8954a',mid:'#6f5a33',c3:'#d9d2c3',ab3:'#efe9dc',three:'#efe9dc',trip:'#5e584e'};
+const LAB={rim:'Rim',pnt:'Paint',mid:'Mid',c3:'Corner 3',ab3:'Above-break 3',three:'3PT',trip:'FT trips'};
+let logo=null;const getLogo=()=>logo||(logo=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src='/assets/shield_sm.png';}));
+function base(){const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle=BG;x.fillRect(0,0,W,H);const g=x.createRadialGradient(W,0,0,W,0,900);g.addColorStop(0,'rgba(208,176,99,.22)');g.addColorStop(1,'rgba(208,176,99,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  return [c,x];}
+function t(x,s,X,Y,font,col,align){x.font=font;x.fillStyle=col;x.textAlign=align||'left';x.textBaseline='alphabetic';x.fillText(s,X,Y);return x.measureText(s).width;}
+function fit(x,s,maxW,size,weight,fam){let f=size;do{x.font=`${weight} ${f}px ${fam}`;if(x.measureText(s).width<=maxW)break;f-=2;}while(f>24);return `${weight} ${f}px ${fam}`;}
+async function frame(x,eyebrow){const L=await getLogo();t(x,eyebrow.toUpperCase(),80,92,`600 22px ${MONO}`,GOLD);
+  x.fillStyle=LINE;x.fillRect(80,H-96,W-160,2);if(L)x.drawImage(L,80,H-78,44,50);
+  t(x,'HUSTLE STATS',L?136:80,H-44,`700 26px ${SANS}`,GOLD);t(x,'hustlestatsbasketball.com · @HustleStatsBall',W-80,H-44,`500 22px ${MONO}`,FAINT,'right');}
+function bar(x,X,Y,w,h,parts){let cx=X;const tot=parts.reduce((a,p)=>a+p[1],0)||1;parts.forEach(([k,v])=>{const pw=(w-2*(parts.length-1))*v/tot;x.fillStyle=COL[k];x.fillRect(cx,Y,Math.max(pw,0),h);cx+=pw+2;});}
+function kpi(x,X,Y,label,val,sub,col){t(x,label.toUpperCase(),X,Y,`600 18px ${MONO}`,FAINT);t(x,val,X,Y+62,`700 56px ${SANS}`,col||TXT);if(sub)t(x,sub,X,Y+96,`500 19px ${MONO}`,MUTE);}
+const f1=v=>v==null?'–':(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1);
+const ORD=n=>n+(n%100>=11&&n%100<=13?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th'));
+function save(c,name){c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name+'.png';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);},'image/png');}
+const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+async function player(P,view,D){await document.fonts.ready;const [c,x]=base();const d=P.v[view]||{};const s=d.shot,h=d.hpm,m=d.mu,xf=d.xfg;
+  await frame(x,`Player · ${D.meta.views[view]}${view==='s26'?' · through '+new Date(D.meta.through+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):''}`);
+  x.font=fit(x,P.n,W-160,96,800,SANS);x.fillStyle=TXT;x.textAlign='left';x.fillText(P.n.toUpperCase(),80,200);
+  t(x,[P.tm,P.pos].filter(Boolean).join(' · '),80,248,`500 26px ${MONO}`,MUTE);
+  const K=[];if(s){K.push(['Points per attempt',s.ppa==null?'–':s.ppa.toFixed(3),s.ppa_rk?`${ORD(s.ppa_rk[0])} of ${s.ppa_rk[1]}`:'',HI]);K.push(['Shot Profile Total',f1(s.tot),s.tot_rk?`${s.tot_rk[2]}th percentile`:'',s.tot>=0?HI:DOWN]);}
+  if(xf)K.push(['xMaking',f1(xf.xmk),'pts / 100 shots vs expected',xf.xmk>=0?HI:DOWN]);
+  if(h)K.push(['Hustle Plus-Minus',f1(h.hpm),h.rk?`${h.rk[2]}th percentile`:'',h.hpm>=0?HI:DOWN]);
+  if(m&&m.tdi!=null)K.push(['Defender Index',String(Math.round(m.tdi)),'percentile, Matchups',HI]);
+  const cols=Math.min(K.length,4),cw=(W-160)/Math.max(cols,1);K.slice(0,4).forEach((k,i)=>kpi(x,80+i*cw,330,k[0],k[1],k[2],k[3]));
+  if(s){t(x,'SHOT DIET',80,560,`600 18px ${MONO}`,FAINT);const P2=['rim','pnt','mid','c3','ab3','trip'].map(k=>[k,s.diet[k]||0]);bar(x,80,580,W-160,34,P2);
+    let lx=80;P2.forEach(([k,v])=>{x.fillStyle=COL[k];x.fillRect(lx,648,16,16);const w=t(x,`${LAB[k]} ${v}%`,lx+24,663,`500 20px ${MONO}`,MUTE);lx+=w+56;});
+    t(x,`${s.att} attempts · raw makes, garbage time removed`,80,730,`400 20px ${SANS}`,FAINT);}
+  save(c,'hustle-stats-'+slug(P.n)+'-'+view);}
+async function trend(cd,through){await document.fonts.ready;const [c,x]=base();
+  await frame(x,`Trend Watch · ${cd.kind==='player'?'Player':'Team'} · ${cd.periods[0]} → ${cd.periods[1]}`);
+  x.font=fit(x,cd.name,W-160,84,800,SANS);x.fillStyle=TXT;x.textAlign='left';x.fillText(cd.name.toUpperCase(),80,190);
+  const up=cd.change>0;t(x,`${cd.label} share of ${cd.kind==='player'?'his':'their'} attempts`,80,250,`500 30px ${SANS}`,MUTE);
+  const w1=t(x,cd.before.toFixed(1)+'%',80,390,`700 92px ${SANS}`,FAINT);t(x,'→',80+w1+30,380,`600 64px ${SANS}`,GOLD);const w2=t(x,'→',0,-100,`600 64px ${SANS}`,BG);
+  t(x,cd.after.toFixed(1)+'%',80+w1+30+w2+30,390,`800 132px ${SANS}`,HI);
+  t(x,`Rank among ${cd.rank_after[1]} ${cd.kind==='player'?'qualified players':'teams'}: ${ORD(cd.rank_before[0])} → ${ORD(cd.rank_after[0])}`,80,450,`500 24px ${MONO}`,MUTE);
+  const ks=['rim','pnt','mid','three','trip'];t(x,'BEFORE',80,528,`600 18px ${MONO}`,FAINT);bar(x,200,508,W-280,26,ks.map(k=>[k,cd.diet[k][0]]));
+  t(x,'NOW',80,574,`600 18px ${MONO}`,FAINT);bar(x,200,554,W-280,26,ks.map(k=>[k,cd.diet[k][1]]));
+  let lx=200;ks.forEach(k=>{x.fillStyle=COL[k];x.fillRect(lx,606,16,16);const w=t(x,`${LAB[k]} ${cd.diet[k][0].toFixed(1)}→${cd.diet[k][1].toFixed(1)}%`,lx+24,621,`500 19px ${MONO}`,MUTE);lx+=w+44;});
+  const dc=cd.ppa_change<0?DOWN:HI;kpi(x,80,672,'Points per attempt',`${cd.ppa_before.toFixed(3)} → ${cd.ppa_after.toFixed(3)}`,`${ORD(cd.ppa_rank_before[0])} → ${ORD(cd.ppa_rank_after[0])} of ${cd.ppa_rank_after[1]}`,dc);
+  const sg=v=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(3);kpi(x,760,672,'From shot mix',sg(cd.ppa_from_mix),'new mix at old make rates');kpi(x,1180,672,'From shooting',sg(cd.ppa_from_shooting),'everything else');
+  save(c,'hustle-stats-trend-'+slug(cd.name)+'-'+through);}
+function wire(root){(root||document).querySelectorAll('[data-share-trend]').forEach(b=>{if(b.dataset.wired)return;b.dataset.wired=1;b.onclick=async()=>{b.disabled=true;try{
+  const [th,kind]=b.dataset.shareTrend.split('|');const T=await fetch('/data/trends.json').then(r=>r.json());const e=T.entries.find(e=>e.through===th);if(e&&e[kind])await trend(e[kind],th);}finally{b.disabled=false;}};});}
+document.addEventListener('DOMContentLoaded',()=>wire());
+document.addEventListener('pp:render',ev=>{const {P,view,D}=ev.detail;const a=document.querySelector('.pp-actions');if(!a||a.querySelector('.dl-btn'))return;
+  const b=document.createElement('button');b.type='button';b.className='dl-btn';b.textContent='Download share image';b.onclick=async()=>{b.disabled=true;try{const v=a.querySelector('[aria-pressed=true]');await player(P,v?v.dataset.v:view,D);}finally{b.disabled=false;}};a.prepend(b);});
+return {player,trend,wire};})();
+</script>
 <script>
 (function(){const el=document.getElementById('latest');if(!el)return;
   fetch('/api/hustle-report').then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.posts||!d.posts.length)return;const p=d.posts[0];

@@ -19,7 +19,7 @@
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
-  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus" aria-current="page">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus" aria-current="page">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/players">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
 </div></header>
 <main>
 <div class="app">
@@ -124,7 +124,7 @@
 <footer class="site-footer"><div class="wrap">
   <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
     <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
-  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
   <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
 </div>
 <div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
@@ -298,7 +298,7 @@ function drawDetail(u){
   const rows=DISP.map(k=>`<tr><td class="l">${DL[k]}</td><td class="num"><strong>${f2(u.s[k])}</strong></td><td class="num dim">${f2(u.sr[k])}</td><td class="num dim">${f2(lgv[k])}</td><td class="num">${RKS('s'+k,x=>NEG.has(k)?-x.s[k]:x.s[k],u)}</td></tr>`).join('');
   const xr=[['OREB% (his share of available)','OREB%',pc],['DREB% (his share of available)','DREB%',pc],['Block recovery rate','blkrec%',pc],['Pts per steal (team, that possession)','pos_per_stl',f2],['Miles per 36 min','miles36',f2],['Average speed (mph)','speed',f2]]
     .map(([l,k,f])=>`<tr><td class="l">${l}</td><td class="num"><strong>${f(u.x[k])}</strong></td><td></td><td></td><td class="num">${RKS('x'+k,x=>x.x[k],u)}</td></tr>`).join('');
-  el.innerHTML=`<div class="eyebrow">${u.tm||'–'} · ${POSL[u.pos]||'–'} · ${VL[vk]} · ${Math.round(u.poss).toLocaleString()} possessions${vk==='cur'?' (time-weighted)':''}</div><h3 id="popTitle">${p.n}</h3>
+  el.innerHTML=`<div class="eyebrow">${u.tm||'–'} · ${POSL[u.pos]||'–'} · ${VL[vk]} · ${Math.round(u.poss).toLocaleString()} possessions${vk==='cur'?' (time-weighted)':''}</div><h3 id="popTitle">${p.n}</h3>${p.team?'':`<a class="pplink" href="/player?p=${SLUG(p.n)}" style="display:inline-block;margin:2px 0 8px;font:600 13px var(--body,inherit);color:var(--accent,#d0b063)">Player page →</a>`}
   <div class="dgrid"><div class="dcol"><div class="kpis"><div class="kpi hi"><div class="k">HPM</div><div class="v">${f1(u.HPM)}</div><div class="s">${RKS('HPM',x=>x.HPM,u)}of ${n} ${NT(u.HPM,u.sd)}</div></div>
    <div class="kpi"><div class="k">O-HPM</div><div class="v">${f1(u.O)}</div><div class="s">${RKS('O',x=>x.O,u)}${NT(u.O,u.sdO)}</div></div>
    <div class="kpi"><div class="k">D-HPM</div><div class="v">${f1(u.D)}</div><div class="s">${RKS('D',x=>x.D,u)}${NT(u.D,u.sdD)}</div></div>

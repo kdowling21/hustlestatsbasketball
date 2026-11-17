@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Player · Hustle Stats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Shot Profile, Hustle Plus-Minus and Matchups for one player, on one page.">
+<link rel="canonical" href="https://hustlestatsbasketball.com/player">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Hustle Stats">
+<meta property="og:title" content="Player · Hustle Stats"><meta property="og:description" content="Shot Profile, Hustle Plus-Minus and Matchups for one player, on one page.">
+<meta property="og:url" content="https://hustlestatsbasketball.com/player"><meta property="og:image" content="https://hustlestatsbasketball.com/assets/og/home.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Player · Hustle Stats: Hustle Stats basketball analytics">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@HustleStatsBall">
+<meta name="twitter:title" content="Player · Hustle Stats"><meta name="twitter:description" content="Shot Profile, Hustle Plus-Minus and Matchups for one player, on one page."><meta name="twitter:image" content="https://hustlestatsbasketball.com/assets/og/home.png">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="/assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/icon_180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="/assets/site.css"><style>
+.pl-search{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.pl-search input{flex:1 1 260px;min-width:0;background:var(--court);border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--text);font:500 16px var(--f-body)}
+.pl-search input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.pl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.pl-list a{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--court);border:1px solid var(--line);border-radius:8px;color:var(--text);text-decoration:none;font:600 14.5px var(--f-body);min-width:0}
+.pl-list a span{font:500 12px var(--f-data);color:var(--faint);white-space:nowrap}
+.pl-list a:hover{border-color:var(--gold);color:var(--gold-hi)}
+.pp-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:14px 24px}
+.pp-head h1{margin:6px 0 0}
+.pp-meta{font:500 14px var(--f-data);color:var(--faint);margin-top:8px}
+.pp-seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.pp-seg button{background:transparent;border:0;color:var(--mute);font:600 13.5px var(--f-body);padding:10px 14px;cursor:pointer}
+.pp-seg button[aria-pressed=true]{background:var(--gold);color:var(--ink)}
+.pp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:860px){.pp-grid{grid-template-columns:1fr}}
+.pp-card{background:var(--court);border:1px solid var(--line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.pp-card.wide{grid-column:1/-1}
+.pp-card h2{font:700 13px/1.3 var(--f-data);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pp-card h2 a{font:500 12px var(--f-body);letter-spacing:0;text-transform:none;color:var(--mute)}
+.pp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:12px}
+.pp-k .k{font:600 10.5px/1.3 var(--f-data);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.pp-k .v{font:700 26px/1.15 var(--f-display);color:var(--text);font-variant-numeric:tabular-nums;margin-top:4px}
+.pp-k .v.pos{color:var(--gold-hi)}.pp-k .v.neg{color:var(--down)}
+.pp-k .s{font:500 12px/1.4 var(--f-data);color:var(--faint);margin-top:2px}
+.pp-bar{display:flex;height:16px;border-radius:3px;overflow:hidden;gap:2px}
+.pp-bar i{display:block;height:100%}
+.pp-leg{display:flex;flex-wrap:wrap;gap:6px 14px;font:500 12px var(--f-data);color:var(--mute)}
+.pp-leg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.pp-note{font:400 13px/1.5 var(--f-body);color:var(--faint);margin:0}
+.pp-list{margin:0;padding-left:18px;color:var(--mute);font:400 14px/1.55 var(--f-body)}
+.pp-empty{color:var(--faint);font:400 14px var(--f-body)}
+.pp-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.dl-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1.5px solid var(--gold);color:var(--gold);border-radius:8px;padding:9px 14px;font:600 13.5px/1 var(--f-body);cursor:pointer}
+.dl-btn:hover{background:rgba(208,176,99,.12);color:var(--gold-hi)}
+.dl-btn[disabled]{opacity:.5;cursor:wait}
+</style>
+</head><body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
+    <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/players">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+</div></header>
+<main>
+<section class="section"><div class="wrap" id="pp"><p class="pp-empty">Loading…</p></div></section>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+    <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
+</div>
+<div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
+</footer>
+<script>
+window.HSShare=(()=>{
+const W=1600,H=900,BG='#0b0b0c',GOLD='#d0b063',HI='#ecd28a',TXT='#efe9dc',MUTE='#a29b8e',FAINT='#6f695f',LINE='#2b2822',DOWN='#c9826b';
+const SANS='"IBM Plex Sans",Inter,Arial,sans-serif',MONO='"IBM Plex Mono",Menlo,monospace';
+const COL={rim:'#ecd28a',pnt:'#b8954a',mid:'#6f5a33',c3:'#d9d2c3',ab3:'#efe9dc',three:'#efe9dc',trip:'#5e584e'};
+const LAB={rim:'Rim',pnt:'Paint',mid:'Mid',c3:'Corner 3',ab3:'Above-break 3',three:'3PT',trip:'FT trips'};
+let logo=null;const getLogo=()=>logo||(logo=new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src='/assets/shield_sm.png';}));
+function base(){const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle=BG;x.fillRect(0,0,W,H);const g=x.createRadialGradient(W,0,0,W,0,900);g.addColorStop(0,'rgba(208,176,99,.22)');g.addColorStop(1,'rgba(208,176,99,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  return [c,x];}
+function t(x,s,X,Y,font,col,align){x.font=font;x.fillStyle=col;x.textAlign=align||'left';x.textBaseline='alphabetic';x.fillText(s,X,Y);return x.measureText(s).width;}
+function fit(x,s,maxW,size,weight,fam){let f=size;do{x.font=`${weight} ${f}px ${fam}`;if(x.measureText(s).width<=maxW)break;f-=2;}while(f>24);return `${weight} ${f}px ${fam}`;}
+async function frame(x,eyebrow){const L=await getLogo();t(x,eyebrow.toUpperCase(),80,92,`600 22px ${MONO}`,GOLD);
+  x.fillStyle=LINE;x.fillRect(80,H-96,W-160,2);if(L)x.drawImage(L,80,H-78,44,50);
+  t(x,'HUSTLE STATS',L?136:80,H-44,`700 26px ${SANS}`,GOLD);t(x,'hustlestatsbasketball.com · @HustleStatsBall',W-80,H-44,`500 22px ${MONO}`,FAINT,'right');}
+function bar(x,X,Y,w,h,parts){let cx=X;const tot=parts.reduce((a,p)=>a+p[1],0)||1;parts.forEach(([k,v])=>{const pw=(w-2*(parts.length-1))*v/tot;x.fillStyle=COL[k];x.fillRect(cx,Y,Math.max(pw,0),h);cx+=pw+2;});}
+function kpi(x,X,Y,label,val,sub,col){t(x,label.toUpperCase(),X,Y,`600 18px ${MONO}`,FAINT);t(x,val,X,Y+62,`700 56px ${SANS}`,col||TXT);if(sub)t(x,sub,X,Y+96,`500 19px ${MONO}`,MUTE);}
+const f1=v=>v==null?'–':(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1);
+const ORD=n=>n+(n%100>=11&&n%100<=13?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th'));
+function save(c,name){c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name+'.png';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);},'image/png');}
+const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+async function player(P,view,D){await document.fonts.ready;const [c,x]=base();const d=P.v[view]||{};const s=d.shot,h=d.hpm,m=d.mu,xf=d.xfg;
+  await frame(x,`Player · ${D.meta.views[view]}${view==='s26'?' · through '+new Date(D.meta.through+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):''}`);
+  x.font=fit(x,P.n,W-160,96,800,SANS);x.fillStyle=TXT;x.textAlign='left';x.fillText(P.n.toUpperCase(),80,200);
+  t(x,[P.tm,P.pos].filter(Boolean).join(' · '),80,248,`500 26px ${MONO}`,MUTE);
+  const K=[];if(s){K.push(['Points per attempt',s.ppa==null?'–':s.ppa.toFixed(3),s.ppa_rk?`${ORD(s.ppa_rk[0])} of ${s.ppa_rk[1]}`:'',HI]);K.push(['Shot Profile Total',f1(s.tot),s.tot_rk?`${s.tot_rk[2]}th percentile`:'',s.tot>=0?HI:DOWN]);}
+  if(xf)K.push(['xMaking',f1(xf.xmk),'pts / 100 shots vs expected',xf.xmk>=0?HI:DOWN]);
+  if(h)K.push(['Hustle Plus-Minus',f1(h.hpm),h.rk?`${h.rk[2]}th percentile`:'',h.hpm>=0?HI:DOWN]);
+  if(m&&m.tdi!=null)K.push(['Defender Index',String(Math.round(m.tdi)),'percentile, Matchups',HI]);
+  const cols=Math.min(K.length,4),cw=(W-160)/Math.max(cols,1);K.slice(0,4).forEach((k,i)=>kpi(x,80+i*cw,330,k[0],k[1],k[2],k[3]));
+  if(s){t(x,'SHOT DIET',80,560,`600 18px ${MONO}`,FAINT);const P2=['rim','pnt','mid','c3','ab3','trip'].map(k=>[k,s.diet[k]||0]);bar(x,80,580,W-160,34,P2);
+    let lx=80;P2.forEach(([k,v])=>{x.fillStyle=COL[k];x.fillRect(lx,648,16,16);const w=t(x,`${LAB[k]} ${v}%`,lx+24,663,`500 20px ${MONO}`,MUTE);lx+=w+56;});
+    t(x,`${s.att} attempts · raw makes, garbage time removed`,80,730,`400 20px ${SANS}`,FAINT);}
+  save(c,'hustle-stats-'+slug(P.n)+'-'+view);}
+async function trend(cd,through){await document.fonts.ready;const [c,x]=base();
+  await frame(x,`Trend Watch · ${cd.kind==='player'?'Player':'Team'} · ${cd.periods[0]} → ${cd.periods[1]}`);
+  x.font=fit(x,cd.name,W-160,84,800,SANS);x.fillStyle=TXT;x.textAlign='left';x.fillText(cd.name.toUpperCase(),80,190);
+  const up=cd.change>0;t(x,`${cd.label} share of ${cd.kind==='player'?'his':'their'} attempts`,80,250,`500 30px ${SANS}`,MUTE);
+  const w1=t(x,cd.before.toFixed(1)+'%',80,390,`700 92px ${SANS}`,FAINT);t(x,'→',80+w1+30,380,`600 64px ${SANS}`,GOLD);const w2=t(x,'→',0,-100,`600 64px ${SANS}`,BG);
+  t(x,cd.after.toFixed(1)+'%',80+w1+30+w2+30,390,`800 132px ${SANS}`,HI);
+  t(x,`Rank among ${cd.rank_after[1]} ${cd.kind==='player'?'qualified players':'teams'}: ${ORD(cd.rank_before[0])} → ${ORD(cd.rank_after[0])}`,80,450,`500 24px ${MONO}`,MUTE);
+  const ks=['rim','pnt','mid','three','trip'];t(x,'BEFORE',80,528,`600 18px ${MONO}`,FAINT);bar(x,200,508,W-280,26,ks.map(k=>[k,cd.diet[k][0]]));
+  t(x,'NOW',80,574,`600 18px ${MONO}`,FAINT);bar(x,200,554,W-280,26,ks.map(k=>[k,cd.diet[k][1]]));
+  let lx=200;ks.forEach(k=>{x.fillStyle=COL[k];x.fillRect(lx,606,16,16);const w=t(x,`${LAB[k]} ${cd.diet[k][0].toFixed(1)}→${cd.diet[k][1].toFixed(1)}%`,lx+24,621,`500 19px ${MONO}`,MUTE);lx+=w+44;});
+  const dc=cd.ppa_change<0?DOWN:HI;kpi(x,80,672,'Points per attempt',`${cd.ppa_before.toFixed(3)} → ${cd.ppa_after.toFixed(3)}`,`${ORD(cd.ppa_rank_before[0])} → ${ORD(cd.ppa_rank_after[0])} of ${cd.ppa_rank_after[1]}`,dc);
+  const sg=v=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(3);kpi(x,760,672,'From shot mix',sg(cd.ppa_from_mix),'new mix at old make rates');kpi(x,1180,672,'From shooting',sg(cd.ppa_from_shooting),'everything else');
+  save(c,'hustle-stats-trend-'+slug(cd.name)+'-'+through);}
+function wire(root){(root||document).querySelectorAll('[data-share-trend]').forEach(b=>{if(b.dataset.wired)return;b.dataset.wired=1;b.onclick=async()=>{b.disabled=true;try{
+  const [th,kind]=b.dataset.shareTrend.split('|');const T=await fetch('/data/trends.json').then(r=>r.json());const e=T.entries.find(e=>e.through===th);if(e&&e[kind])await trend(e[kind],th);}finally{b.disabled=false;}};});}
+document.addEventListener('DOMContentLoaded',()=>wire());
+document.addEventListener('pp:render',ev=>{const {P,view,D}=ev.detail;const a=document.querySelector('.pp-actions');if(!a||a.querySelector('.dl-btn'))return;
+  const b=document.createElement('button');b.type='button';b.className='dl-btn';b.textContent='Download share image';b.onclick=async()=>{b.disabled=true;try{const v=a.querySelector('[aria-pressed=true]');await player(P,v?v.dataset.v:view,D);}finally{b.disabled=false;}};a.prepend(b);});
+return {player,trend,wire};})();
+</script>
+<script>
+(async()=>{
+const D=await fetch('/data/players.json').then(r=>r.json());
+const q=new URLSearchParams(location.search).get('p')||location.hash.slice(1);
+const P=D.players.find(p=>p.s===q)||D.players.find(p=>p.id===q);
+const root=document.getElementById('pp');
+if(!P){root.innerHTML='<p class="pp-empty">Player not found. <a href="/players">Browse all players</a>.</p>';return;}
+document.title=P.n+' · Hustle Stats';
+const ORD=n=>n+(n%100>=11&&n%100<=13?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th'));
+const f1=x=>x==null?'–':(x>0?'+':x<0?'−':'')+Math.abs(x).toFixed(1);
+const f3=x=>x==null?'–':x.toFixed(3);
+const cls=x=>x==null?'':x>0?'pos':x<0?'neg':'';
+const rk=(r,unit)=>r?`${ORD(r[0])} of ${r[1]} · ${r[2]}th pct`:(unit||'below the minimum, unranked');
+const COL={rim:'#ecd28a',pnt:'#b8954a',mid:'#6f5a33',c3:'#d9d2c3',ab3:'#efe9dc',trip:'#5e584e'};
+const LAB={rim:'Rim',pnt:'Paint',mid:'Mid-range',c3:'Corner 3',ab3:'Above-break 3',trip:'FT trips'};
+const views=Object.keys(D.meta.views).filter(k=>P.v[k]);
+let view=views[0];
+const K=(k,v,s,c)=>`<div class="pp-k"><div class="k">${k}</div><div class="v ${c||''}">${v}</div><div class="s">${s||''}</div></div>`;
+function shot(d){const s=d.shot,x=d.xfg;if(!s)return `<div class="pp-card"><h2>Shot Profile</h2><p class="pp-empty">No shot data in this view.</p></div>`;
+  const bar=Object.keys(COL).map(k=>`<i style="width:${s.diet[k]||0}%;background:${COL[k]}" title="${LAB[k]} ${s.diet[k]}%"></i>`).join('');
+  const leg=Object.keys(COL).map(k=>`<span><i style="background:${COL[k]}"></i>${LAB[k]} ${s.diet[k]}%${k!=='trip'&&s.made[k][1]?` · ${s.made[k][0]}/${s.made[k][1]}`:''}</span>`).join('');
+  return `<div class="pp-card"><h2>Shot Profile<a href="/shot-profile#${P.s}">Open in Shot Profile →</a></h2>
+  <div class="pp-kpis">${K('Points per attempt',f3(s.ppa),rk(s.ppa_rk))}${K('Decisions',f1(s.dec),'pts / 100 att vs league',cls(s.dec))}${K('Execution',f1(s.exe),'pts / 100 att vs league',cls(s.exe))}${K('Total',f1(s.tot),rk(s.tot_rk),cls(s.tot))}</div>
+  <div class="pp-bar">${bar}</div><div class="pp-leg">${leg}</div>
+  ${x?`<div class="pp-kpis">${K('Shot difficulty',f1(x.diff),'pts / 100 shots, + = harder',cls(x.diff))}${K('xMaking',f1(x.xmk),Math.abs(x.z)>=2?'likely real':'could be noise',cls(x.xmk))}${K('eFG% vs expected',x.efg.toFixed(1)+'%','expected '+x.xefg.toFixed(1)+'% on '+x.shots+' shots')}</div>`:''}
+  <p class="pp-note">${s.att} attempts (${s.fga} FGA + fouled trips), garbage time removed. PPA uses raw makes; Decisions, Execution and Total are vs league average, adjusted. ${s.q?'':'Below the '+s.min+'-FGA leaderboard minimum, so unranked.'}</p></div>`;}
+function hpm(d){const h=d.hpm;if(!h)return `<div class="pp-card"><h2>Hustle Plus-Minus</h2><p class="pp-empty">No hustle data in this view.</p></div>`;
+  return `<div class="pp-card"><h2>Hustle Plus-Minus${h.label?' · '+h.label:''}<a href="/hustle-plus-minus#${P.s}">Open in Hustle Plus-Minus →</a></h2>
+  <div class="pp-kpis">${K('HPM',f1(h.hpm),rk(h.rk),cls(h.hpm))}${K('O-HPM',f1(h.o),rk(h.o_rk),cls(h.o))}${K('D-HPM',f1(h.d),rk(h.d_rk),cls(h.d))}</div>
+  <ul class="pp-list">${h.top.map(t=>`<li>${t[0]}: ${f1(t[1])} pts / 100</li>`).join('')}</ul>
+  <p class="pp-note">Points per 100 possessions vs an average player, over ${h.poss.toLocaleString()} possessions. ${Math.abs(h.hpm)>2*h.sd?'Likely real.':'Within its noise range.'} ${h.q?'':'Below the '+h.min.toLocaleString()+'-possession minimum, so unranked.'}</p></div>`;}
+function mu(d){const m=d.mu,s=d.sc;if(!m&&!s)return '';
+  const def=m?`<div class="pp-kpis">${K('Defender Index',m.tdi==null?'–':Math.round(m.tdi),m.q?rk(m.tdi_rk):'below the minimum')}${K('Assignment difficulty',f1(m.diff),rk(m.diff_rk,''),cls(m.diff))}${K('Star share',m.star+'%','of matchups on top-50 scorers')}${K('Results',f1(m.res),rk(m.res_rk,''),cls(m.res))}${K('Team D Impact',f1(m.rapm),rk(m.rapm_rk,''),cls(m.rapm))}</div>`:'';
+  const sc=s?`<ul class="pp-list"><li>As a scorer: ${s.p100} pts per 100 matchup possessions${s.rk?` (${ORD(s.rk[0])} of ${s.rk[1]})`:''}${s.fg!=null?`, ${s.fg}% FG`:''}</li>${s.most?`<li>Most guarded by ${s.most[0]} (${s.most[1]} possessions)</li>`:''}${s.tough?`<li>Toughest defender: ${s.tough[0]}, held him ${f1(s.tough[2])} pts / 100 vs his usual (${s.tough[1]} possessions)</li>`:''}</ul>`:'';
+  return `<div class="pp-card wide"><h2>Matchups<a href="/matchups#${P.s}">Open in Matchups →</a></h2>${def}${sc}
+  <p class="pp-note">NBA.com matchup tracking. ${m?m.poss.toLocaleString()+' possessions as primary defender. ':''}${m&&!m.q?'Below the '+m.min.toLocaleString()+'-possession minimum, so the Index is unranked. ':''}Small samples swing a lot; see Methodology.</p></div>`;}
+function tw(){if(!P.tw)return '';return `<div class="pp-card wide"><h2>Trend Watch</h2><ul class="pp-list">${P.tw.map(t=>`<li>${t.through}: ${t.headline} (from ${t.before}%), PPA ${t.ppa[0].toFixed(3)} → ${t.ppa[1].toFixed(3)}</li>`).join('')}</ul></div>`;}
+function render(){const d=P.v[view];
+  root.innerHTML=`<div class="pp-head"><div><div class="eyebrow">Player</div><h1>${P.n}</h1><div class="pp-meta">${[P.tm,P.pos].filter(Boolean).join(' · ')} · data through ${new Date(D.meta.through+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>
+  <div class="pp-actions"><div class="pp-seg" role="group" aria-label="Seasons">${views.map(k=>`<button type="button" data-v="${k}" aria-pressed="${k===view}">${D.meta.views[k]}</button>`).join('')}</div></div></div>
+  <div class="pp-grid" style="margin-top:22px">${shot(d)}${hpm(d)}${mu(d)}${tw()}</div>`;
+  root.querySelectorAll('.pp-seg button').forEach(b=>b.onclick=()=>{view=b.dataset.v;render();});
+  document.dispatchEvent(new CustomEvent('pp:render',{detail:{P,view,D}}));}
+render();
+})().catch(e=>{document.getElementById('pp').innerHTML='<p class="pp-empty">The player data did not load. Refresh to try again.</p>';console.error(e);});
+</script>
+</body></html>

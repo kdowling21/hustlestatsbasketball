@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Players · Hustle Stats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Every NBA player with Hustle Stats data: one page each for Shot Profile, Hustle Plus-Minus and Matchups.">
+<link rel="canonical" href="https://hustlestatsbasketball.com/players">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Hustle Stats">
+<meta property="og:title" content="Players · Hustle Stats"><meta property="og:description" content="Every NBA player with Hustle Stats data: one page each for Shot Profile, Hustle Plus-Minus and Matchups.">
+<meta property="og:url" content="https://hustlestatsbasketball.com/players"><meta property="og:image" content="https://hustlestatsbasketball.com/assets/og/home.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Players · Hustle Stats: Hustle Stats basketball analytics">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@HustleStatsBall">
+<meta name="twitter:title" content="Players · Hustle Stats"><meta name="twitter:description" content="Every NBA player with Hustle Stats data: one page each for Shot Profile, Hustle Plus-Minus and Matchups."><meta name="twitter:image" content="https://hustlestatsbasketball.com/assets/og/home.png">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="/assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/icon_180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="/assets/site.css"><style>
+.pl-search{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.pl-search input{flex:1 1 260px;min-width:0;background:var(--court);border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--text);font:500 16px var(--f-body)}
+.pl-search input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.pl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.pl-list a{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--court);border:1px solid var(--line);border-radius:8px;color:var(--text);text-decoration:none;font:600 14.5px var(--f-body);min-width:0}
+.pl-list a span{font:500 12px var(--f-data);color:var(--faint);white-space:nowrap}
+.pl-list a:hover{border-color:var(--gold);color:var(--gold-hi)}
+.pp-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:14px 24px}
+.pp-head h1{margin:6px 0 0}
+.pp-meta{font:500 14px var(--f-data);color:var(--faint);margin-top:8px}
+.pp-seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.pp-seg button{background:transparent;border:0;color:var(--mute);font:600 13.5px var(--f-body);padding:10px 14px;cursor:pointer}
+.pp-seg button[aria-pressed=true]{background:var(--gold);color:var(--ink)}
+.pp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:860px){.pp-grid{grid-template-columns:1fr}}
+.pp-card{background:var(--court);border:1px solid var(--line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.pp-card.wide{grid-column:1/-1}
+.pp-card h2{font:700 13px/1.3 var(--f-data);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pp-card h2 a{font:500 12px var(--f-body);letter-spacing:0;text-transform:none;color:var(--mute)}
+.pp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:12px}
+.pp-k .k{font:600 10.5px/1.3 var(--f-data);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.pp-k .v{font:700 26px/1.15 var(--f-display);color:var(--text);font-variant-numeric:tabular-nums;margin-top:4px}
+.pp-k .v.pos{color:var(--gold-hi)}.pp-k .v.neg{color:var(--down)}
+.pp-k .s{font:500 12px/1.4 var(--f-data);color:var(--faint);margin-top:2px}
+.pp-bar{display:flex;height:16px;border-radius:3px;overflow:hidden;gap:2px}
+.pp-bar i{display:block;height:100%}
+.pp-leg{display:flex;flex-wrap:wrap;gap:6px 14px;font:500 12px var(--f-data);color:var(--mute)}
+.pp-leg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.pp-note{font:400 13px/1.5 var(--f-body);color:var(--faint);margin:0}
+.pp-list{margin:0;padding-left:18px;color:var(--mute);font:400 14px/1.55 var(--f-body)}
+.pp-empty{color:var(--faint);font:400 14px var(--f-body)}
+.pp-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.dl-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1.5px solid var(--gold);color:var(--gold);border-radius:8px;padding:9px 14px;font:600 13.5px/1 var(--f-body);cursor:pointer}
+.dl-btn:hover{background:rgba(208,176,99,.12);color:var(--gold-hi)}
+.dl-btn[disabled]{opacity:.5;cursor:wait}
+</style>
+<script>function FOLD(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[łŁ]/g,'l').replace(/[đĐ]/g,'d').replace(/[øØ]/g,'o').replace(/ß/g,'ss').replace(/[æÆ]/g,'ae').toLowerCase();}</script></head><body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
+    <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/players" aria-current="page">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+</div></header>
+<main>
+<section class="page-head"><div class="wrap"><div class="eyebrow">Players</div><h1>Player pages</h1>
+<p>Shot Profile, Hustle Plus-Minus and Matchups for one player on one page. 526 players from 2025-26 and 2026-27.</p></div></section>
+<section class="section"><div class="wrap"><div class="pl-search"><input id="plq" type="search" placeholder="Find a player or team" aria-label="Find a player or team"><span class="pp-note" id="plc"></span></div>
+<div class="pl-list" id="pl"></div></div></section>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+    <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
+</div>
+<div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
+</footer>
+<script>
+(async()=>{const D=await fetch('/data/players.json').then(r=>r.json());const el=document.getElementById('pl'),q=document.getElementById('plq'),cnt=document.getElementById('plc');
+const draw=()=>{const s=FOLD(q.value.trim());const L=D.players.filter(p=>!s||FOLD(p.n+' '+(p.tm||'')).includes(s));
+cnt.textContent=L.length+' players';el.innerHTML=L.slice(0,400).map(p=>`<a href="/player?p=${p.s}">${p.n}<span>${[p.tm,p.pos].filter(Boolean).join(' · ')}</span></a>`).join('');};
+q.oninput=draw;draw();})();
+</script>
+</body></html>
