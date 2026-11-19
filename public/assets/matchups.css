@@ -1,4 +1,15 @@
 
+.app #chartsec[hidden]{display:none}
+.app #tbl.con th:nth-child(4),.app #tbl.con td:nth-child(4){background:none!important;box-shadow:none!important;font-weight:inherit}
+.app #tbl.con td:nth-child(4){font-size:inherit}
+.app #tbl.con th:nth-child(4){font-weight:500!important}
+.app #tbl.con th:nth-child(4){color:var(--muted)!important}
+.app #tbl.con td:nth-child(4):not(.neg){color:inherit}
+.app #tbl.con th:nth-child(9),.app #tbl.con td:nth-child(9){background:rgba(208,176,99,.10);box-shadow:inset 1px 0 0 rgba(208,176,99,.35),inset -1px 0 0 rgba(208,176,99,.35)}
+.app #tbl.con th:nth-child(9){color:var(--accent)!important;font-weight:700}
+.app #tbl.con td:nth-child(9){font-size:14.5px}
+.app #tbl.con td:nth-child(9):not(.neg){color:var(--accent)}
+.app #tbl.con tbody tr:hover td:nth-child(9){background:rgba(208,176,99,.18)}
 /* ---- Matchups page ---- */
 .app .caveat{background:var(--surface);border:1px solid var(--grid);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px}
 .app .caveat summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}

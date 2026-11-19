@@ -19,7 +19,7 @@
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
-  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile" aria-current="page">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Matchups</a><a href="/players">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile" aria-current="page">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Defense</a><a href="/players">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
 </div></header>
 <main>
 <div class="app">
@@ -35,6 +35,7 @@
   <div class="ctl"><span class="lab">Shot detail</span><div class="seg" id="mode"></div></div>
   <div class="seg" id="games" hidden style="display:none"></div>
   <div class="ctl"><span class="lab">Baseline</span><div class="seg" id="base"></div></div>
+  <div class="ctl"><span class="lab">Situation</span><div class="seg" id="sit"></div></div>
   <div class="ctl"><span class="lab">Numbers</span><div class="seg" id="adj"></div></div>
   <div class="ctl"><label for="posf">Position</label><select id="posf"><option value="all">All positions</option><option value="G">Guards (PG, SG)</option><option value="F">Forwards (SF, PF)</option><option value="B">Bigs (PF, C)</option><option value="PG">PG</option><option value="SG">SG</option><option value="SF">SF</option><option value="PF">PF</option><option value="C">C</option></select></div>
   <div class="ctl"><label for="teamf">Team</label><select id="teamf"><option value="all">All teams</option></select></div>
@@ -45,12 +46,22 @@
 
 <section style="display:grid;gap:10px">
   <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
-    <div><h2 id="lbtitle">Leaderboard</h2><p class="note" style="margin:4px 0 0">Click a player to open his full breakdown. Total = Decisions + Execution.</p><p class="note" id="adjnote" hidden style="margin:4px 0 0;color:var(--accent)">Raw numbers: his actual FG% and FT% with no sample-size adjustment, so small samples swing more. Alignment is folded into Making in Raw. Switch to Adjusted for the default view.</p></div>
+    <div><h2 id="lbtitle">Leaderboard</h2><p class="note" style="margin:4px 0 0">Click a player to open his full breakdown. Total = Decisions + Execution.</p><p class="note" id="sitnote" hidden style="margin:4px 0 0;color:var(--accent)">Clutch: last 5 minutes of the 4th quarter or overtime, score within 5. Compared with the league's clutch average. Each player's clutch FG% and FT% are pulled toward his own full-game rates, so only a sizable clutch difference moves his numbers. Samples are small: combined seasons are the best read.</p><p class="note" id="adjnote" hidden style="margin:4px 0 0;color:var(--accent)">Raw numbers: his actual FG% and FT% with no sample-size adjustment, so small samples swing more. Alignment is folded into Making in Raw. Switch to Adjusted for the default view.</p></div>
     <div class="legend" id="zlegend"></div>
   </div>
   <div class="tablewrap"><table id="tbl"><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
 </section>
 
+
+<section id="ptview" hidden>
+  <div class="pthead">
+    <div><h2 id="pttitle">Play types</h2><p class="note" style="margin:4px 0 0" id="ptnote"></p></div>
+    <div class="ctl"><label for="ptfocus">Play type</label><select id="ptfocus"></select></div>
+  </div>
+  <div id="ptlegend"></div>
+  <div class="tablewrap"><table id="pttbl"><thead><tr id="ptthead"></tr></thead><tbody id="ptbody"></tbody></table></div>
+  <p class="note" style="margin:0">Source: NBA.com play types (Synergy). Possessions end in a shot, foul or turnover. Adjusted PPP is pulled toward the league rate for that play type by sample size; percentiles need 25+ possessions in that play type per season. Mix + Efficiency = Total, in points per 100 possessions vs the league average possession.</p>
+</section>
 <section class="panel chartpanel">
     <h2>Execution vs decisions</h2>
     <p class="note" id="chartnote"></p>
@@ -146,7 +157,7 @@
 <footer class="site-footer"><div class="wrap">
   <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
     <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
-  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Matchups</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Defense</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
   <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
 </div>
 <div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
@@ -195,7 +206,7 @@ const state={ent:'players',mode:'zone',view:'s25',games:'A',base:'L',pos:'all',t
 try{const s=JSON.parse(localStorage.getItem('spl4')||'{}');['ent','mode','view','games','base','pos','team','min','sort','dir'].forEach(k=>{if(s[k]!=null)state[k]=s[k];});}catch(e){}
 if(!VK[state.view])state.view='s25';
 if(state.sort==='chg')state.sort='tot';
-const save=()=>{try{localStorage.setItem('spl4',JSON.stringify({ent:state.ent,mode:state.mode,pos:state.pos,team:state.team,view:state.view,games:state.games,base:state.base,min:state.min,sort:state.sort,dir:state.dir}))}catch(e){}};
+const save=()=>{try{localStorage.setItem('spl4',JSON.stringify({ent:state.ent,mode:state.mode,pos:state.pos,team:state.team,view:state.view,games:state.games,base:state.base,min:(window.SIT_KEEP?window.SIT_KEEP.min:(state.mode==='pt'&&PT_KEEP?PT_KEEP.min:state.min)),sort:state.sort,dir:state.dir}))}catch(e){}};
 const f1=x=>x==null||isNaN(x)?'–':(x>0?'+':x<0?'−':'')+Math.abs(x).toFixed(1);
 const pc=x=>x==null||isNaN(x)?'–':(x*100).toFixed(1)+'%';
 const LIVEDATE=()=>{if(!M.live||!M.live.through)return '';const d=new Date(M.live.through.slice(0,10)+'T12:00:00Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});};
@@ -209,16 +220,16 @@ const X=p=>U(p,state.view).x;
 const CH=p=>{const u=U(p,state.view),a=u.T[BS()+'o'],b=u.R[BS()+'o'];return {tot:a.tot-b.tot,dec:a.dec-b.dec,exe:a.exe-b.exe};};
 const REAL=(v,sd)=>sd&&Math.abs(v)>2*sd;
 
-function seg(id,opts,key){const el=document.getElementById(id);opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.onclick=()=>{state[key]=v;save();render();};el.appendChild(b);});return el;}
+function seg(id,opts,key){const el=document.getElementById(id);opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.onclick=async()=>{if(key==='mode'&&v==='pt'&&state.sit==='cl'&&typeof setSit==='function')await setSit('all');state[key]=v;save();render();};el.appendChild(b);});return el;}
 const entEl=seg('ent',[['players','Players'],['teams','Teams']],'ent');
-const modeEl=seg('mode',[['zone','Zones'],['type','Zones + shot type']],'mode');
+const modeEl=seg('mode',[['zone','Zones'],['type','Zones + shot type'],['pt','Play types']],'mode');
 const viewsEl=document.getElementById('viewsf');{const ORDV=['s26','s25','s24','s23','s22','s21','s20','w3','l3','l2','l6'];const og1=document.createElement('optgroup'),og2=document.createElement('optgroup');og1.label='Single season';og2.label='Combined seasons';ORDV.filter(k=>VK[k]).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k==='s26'?'2026-27 (live)':VK[k].label;(k[0]==='s'?og1:og2).appendChild(o);});viewsEl.append(og1,og2);}viewsEl.onchange=()=>{state.view=viewsEl.value;save();render();};
 const gamesEl=seg('games',[['A','All games'],['T','vs top-10 D'],['R','vs other 20']],'games');
 const baseEl=seg('base',[['L','League'],['R','Role peers']],'base');
 state.adj='adj';window.SP_RAW=false;
 const adjEl=document.getElementById('adj');let RAWD=null;const ADJ=new Map();
 [['adj','Adjusted','Default. Zone FG% and FT% pulled toward role peers by sample size, so small samples move less.'],['raw','Raw','His actual makes, with no sample-size adjustment.']].forEach(([v,l,t])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.title=t;b.onclick=()=>setAdj(v);adjEl.appendChild(b);});
-async function setAdj(v){if(v===state.adj)return;
+async function setAdj(v){if(v===state.adj)return;if(state.sit==='cl')unSit();
   if(v==='raw'&&!RAWD){adjEl.setAttribute('aria-busy','true');
     try{RAWD=await Promise.all(['zone','type','team'].map(k=>fetch('data/shot_'+k+'_raw.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json();})));}
     catch(e){adjEl.removeAttribute('aria-busy');const b=adjEl.querySelector('[data-v=raw]');b.disabled=true;b.title='Raw numbers are not available right now.';console.error(e);return;}
@@ -228,7 +239,32 @@ async function setAdj(v){if(v===state.adj)return;
     if(raw){const r=RAWD[0].players[p.pid]||{};p.v=r.v||a.v;p.sl=r.sl||a.sl;p.tr=r.tr||a.tr;p.dt=RAWD[1].players[p.pid]||a.dt;}else{p.v=a.v;p.dt=a.dt;p.sl=a.sl;p.tr=a.tr;}p._c={};});
   TM.forEach(p=>{if(!ADJ.has(p))ADJ.set(p,{v:p.v,dt:p.dt,sl:p.sl});const a=ADJ.get(p);
     if(raw){const r=RAWD[2].teams[p.t]||{};p.v=r.v||a.v;p.dt=r.dt||a.dt;p.sl=r.sl||a.sl;}else{p.v=a.v;p.dt=a.dt;p.sl=a.sl;}p._c={};});
-  document.getElementById('adjnote').hidden=!raw;render();}
+  document.getElementById('adjnote').hidden=!raw;if(state.sit==='cl'){try{await applySit();}catch(e){console.error(e);state.sit='all';sitControls();}}render();}
+state.sit='all';window.SP_CL=false;
+const sitEl=document.getElementById('sit');const CLD={};const CLO=new Map();const VKSAVE={};window.SIT_KEEP=null;
+[['all','All games','Every attempt.'],['cl','Clutch','Last 5 minutes of the 4th quarter or overtime, score within 5.']].forEach(([v,l,t])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.title=t;b.onclick=()=>setSit(v);sitEl.appendChild(b);});
+function unSit(){PL.forEach(p=>{const o=CLO.get(p);if(o){p.v=o.v;p._c={};}});CLO.clear();
+  Object.keys(VKSAVE).forEach(k=>{for(const f in VK[k])delete VK[k][f];Object.assign(VK[k],VKSAVE[k]);delete VKSAVE[k];});window.SP_CL=false;}
+async function applySit(){const k=state.adj==='raw'?'_raw':'';
+  if(!CLD[k])CLD[k]=await fetch('data/shot_zone_clutch'+k+'.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json();});
+  const D=CLD[k];D.views.forEach(v=>{if(!VK[v.key])return;VKSAVE[v.key]={...VK[v.key]};Object.assign(VK[v.key],v,{label:'Clutch · '+VKSAVE[v.key].label});});
+  PL.forEach(p=>{CLO.set(p,{v:p.v});const r=D.players[p.pid];p.v=(r&&r.v)||{};p._c={};});window.SP_CL=true;}
+function sitControls(){const cl=state.sit==='cl';[...sitEl.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.sit));
+  [...entEl.children].forEach(b=>{if(b.dataset.v==='teams'){b.disabled=cl;b.title=cl?'Clutch is players only':'';}});
+  [...modeEl.children].forEach(b=>{if(b.dataset.v==='type'){b.disabled=cl;b.title=cl?'Clutch is shown in Zones mode':'';}});
+  const o=viewsEl.querySelector('option[value=s26]');if(o){o.disabled=cl;}
+  const lab=document.querySelector('label[for=minfga]');if(lab&&lab.firstChild)lab.firstChild.textContent=cl?'Min clutch FGA per season: ':'Min FGA per season: ';
+  const mf_=document.getElementById('minfga');mf_.min=cl?10:200;mf_.max=cl?100:1200;mf_.step=cl?5:50;mf_.value=state.min;
+  document.getElementById('sitnote').hidden=!cl;}
+async function setSit(v){if(v===state.sit)return;
+  if(v==='cl'){sitEl.setAttribute('aria-busy','true');
+    try{await applySit();}catch(e){sitEl.removeAttribute('aria-busy');unSit();const b=sitEl.querySelector('[data-v=cl]');b.disabled=true;b.title='Clutch numbers are not available right now.';console.error(e);return;}
+    sitEl.removeAttribute('aria-busy');
+    window.SIT_KEEP={ent:state.ent,mode:state.mode,view:state.view,min:state.min};state.ent='players';state.mode='zone';state.view='l3';viewsEl.value=state.view;state.min=20;}
+  else{unSit();const K0=window.SIT_KEEP;if(K0){state.min=K0.min;state.mode=K0.mode;state.ent=K0.ent;state.view=K0.view;viewsEl.value=state.view;}window.SIT_KEEP=null;}
+  state.sit=v;sitControls();document.getElementById('minfgaV').textContent=state.min;render();}
+sitControls();
+
 
 const mf=document.getElementById('minfga');mf.value=state.min;mf.oninput=()=>{state.min=+mf.value;save();render();};
 document.getElementById('q').oninput=e=>{state.q=e.target.value;render();};
@@ -258,7 +294,7 @@ COLS.forEach(c=>{const th=document.createElement('th');th.textContent=c.l;th.cla
   if(!c.ns){th.tabIndex=0;const go=()=>{if(state.sort===c.k)state.dir*=-1;else{state.sort=c.k;state.dir=c.k==='name'?1:-1;}save();render();};th.onclick=go;th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};}
   thead.appendChild(th);});
 
-const XV=p=>(!XF||p.team||GS()!=='A')?null:((XF.players[p.pid]||{})[state.view]||null);
+const XV=p=>(!XF||p.team||GS()!=='A'||window.SP_CL)?null:((XF.players[p.pid]||{})[state.view]||null);
 const XS=(p,k)=>{const v=XV(p);return v?v[k==='xdif'?1:2]:(state.dir<0?-1e9:1e9);};
 const XC=p=>{const v=XV(p);if(!v)return '<td class="num dim xf0">–</td><td class="num dim">–</td>';
   const real=Math.abs(v[3])>=2;
@@ -284,7 +320,62 @@ posEl.onchange=()=>{state.pos=posEl.value;save();render();};teamEl.onchange=()=>
 let RKL=null,RKC={};
 function rkN(key,fn,p){if(!RKL)return 0;let a=RKC[key];if(!a){a=RKL.map(fn).filter(v=>v!=null&&!isNaN(v)).sort((x,y)=>y-x);RKC[key]=a;}const v=fn(p);if(v==null||isNaN(v))return 0;let r=1;for(const x of a){if(x>v+1e-9)r++;else break;}return r;}
 function RKS(key,fn,p,pre){const r=rkN(key,fn,p);if(!r)return '';const n=RKL.length;return `${pre||''}<span class="rk ${r<=5?'hi':r>n-5?'lo':''}" title="Rank among ${n} ${TEAMS()?'teams':'players shown'}">#${r}</span>`;}
-function render(){
+
+const PTC={"Isolation": "#e07b39", "PRBallHandler": "#f2a66b", "Postup": "#a9551f", "PRRollman": "#3fae7f", "Cut": "#7fd3ab", "OffRebound": "#2a7a57", "Spotup": "#5b9bd5", "OffScreen": "#93c0ea", "Handoff": "#3a6fa3", "Transition": "#d0b063", "Misc": "#5e584e"};let PTD=null,PTERR=false,PTLOAD=null;state.ptf=state.ptf||'all';let ptSort={k:'tot',d:-1};let PT_KEEP=null;
+const ptEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ptF3=v=>v==null?'–':v.toFixed(3);const ptPct=v=>v==null?'–':Math.round(100*v)+'%';
+function ptLoad(){if(!PTLOAD)PTLOAD=fetch('data/shot_playtypes.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(d=>{PTD=d;ptSetup();render();}).catch(e=>{PTERR=true;console.error(e);render();});return PTLOAD;}
+function ptSetup(){const sel=document.getElementById('ptfocus');sel.innerHTML='<option value="all">All play types</option>'+PTD.meta.types.map(t=>`<option value="${t}">${ptEsc(PTD.meta.label[t])}</option>`).join('');sel.value=state.ptf;
+  sel.onchange=()=>{state.ptf=sel.value;ptSort={k:state.ptf==='all'?'tot':'vs',d:-1};render();};}
+function ptPos(){const m={};PL.forEach(p=>{const x=latestX(p);m[p.pid]=x?x.pos:'';});return m;}let PTPOS=null;
+function ptShow(on){document.getElementById('ptview').classList.toggle('pt-off',!on);document.getElementById('ptview').hidden=false;const lb=document.getElementById('tbl').closest('section');if(lb)lb.classList.toggle('pt-off',on);
+  const cp=document.querySelector('.chartpanel');if(cp)cp.classList.toggle('pt-off',on);}
+function ptControls(on){[...baseEl.children].forEach(b=>{if(on){b.disabled=b.dataset.v==='R';if(b.disabled)b.title='Play types are measured against the league';}});
+  if(typeof sitEl!=='undefined')[...sitEl.children].forEach(b=>{if(b.dataset.v==='cl'&&(on||b.dataset.ptoff)){b.disabled=on;b.title=on?'Clutch is not available for play types':'';if(on)b.dataset.ptoff=1;else delete b.dataset.ptoff;}});
+  [...modeEl.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.mode));
+  [...entEl.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.ent));
+  const lab=document.querySelector('label[for=minfga]'),mf_=document.getElementById('minfga');
+  if(on){if(!PT_KEEP){PT_KEEP={min:state.min};state.min=state.ptmin||300;}if(lab&&lab.firstChild)lab.firstChild.textContent='Min play-type possessions per season: ';mf_.min=100;mf_.max=1200;mf_.step=50;}
+  else if(PT_KEEP){state.min=PT_KEEP.min;PT_KEEP=null;if(lab&&lab.firstChild)lab.firstChild.textContent='Min FGA per season: ';mf_.min=200;mf_.max=1200;mf_.step=50;}
+  mf_.value=state.min;document.getElementById('minfgaV').textContent=state.min;}
+function ptGate(){const on=state.mode==='pt';if(on&&state.sit==='cl'){/* leave clutch first */}
+  ptShow(on);ptControls(on);if(!on)return false;if(on)state.ptmin=state.min;
+  if(!PTD){document.getElementById('ptbody').innerHTML=`<tr><td class="l" style="padding:14px">${PTERR?'Play-type data is not available right now.':'Loading play types…'}</td></tr>`;document.getElementById('ptthead').innerHTML='';if(!PTERR)ptLoad();return true;}
+  ptRender();return true;}
+function ptRender(){const M=PTD.meta,T=M.types,team=state.ent==='teams',raw=window.SP_RAW,vk=state.view;
+  const mv=M.views.find(v=>v.key===vk)||M.views[0],ws=mv.wsum,src=team?PTD.teams:PTD.players;if(!PTPOS)PTPOS=ptPos();
+  const f=state.ptf,ti=T.indexOf(f),fr=(VK[vk]&&VK[vk].frac)||1,minP=team?0:state.min*ws*fr*(vk[0]!=='s'?0.67:1);
+  const q=FOLD(state.q.trim());
+  let rows=[];for(const [id,e] of Object.entries(src)){const v=e.v[vk];if(!v)continue;
+    const pos=team?'':(PTPOS[id]||'');const qm=q&&FOLD(e.n+' '+e.t).includes(q);
+    if(!team){if(!(qm||v[0]>=minP))continue;if(!posOK(pos))continue;if(state.team!=='all'&&e.t!==state.team)continue;}
+    if(q&&!qm)continue;
+    const r={id,e,v,pos,N:v[0],ppp:v[1],mix:v[2],eff:raw?v[4]:v[3]};r.tot=r.mix+r.eff;
+    if(ti>=0){const c=v[5][ti];if(!c)continue;const lg=mv.lg[f][1];r.tp=c[0];r.freq=c[0]/v[0];r.raw=c[1]/c[0];r.adj=c[2];r.pct=raw?c[4]:c[3];r.vs=((raw?r.raw:r.adj)-lg)*100;r.pts=r.vs/100*c[0]/ws;
+      if(!team&&!qm&&c[0]<M.qual*ws*fr)continue;}
+    rows.push(r);}
+  const sk=ptSort.k,sd=ptSort.d;rows.sort((a,b)=>{const x=a[sk],y=b[sk];return (x==null)-(y==null)||sd*((x>y)-(x<y))||a.e.n.localeCompare(b.e.n);});
+  const th=(k,l,t,cls)=>`<th data-k="${k}" class="${cls||''}${k===sk?' sorted':''}" title="${ptEsc(t||'')}" style="cursor:pointer">${l}${k===sk?(sd<0?' ↓':' ↑'):''}</th>`;
+  const label=team?'Team':'Player',vl=VK[vk]?VK[vk].label:mv.label;
+  document.getElementById('pttitle').textContent=ti>=0?`Play types: ${M.label[f]}`:'Play types';
+  document.getElementById('ptnote').textContent=`${team?'Teams':'Players'} · ${vl} · ${raw?'raw PPP':'adjusted PPP'} · league ${ti>=0?M.label[f]+' PPP '+mv.lg[f][1].toFixed(3):'PPP '+mv.all.toFixed(3)}`+(team?'':` · ${rows.length} players`)+(ti>=0&&!team?` with ${Math.round(M.qual*ws*fr)}+ possessions in it`:'');
+  let h=`<th>#</th><th class="l">${label}</th>`;
+  if(ti<0)h+=th('N','Poss','Play-type possessions')+th('ppp','PPP','Points per possession, actual')+th('mix','Mix','Points per 100 possessions his play-type mix is worth at league PPP, vs the league average possession')+th('eff','Efficiency',(raw?'Raw':'Adjusted')+' PPP above league within each play type, per 100 possessions, weighted by his mix')+th('tot','Total','Mix + Efficiency')+'<th class="l">Play-type mix</th>';
+  else h+=th('tp','Poss','Possessions in this play type')+th('freq','Freq','Share of his play-type possessions')+th('raw','PPP','Points per possession, actual')+(raw?'':th('adj','Adj. PPP','Pulled toward the league rate for this play type by sample size'))+th('pct','Pctile','Percentile among qualifiers')+th('vs','vs league','Points per 100 possessions above the league rate in this play type')+th('pts','Pts added','Points above league in this play type, per season');
+  document.getElementById('ptthead').innerHTML=h;
+  document.querySelectorAll('#ptthead th[data-k]').forEach(t=>t.onclick=()=>{const k=t.dataset.k;ptSort=ptSort.k===k?{k,d:-ptSort.d}:{k,d:-1};ptRender();});
+  const slugP=n=>FOLD(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const name=r=>team?`${ptEsc(r.e.n)}`:`<a href="/player?p=${slugP(r.e.n)}">${ptEsc(r.e.n)}</a><span class="meta">${ptEsc(r.e.t||'')}${r.pos?' · '+ptEsc(r.pos):''}</span>`;
+  const sg=v=>`<td class="num${v<0?' neg':''}">${f1(v)}</td>`;
+  const bar=r=>`<div class="ptbar">${T.map((t,i)=>{const c=r.v[5][i];if(!c)return '';return `<i style="width:${(100*c[0]/r.N).toFixed(1)}%;background:${PTC[t]}" title="${ptEsc(M.label[t])} ${Math.round(100*c[0]/r.N)}% · ${(c[1]/c[0]).toFixed(2)} PPP"></i>`;}).join('')}</div>`;
+  const body=rows.slice(0,400).map((r,i)=>`<tr class="ptrow"><td class="num dim">${i+1}</td><td class="l">${name(r)}</td>`+(ti<0?
+    `<td class="num">${Math.round(r.N)}</td><td class="num">${ptF3(r.ppp)}</td>${sg(r.mix)}${sg(r.eff)}<td class="num tot${r.tot<0?' neg':''}">${f1(r.tot)}</td><td>${bar(r)}</td>`:
+    `<td class="num">${Math.round(r.tp)}</td><td class="num">${ptPct(r.freq)}</td><td class="num">${ptF3(r.raw)}</td>${raw?'':`<td class="num">${ptF3(r.adj)}</td>`}<td class="num">${r.pct==null?'–':r.pct}</td>${sg(r.vs)}${sg(r.pts)}`)+'</tr>').join('');
+  document.getElementById('ptbody').innerHTML=body||'<tr><td class="l" colspan="9" style="padding:14px">No one matches these filters.</td></tr>';
+  document.getElementById('ptlegend').innerHTML=T.map(t=>`<span data-t="${t}" aria-pressed="${t===f}" title="Show ${ptEsc(M.label[t])} only"><i style="background:${PTC[t]}"></i>${ptEsc(M.label[t])}</span>`).join('');
+  document.querySelectorAll('#ptlegend span').forEach(s=>s.onclick=()=>{state.ptf=state.ptf===s.dataset.t?'all':s.dataset.t;document.getElementById('ptfocus').value=state.ptf;ptSort={k:state.ptf==='all'?'tot':'vs',d:-1};ptRender();});
+  document.getElementById('count').textContent=team?`${rows.length} teams`:`${rows.length} players`;}
+function render(){if(typeof ptGate==='function'&&ptGate())return;if(typeof sitControls==='function')setTimeout(sitControls,0);
   const want=TEAMS()?TM:PL;if(P!==want){selMem[P===TM?'teams':'players']=state.sel;P=want;state.sel=selMem[state.ent];}
   const tm=TEAMS();[posEl,teamEl,mf].forEach(e=>{e.disabled=tm;e.title=tm?'Player filters. Switch to Players to use them.':'';});
   [...baseEl.children].forEach(b=>{b.disabled=tm&&b.dataset.v==='R';b.title=b.disabled?'Teams are measured against the league':'';});
@@ -433,7 +524,7 @@ function drawDetail(p){
   const notes=`<div class="flag"><div>${p.team?`<b>Most attempts for this team:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}% (${c[2].toFixed(2)} PPA)`).join(', ')}. Players who changed teams count only for the games they played here.`:`<b>Role peers carrying the most weight:</b> ${x.comps.map(c=>`${c[0]} ${c[1]}%`).join(', ')}. The baseline pools 20 peers, weighted by their attempts.`}</div></div>
     <div class="flag"><div><b>Not counted:</b> ${Math.round(x.ns)} non-shooting FTA in this view (${x.ns?pc(x.nsm/x.ns):'–'} made): bonus fouls, hacks, technicals and flagrants.</div></div>`;
   el.innerHTML=`<div class="eyebrow">${p.team?X(p).tm+' · '+Math.round(X(p).gp)+' games':X(p).tm+' · '+X(p).pos} · ${VK[state.view].label} · ${Math.round(g.fga)} FGA · ${Math.round(g.T)} fouled trips · ${BS()==='L'?'league':'role-peer'} baseline</div><h3 id="popTitle">${p.n}</h3>${p.team?'':`<a class="pplink" href="/player?p=${SLUG(p.n)}" style="display:inline-block;margin:2px 0 8px;font:600 13px var(--body,inherit);color:var(--accent,#d0b063)">Player page →</a>`}
-  ${kp}<div class="cgrid"><div class="ccol">${courtCard(p)}</div><div class="ccol"><div class="splitbox seasons"><div class="eyebrow">Season by season</div>${seasonChart(p)}</div>${notes}</div></div>${tbl}`;
+  ${kp}<div class="cgrid"><div class="ccol">${courtCard(p)}</div><div class="ccol"><div class="splitbox seasons"><div class="eyebrow">Season by season${window.SP_CL?' · all games':''}</div>${seasonChart(p)}</div>${notes}</div></div>${tbl}`;
 }
 
 const QUADS=[
