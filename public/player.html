@@ -56,7 +56,7 @@
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
-  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Defense</a><a href="/players">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/stats">Stats</a><a href="/players">Players</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Defense</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
 </div></header>
 <main>
 <section class="section"><div class="wrap" id="pp"><p class="pp-empty">Loading…</p></div></section>
@@ -64,7 +64,7 @@
 <footer class="site-footer"><div class="wrap">
   <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
     <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
-  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Defense</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Defense</a></li><li><a href="/stats">Stats</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
   <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
 </div>
 <div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
@@ -169,11 +169,16 @@ function pt(d){const p=d.pt;if(!p)return '';
   <div class="pp-kpis">${K('PPP',f3(p.ppp),p.poss.toLocaleString()+' possessions')}${K('Mix',f1(p.mix),'pts / 100 vs league',cls(p.mix))}${K('Efficiency',f1(p.eff),'pts / 100 vs league',cls(p.eff))}</div>
   <div class="pp-bar">${bar}</div><ul class="pp-list">${rows}</ul>
   <p class="pp-note">NBA.com play types (Synergy). Mix: what his play-type diet is worth at league PPP. Efficiency: how he does within each play type, adjusted for sample size.</p></div>`;}
+function st(d){const s=d.st;if(!s)return '';const p=v=>v==null?'–':(100*v).toFixed(1)+'%';
+  return `<div class="pp-card wide"><h2>Advanced stats<a href="/stats">Open in Stats →</a></h2>
+  <div class="pp-kpis">${K('TS%',p(s.ts),s.efg_x!=null?'eFG% vs expected '+f1(100*s.efg_x):'')}${K('USG%',p(s.usg),'share of possessions used')}${K('AST%',p(s.ast_pct),'of teammates’ made shots')}${K('TOV%',p(s.tov_pct),'turnovers per 100 plays')}${K('REB%',p(s.orb_pct)+' / '+p(s.drb_pct),'offensive / defensive')}</div>
+  <div class="pp-kpis">${K('STL%',p(s.stl_pct),'per opponent possession')}${K('BLK%',p(s.blk_pct),'of opponent 2s')}${K('Stop%',p(s.stop_pct),'Dean Oliver')}${K('On/off',f1(s.onoff),'net rating, noisy',cls(s.onoff))}</div>
+  <p class="pp-note">${s.gp} games, ${Math.round(s.min).toLocaleString()} minutes. NBA play-by-play, all minutes.</p></div>`;}
 function tw(){if(!P.tw)return '';return `<div class="pp-card wide"><h2>Trend Watch</h2><ul class="pp-list">${P.tw.map(t=>`<li>${t.through}: ${t.headline} (from ${t.before}%), PPA ${t.ppa[0].toFixed(3)} → ${t.ppa[1].toFixed(3)}</li>`).join('')}</ul></div>`;}
 function render(){const d=P.v[view];
   root.innerHTML=`<div class="pp-head"><div><div class="eyebrow">Player</div><h1>${P.n}</h1><div class="pp-meta">${[P.tm,P.pos].filter(Boolean).join(' · ')} · data through ${new Date(D.meta.through+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>
   <div class="pp-actions"><div class="pp-seg" role="group" aria-label="Seasons">${views.map(k=>`<button type="button" data-v="${k}" aria-pressed="${k===view}">${D.meta.views[k]}</button>`).join('')}</div></div></div>
-  <div class="pp-grid" style="margin-top:22px">${shot(d)}${hpm(d)}${pt(d)}${mu(d)}${tw()}</div>`;
+  <div class="pp-grid" style="margin-top:22px">${shot(d)}${hpm(d)}${st(d)}${pt(d)}${mu(d)}${tw()}</div>`;
   root.querySelectorAll('.pp-seg button').forEach(b=>b.onclick=()=>{view=b.dataset.v;render();});
   document.dispatchEvent(new CustomEvent('pp:render',{detail:{P,view,D}}));}
 render();

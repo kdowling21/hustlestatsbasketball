@@ -19,13 +19,13 @@
 <header class="site-header"><div class="wrap">
   <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
     <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
-  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Defense</a><a href="/players">Players</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology" aria-current="page">Methodology</a><a href="/about">About</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/stats">Stats</a><a href="/players">Players</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Defense</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology" aria-current="page">Methodology</a><a href="/about">About</a></nav>
 </div></header>
 <main>
 <section class="page-head"><div class="wrap"><div class="eyebrow">Methodology</div><h1>How the numbers work</h1>
 <p>Every metric on Hustle Stats, how it is built, and how much of it is skill versus noise. The full method notes, with live tables, also sit at the bottom of each tool.</p></div></section>
 <section class="section"><div class="wrap method-page">
-<nav class="toc" aria-label="On this page"><a href="#data">Data</a><a href="#shot-profile">Shot Profile</a><a href="#shot-difficulty">Shot difficulty</a><a href="#clutch">Clutch</a><a href="#play-types">Play types</a><a href="#hpm">Hustle Plus-Minus</a><a href="#matchups">Matchups</a><a href="#contests">Contests</a><a href="#noise">Skill vs noise</a><a href="#peers">Role peers</a><a href="#limits">Limits</a></nav>
+<nav class="toc" aria-label="On this page"><a href="#data">Data</a><a href="#shot-profile">Shot Profile</a><a href="#shot-difficulty">Shot difficulty</a><a href="#clutch">Clutch</a><a href="#play-types">Play types</a><a href="#hpm">Hustle Plus-Minus</a><a href="#matchups">Matchups</a><a href="#contests">Contests</a><a href="#stats">Stats page</a><a href="#noise">Skill vs noise</a><a href="#peers">Role peers</a><a href="#limits">Limits</a></nav>
 <div class="mdoc">
 
 <section id="data"><h2>Data</h2>
@@ -129,6 +129,16 @@
 <p><b>Does it repeat?</b> Rim FG% held repeats at r = 0.55 to 0.82 year to year (players with 400+ shots defended in both seasons), and points saved per 100 at 0.55 to 0.80. Mid-range is weaker (0.23 to 0.42), and 3PT FG% allowed barely repeats at all (−0.01 to 0.15), which is why it is pulled so hard toward zero. Contesting 3s matters; the make rate on the ones you contest is mostly luck.</p>
 <p><b>Limits:</b> closest defender isn't always the responsible defender (late closeouts and help rotations count), and bigs who protect the rim face shots that guards never see, so compare within position.</p></section>
 
+<section id="stats"><h2>Stats page</h2>
+<p>The <b>Stats</b> page carries the standard advanced numbers, so readers can check them against NBA.com and Basketball-Reference. Box, on-court and team numbers are built from NBA play-by-play (all minutes, garbage time included unless a column says otherwise). Possession counts come from the play-by-play, so ratings can differ slightly from sites that estimate possessions from box scores.</p>
+<ul><li><b>Shooting:</b> eFG% = (FGM + 0.5 × 3PM) / FGA. TS% = PTS / (2 × (FGA + 0.44 × FTA)). +eFG% = eFG% minus the eFG% a league-average shooter would post on the same shots (NBA.com shot tracking).</li>
+<li><b>On-court rates:</b> USG%, AST%, ORB%, DRB%, STL% and BLK% use the team and opponent totals from the possessions he was on the floor for. TOV% = TOV / (FGA + 0.44 × FTA + TOV).</li>
+<li><b>Stop%:</b> Dean Oliver's formula: the share of the possessions he defends that end in a stop credited to him (steals, blocks, defensive rebounds, plus his share of forced misses and turnovers).</li>
+<li><b>Team:</b> ORTG and DRTG are points per 100 possessions. Schedule-adjusted net rating solves every game's net rating (garbage time removed) for team strength plus home court, lightly regularized. Clutch is the NBA definition. Expected eFG% allowed applies league zone make rates to the shots opponents took.</li>
+<li><b>Tracking:</b> hustle, rebounding, passing, drives, catch-and-shoot, pull-ups and touches come from NBA.com player tracking; play types (offense, and team defense) from NBA.com / Synergy.</li>
+<li><b>Adjusted:</b> the Numbers toggle pulls each rate toward league average by sample size, with the pull for each stat estimated from that season's data (the same method as Shot Profile). Raw is the standard number.</li></ul>
+<p><b>Left out on purpose:</b> raw plus-minus, clutch win-loss records and opponent 3P% are mostly noise or luck over a season. On/off is included but noisy.</p></section>
+
 <section id="noise"><h2>Skill vs noise</h2>
 <p>Every number on the site is an estimate from a limited sample, so two ideas run through all of it.</p>
 <h3>Shrinkage</h3>
@@ -153,7 +163,7 @@
 <footer class="site-footer"><div class="wrap">
   <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
     <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
-  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Defense</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Defense</a></li><li><a href="/stats">Stats</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
   <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
 </div>
 <div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>

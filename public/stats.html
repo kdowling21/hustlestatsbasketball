@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Stats · Hustle Stats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="NBA advanced stats for every player and team: efficiency, usage, playmaking, rebounding, defense, play types, ratings and the Four Factors.">
+<link rel="canonical" href="https://hustlestatsbasketball.com/stats">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Hustle Stats">
+<meta property="og:title" content="Stats · Hustle Stats"><meta property="og:description" content="NBA advanced stats for every player and team: efficiency, usage, playmaking, rebounding, defense, play types, ratings and the Four Factors.">
+<meta property="og:url" content="https://hustlestatsbasketball.com/stats"><meta property="og:image" content="https://hustlestatsbasketball.com/assets/og/home.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Stats · Hustle Stats: Hustle Stats basketball analytics">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@HustleStatsBall">
+<meta name="twitter:title" content="Stats · Hustle Stats"><meta name="twitter:description" content="NBA advanced stats for every player and team: efficiency, usage, playmaking, rebounding, defense, play types, ratings and the Four Factors."><meta name="twitter:image" content="https://hustlestatsbasketball.com/assets/og/home.png">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="/assets/icon_32.png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/icon_180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/hustle.css"><link rel="stylesheet" href="/assets/stats.css">
+<script>function FOLD(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[łŁ]/g,'l').replace(/[đĐ]/g,'d').replace(/[øØ]/g,'o').replace(/ß/g,'ss').replace(/[æÆ]/g,'ae').toLowerCase();}</script></head><body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="/" aria-label="Hustle Stats home"><img src="/assets/shield_sm.png" alt="" width="36" height="41">
+    <span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/stats" aria-current="page">Stats</a><a href="/players">Players</a><a href="/shot-profile">Shot Profile</a><a href="/hustle-plus-minus">Hustle Plus-Minus</a><a href="/matchups">Defense</a><a href="/research">Research</a><a href="/hustle-report">The Hustle Report</a><a href="/methodology">Methodology</a><a href="/about">About</a></nav>
+</div></header>
+<main>
+<div class="app">
+<header>
+  <div class="eyebrow" id="eyebrow">NBA.com play-by-play + player tracking</div>
+  <h1>Stats</h1>
+  <p class="lede">The standard advanced numbers, built the same way for every player and team: efficiency, usage, playmaking, rebounding, defense, play types, team ratings and the Four Factors. Hover any column for its definition and any cell for its rank. Our own models live on Shot Profile, Hustle Plus-Minus and Defense.</p>
+</header>
+<div class="controls" role="group" aria-label="Filters">
+  <div class="ctl"><span class="lab">Show</span><div class="seg" id="ent"></div></div>
+  <div class="ctl"><label for="seasonf">Season</label><select id="seasonf"></select></div>
+  <div class="ctl"><span class="lab">Per</span><div class="seg" id="basis"></div></div>
+  <div class="ctl"><span class="lab">Numbers</span><div class="seg" id="adj"></div></div>
+  <div class="ctl"><label for="posf">Position</label><select id="posf"><option value="all">All</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select></div>
+  <div class="ctl"><label for="teamf">Team</label><select id="teamf"><option value="all">All teams</option></select></div>
+  <div class="ctl"><label for="minm">Min minutes: <span id="minmV"></span></label><input id="minm" type="range" min="0" max="2500" step="50" value="1000"></div>
+  <div class="ctl"><label for="q">Find</label><input id="q" type="search" placeholder="Name or team"></div>
+  <div class="count" id="count"></div>
+</div>
+<section style="display:grid;gap:10px;margin-top:14px">
+  <div class="cats" id="cats" role="group" aria-label="Category"></div>
+  <p class="stnote" id="catnote"></p>
+  <div class="stleg"><span>Percentile among qualifiers:</span><span><i style="background:rgba(208,176,99,.34)"></i> top 10%</span><span><i style="background:rgba(208,176,99,.20)"></i> top 25%</span><span><i style="background:rgba(208,176,99,.08)"></i> above average</span><span style="color:#c98f84">bottom 10%</span></div>
+  <div class="tablewrap" style="max-height:max(480px,calc(100vh - 96px))"><table id="stbl"><thead><tr id="sthead"></tr></thead><tbody id="stbody"></tbody></table></div>
+  <p class="stnote" id="srcnote"></p>
+</section>
+</div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div><a class="brand" href="/"><img src="/assets/shield_sm.png" alt="" width="36" height="41"><span><b>Hustle Stats</b><small>Basketball scouting &amp; analytics</small></span></a>
+    <p>Independent NBA analysis built from play-by-play and player-tracking data. Not affiliated with or endorsed by the NBA or any team.</p></div>
+  <div><h4>Analysis</h4><ul><li><a href="/shot-profile">Shot Profile</a></li><li><a href="/hustle-plus-minus">Hustle Plus-Minus</a></li><li><a href="/matchups">Defense</a></li><li><a href="/stats">Stats</a></li><li><a href="/players">Players</a></li><li><a href="/research">Research</a></li><li><a href="/methodology">Methodology</a></li></ul></div>
+  <div><h4>Hustle Stats</h4><ul><li><a href="/hustle-report">The Hustle Report</a></li><li><a href="/about">About</a></li><li><a href="https://x.com/HustleStatsBall" rel="noopener">X · @HustleStatsBall</a></li><li><a href="https://hustlestatsball.substack.com/" rel="noopener">Substack</a></li></ul></div>
+</div>
+<div class="legal"><div class="wrap"><span>© 2026 Hustle Stats</span><span>Data: NBA.com play-by-play and player tracking</span></div></div>
+</footer>
+<script>
+(async()=>{
+const IDX=await fetch('data/stats/index.json').then(r=>r.json());
+const ESC=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const FOLD=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[łŁ]/g,'l').replace(/[đĐ]/g,'d').replace(/[øØ]/g,'o').toLowerCase();
+const SLUG=n=>FOLD(n).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const PG={G:['PG','SG','G'],F:['SF','PF','F'],C:['C']};
+let state={ent:'players',season:IDX.seasons[0].season,cat:'box',basis:'p100',adj:'raw',pos:'all',team:'all',min:1000,q:'',sort:null,dir:-1};
+try{const s=JSON.parse(localStorage.getItem('st3')||'{}');['ent','cat','basis','adj','pos','min'].forEach(k=>{if(s[k]!=null)state[k]=s[k];});}catch(e){}
+const save=()=>{try{localStorage.setItem('st3',JSON.stringify({ent:state.ent,cat:state.cat,basis:state.basis,adj:state.adj,pos:state.pos,min:state.min}));}catch(e){}};
+const CACHE={};const load=s=>CACHE[s]||(CACHE[s]=fetch('data/stats/stats_'+s+'.json').then(r=>r.json()));
+let POS={};try{const P=await fetch('data/players.json').then(r=>r.json());P.players.forEach(p=>{POS[p.id]=p.pos;});}catch(e){}
+// ---------- formatting
+const pct=v=>v==null?'–':(100*v).toFixed(1);const f1=v=>v==null?'–':v.toFixed(1);const f3=v=>v==null?'–':v.toFixed(3);const f0=v=>v==null?'–':Math.round(v).toLocaleString();
+const sg1=v=>v==null?'–':(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1);const sgp=v=>v==null?'–':(v>0?'+':v<0?'−':'')+Math.abs(100*v).toFixed(1);
+// ---------- column helpers. c = count stat (converted by basis); r = rate (as is). a = adjusted accessor.
+const B=()=>state.basis;
+function conv(d,v,team){if(v==null)return null;const b=B();if(b==='tot')return v;if(b==='pg')return v/Math.max(d.gp||1,1);
+  const poss=team?(d.poss_o+d.poss_d)/2:d.poss;return 100*v/Math.max(poss,1);}
+const C=(k,l,t,o={})=>Object.assign({k,l,t,type:'c',get:d=>d[k],fmt:f1},o);
+const R=(k,l,t,o={})=>Object.assign({k,l,t,type:'r',get:d=>d[k],fmt:pct},o);
+const tr=k=>d=>d[k];
+const ptype=(i,l)=>[C('pt'+i,l+' poss','Possessions in this play type (NBA.com / Synergy).',{get:d=>d.pt&&d.pt[2+i]?d.pt[2+i][0]:null,grp:1}),
+  R('ptp'+i,l+' PPP','Points per possession in this play type.',{get:d=>d.pt&&d.pt[2+i]?d.pt[2+i][1]/d.pt[2+i][0]:null,fmt:f3,ss:d=>!(d.pt&&d.pt[2+i]&&d.pt[2+i][0]>=25)})];
+const PTN=['Isolation','P&R ball handler','Post-up','P&R roll man','Cut','Putback','Spot-up','Off screen','Handoff','Transition'];
+const PCATS={
+ box:{l:'Box score',n:'The counting stats behind the rates. Per 100 possessions by default; switch Per to see per game or totals.',cols:[
+  C('PTS','PTS','Points.'),C('reb','REB','Total rebounds.',{get:d=>d.OREB+d.DREB}),C('OREB','OREB','Offensive rebounds.'),C('DREB','DREB','Defensive rebounds.'),
+  C('AST','AST','Assists.',{grp:1}),C('STL','STL','Steals.'),C('BLK','BLK','Blocks.'),C('TOV','TOV','Turnovers.',{hi:false}),C('PF','PF','Personal fouls.',{hi:false}),
+  C('FGM','FGM','Field goals made.',{grp:1}),C('FGA','FGA','Field-goal attempts.'),R('fgp','FG%','Field-goal percentage.',{get:d=>d.FGA?d.FGM/d.FGA:null,ss:d=>d.FGA<100}),
+  C('M3','3PM','3-pointers made.',{grp:1}),C('A3','3PA','3-point attempts.'),R('fg3b','3P%','3-point percentage.',{get:d=>d.A3?d.M3/d.A3:null,a:tr('fg3_adj'),ss:d=>d.A3<50}),
+  C('FTM','FTM','Free throws made.',{grp:1}),C('FTA','FTA','Free-throw attempts.'),R('ftb','FT%','Free-throw percentage.',{get:d=>d.FTA?d.FTM/d.FTA:null,a:tr('ft_adj'),ss:d=>d.FTA<30})]},
+ scoring:{l:'Scoring',n:'Shooting efficiency and how he scores. TS% counts free throws; eFG% weights 3s by 1.5. +eFG% is eFG% minus the eFG% a league-average shooter would post on the same shots (NBA.com shot tracking: defender distance, dribbles, shot type).',cols:[
+  C('PTS','PTS','Points.'),C('FGA','FGA','Field-goal attempts.'),R('efg','eFG%','Effective FG%: (FGM + 0.5 × 3PM) / FGA.',{a:tr('efg_adj'),ss:d=>d.FGA<100}),
+  R('ts','TS%','True shooting: PTS / (2 × (FGA + 0.44 × FTA)). Counts free throws.',{a:tr('ts_adj'),ss:d=>d.FGA<100}),
+  R('efg_x','+eFG%','eFG% above what a league-average shooter would make on the same shots (closest defender, dribbles, shot type). Shot-making skill.',{fmt:sgp,grp:1,ss:d=>(d.xshots||0)<100}),
+  R('xefg','xeFG%','Expected eFG% on his shots. Lower = harder shots.',{hi:false}),
+  R('usg','USG%','Usage: share of his team’s possessions he ends with a shot, free throws or a turnover while on the floor.',{a:tr('usg_adj'),grp:1}),
+  R('a3r','3PA rate','Share of his field-goal attempts that are 3s.',{get:d=>d.FGA?d.A3/d.FGA:null,hi:null}),
+  R('fg3','3P%','3-point percentage.',{a:tr('fg3_adj'),ss:d=>d.A3<50}),
+  R('ftr','FT rate','Free-throw attempts per field-goal attempt.',{get:d=>d.FGA?d.FTA/d.FGA:null}),
+  R('ft','FT%','Free-throw percentage.',{a:tr('ft_adj'),ss:d=>d.FTA<30}),
+  C('FD','Fouls drawn','Personal fouls drawn.',{grp:1,a:tr('FD_adj100')}),C('SFD','Shooting fouls drawn','Shooting fouls drawn.'),C('AND1','And-1s','Made shots plus a foul.')]},
+ playmaking:{l:'Playmaking',n:'Creating for others and protecting the ball. AST% is the share of teammates’ made shots he assisted while on the floor. Turnovers are best judged against usage: AST/USG compares the two. Live-ball turnovers (steals) lead to transition and cost more.',cols:[
+  C('AST','AST','Assists.',{a:tr('AST_adj100')}),R('ast_pct','AST%','Share of teammates’ made field goals he assisted while on the floor.',{a:tr('ast_pct_adj')}),
+  C('TOV','TOV','Turnovers.',{hi:false,a:tr('TOV_adj100')}),R('tov_pct','TOV%','Turnovers per 100 plays (FGA + 0.44 × FTA + TOV).',{hi:false,a:tr('tov_pct_adj')}),
+  C('TOVlive','Live-ball TOV','Turnovers that were steals.',{hi:false}),
+  {k:'ast_usg',l:'AST/USG',t:'AST% divided by USG%: playmaking relative to how much he has the ball.',type:'r',get:tr('ast_usg'),fmt:v=>v==null?'–':v.toFixed(2)},
+  C('pa','Potential AST','Passes that led to a shot that would be an assist if made (NBA.com tracking).',{get:d=>d['Passing:POTENTIAL_AST'],grp:1}),
+  C('apc','AST pts created','Points from his assists (NBA.com tracking).',{get:d=>d['Passing:AST_PTS_CREATED']}),
+  C('pm_','Passes made','Passes made (NBA.com tracking).',{get:d=>d['Passing:PASSES_MADE']}),
+  C('h_SCREEN_ASSISTS','Screen AST','Screens that led directly to a made shot (NBA.com hustle).',{grp:1}),C('h_SCREEN_AST_PTS','Screen AST pts','Points from his screen assists.')]},
+ rebounding:{l:'Rebounding',n:'ORB% and DRB% are the share of available rebounds he grabbed while on the floor. Contested rebounds and rebound chances come from NBA.com tracking.',cols:[
+  C('OREB','OREB','Offensive rebounds.',{a:tr('OREB_adj100')}),C('DREB','DREB','Defensive rebounds.',{a:tr('DREB_adj100')}),
+  R('orb_pct','ORB%','Share of available offensive rebounds he grabbed while on the floor.',{a:tr('orb_pct_adj')}),R('drb_pct','DRB%','Share of available defensive rebounds he grabbed while on the floor.',{a:tr('drb_pct_adj')}),
+  C('t_REB_CONTEST','Contested REB','Rebounds grabbed with an opponent within 3.5 feet (NBA.com tracking).',{grp:1,a:tr('t_REB_CONTEST_adj100')}),
+  R('crp','Contested %','Share of his rebounds that were contested.',{get:d=>d.t_REB?d.t_REB_CONTEST/d.t_REB:null,hi:null}),
+  C('t_REB_CHANCES','REB chances','Times he was within 3.5 feet of a rebound.'),R('rcp','REB chance %','Rebounds per chance.',{get:d=>d.t_REB_CHANCES?d.t_REB/d.t_REB_CHANCES:null}),
+  C('h_BOX_OUTS','Box outs','Box outs (NBA.com hustle).',{grp:1,a:tr('h_BOX_OUTS_adj100')}),C('h_BOX_OUT_PLAYER_TEAM_REBS','Box outs → team REB','Box outs that ended in a team rebound.')]},
+ defense:{l:'Defense',n:'Steals, blocks and Dean Oliver’s Stop% (share of the possessions he defends that end in a stop he gets credit for), NBA.com hustle tracking, and our contest model (FG% held as the closest defender, adjusted for sample size).',cols:[
+  C('STL','STL','Steals.',{a:tr('STL_adj100')}),C('BLK','BLK','Blocks.',{a:tr('BLK_adj100')}),
+  R('stl_pct','STL%','Steals per opponent possession while on the floor.',{a:tr('stl_pct_adj')}),R('blk_pct','BLK%','Share of opponent 2-point attempts he blocked while on the floor.',{a:tr('blk_pct_adj')}),
+  R('stop_pct','Stop%','Dean Oliver’s Stop%: share of the possessions he defends that end in a stop credited to him (steals, blocks, defensive rebounds, forced misses and turnovers).',{a:tr('stop_pct_adj'),grp:1}),
+  C('h_DEFLECTIONS','Deflections','Deflections (NBA.com hustle).',{grp:1,a:tr('h_DEFLECTIONS_adj100')}),C('h_CONTESTED_SHOTS','Contests','Shots contested (NBA.com hustle).',{a:tr('h_CONTESTED_SHOTS_adj100')}),
+  C('h_CONTESTED_SHOTS_3PT','3PT contests','3-pointers contested.'),C('h_LOOSE_BALLS_RECOVERED','Loose balls','Loose balls recovered.',{a:tr('h_LOOSE_BALLS_RECOVERED_adj100')}),
+  C('CHG','Charges','Charges drawn.',{a:tr('h_CHARGES_DRAWN_adj100')}),C('PF','Fouls','Personal fouls committed.',{hi:false}),
+  {k:'rimh',l:'Rim FG% held',t:'Percentage points below expected that shooters hit within 6 feet with him as the closest defender (adjusted for sample size). See Defense › Contests.',type:'r',get:d=>d.ct?d.ct[2]:null,fmt:sg1,grp:1,ss:d=>!(d.ct&&d.ct[1]>=60)},
+  {k:'sv100',l:'Pts saved /100 shots',t:'Points per 100 shots defended below what those shooters normally score (Contests model).',type:'r',get:d=>d.ct?d.ct[3]:null,fmt:sg1},
+  {k:'drtg_on',l:'DRTG on court',t:'Team points allowed per 100 possessions with him on the floor.',type:'r',get:tr('drtg_on'),fmt:f1,hi:false,grp:1}]},
+ creation:{l:'Drives & shot types',n:'How he creates: drives, catch-and-shoot and pull-up shooting, touches (NBA.com player tracking). Play types are under Play types.',cols:[
+  C('drv','Drives','Drives to the basket.',{get:d=>d['Drives:DRIVES']}),C('drvp','Drive PTS','Team points on his drives.',{get:d=>d['Drives:DRIVE_PTS']}),
+  R('drvfg','Drive FG%','FG% on his drives.',{get:d=>d['Drives:DRIVE_FGA']?d['Drives:DRIVE_FGM']/d['Drives:DRIVE_FGA']:null}),
+  C('csa','C&S FGA','Catch-and-shoot attempts.',{get:d=>d['CatchShoot:CATCH_SHOOT_FGA'],grp:1}),R('cse','C&S eFG%','Catch-and-shoot eFG%.',{get:d=>d['CatchShoot:CATCH_SHOOT_EFG_PCT']}),
+  C('pua','Pull-up FGA','Pull-up attempts.',{get:d=>d['PullUpShot:PULL_UP_FGA'],grp:1}),C('pu3','Pull-up 3PA','Pull-up 3-point attempts.',{get:d=>d['PullUpShot:PULL_UP_FG3A']}),
+  R('pue','Pull-up eFG%','Pull-up eFG%.',{get:d=>d['PullUpShot:PULL_UP_EFG_PCT']}),
+  C('tch','Touches','Touches.',{get:d=>d['Possessions:TOUCHES'],grp:1}),C('top','Time of poss.','Minutes with the ball (NBA.com tracking).',{get:d=>d['Possessions:TIME_OF_POSS']})]},
+ playtypes:{l:'Play types',n:'NBA.com play types (Synergy): possessions and points per possession in each. For adjusted PPP, Mix and Efficiency, use Shot Profile › Play types.',cols:[].concat(...PTN.map((l,i)=>ptype(i,l)))},
+ impact:{l:'Impact',n:'On/off is noisy: it depends on teammates and opponents. Treat them as context, not ratings. Our lineup-adjusted models are on Hustle Plus-Minus and Defense.',cols:[
+  {k:'onoff',l:'On/off net',t:'Team net rating with him on the floor minus with him off (per 100 possessions). Very noisy; see Methodology.',type:'r',get:tr('onoff'),fmt:sg1},
+  {k:'ortg_on',l:'ORTG on',t:'Team points per 100 possessions with him on the floor.',type:'r',get:tr('ortg_on'),fmt:f1},
+  {k:'drtg_on2',l:'DRTG on',t:'Team points allowed per 100 possessions with him on the floor.',type:'r',get:tr('drtg_on'),fmt:f1,hi:false},
+  {k:'neton',l:'Net on',t:'ORTG on minus DRTG on.',type:'r',get:d=>d.ortg_on!=null?d.ortg_on-d.drtg_on:null,fmt:sg1}]}
+};
+const TN={ATL:'Atlanta Hawks',BOS:'Boston Celtics',BKN:'Brooklyn Nets',CHA:'Charlotte Hornets',CHI:'Chicago Bulls',CLE:'Cleveland Cavaliers',DAL:'Dallas Mavericks',DEN:'Denver Nuggets',DET:'Detroit Pistons',GSW:'Golden State Warriors',HOU:'Houston Rockets',IND:'Indiana Pacers',LAC:'LA Clippers',LAL:'Los Angeles Lakers',MEM:'Memphis Grizzlies',MIA:'Miami Heat',MIL:'Milwaukee Bucks',MIN:'Minnesota Timberwolves',NOP:'New Orleans Pelicans',NYK:'New York Knicks',OKC:'Oklahoma City Thunder',ORL:'Orlando Magic',PHI:'Philadelphia 76ers',PHX:'Phoenix Suns',POR:'Portland Trail Blazers',SAC:'Sacramento Kings',SAS:'San Antonio Spurs',TOR:'Toronto Raptors',UTA:'Utah Jazz',WAS:'Washington Wizards'};
+const TT=(k,l,t,o={})=>Object.assign({k,l,t,type:'r',get:d=>d[k],fmt:f1},o);
+const TP=(k,l,t,o={})=>Object.assign({k,l,t,type:'r',get:d=>d[k],fmt:pct},o);
+const TC=(k,l,t,o={})=>Object.assign({k,l,t,type:'c',get:d=>d[k],fmt:f1},o);
+const TB=(k,l,t,o={})=>Object.assign({k,l,t,type:'c',get:d=>d['b_'+k],fmt:f1},o);
+const TCATS={
+ box:{l:'Box score',n:'Team counting stats and what opponents did. Per 100 possessions by default; switch Per to see per game or totals.',cols:[
+  TB('PTS','PTS','Points.'),{k:'opts',l:'Opp PTS',t:'Points allowed.',type:'c',get:d=>d.ob_PTS,fmt:f1,hi:false},
+  {k:'treb',l:'REB',t:'Total rebounds.',type:'c',get:d=>d.b_OREB+d.b_DREB,fmt:f1,grp:1},TB('OREB','OREB','Offensive rebounds.'),TB('DREB','DREB','Defensive rebounds.'),
+  TB('AST','AST','Assists.',{grp:1}),TB('STL','STL','Steals.'),TB('BLK','BLK','Blocks.'),TB('TOV','TOV','Turnovers.',{hi:false}),TB('PF','PF','Personal fouls.',{hi:false}),
+  TB('FGM','FGM','Field goals made.',{grp:1}),TB('FGA','FGA','Field-goal attempts.'),{k:'tfg',l:'FG%',t:'Field-goal percentage.',type:'r',get:d=>d.b_FGA?d.b_FGM/d.b_FGA:null,fmt:pct},
+  TB('M3','3PM','3-pointers made.',{grp:1}),TB('A3','3PA','3-point attempts.'),{k:'t3p',l:'3P%',t:'3-point percentage.',type:'r',get:d=>d.b_A3?d.b_M3/d.b_A3:null,fmt:pct},
+  TB('FTM','FTM','Free throws made.',{grp:1}),TB('FTA','FTA','Free-throw attempts.'),{k:'tft',l:'FT%',t:'Free-throw percentage.',type:'r',get:d=>d.b_FTA?d.b_FTM/d.b_FTA:null,fmt:pct}]},
+ ratings:{l:'Ratings',n:'Points scored and allowed per 100 possessions from play-by-play. No garbage: garbage time removed. Schedule-adjusted: net rating corrected for opponent strength and home court. Pace = possessions per 48 minutes.',cols:[
+  {k:'wl',l:'W-L',t:'Record.',type:'r',get:d=>d.W/(Math.max(d.W+d.L,1)),fmt:(v,d)=>d.W+'-'+d.L},
+  TT('ortg','ORTG','Points per 100 possessions.'),TT('drtg','DRTG','Points allowed per 100 possessions.',{hi:false}),TT('net','Net','ORTG minus DRTG.',{fmt:sg1}),
+  TT('net_ng','Net, no garbage','Net rating with garbage time removed.',{fmt:sg1,grp:1}),TT('net_adj','Net, schedule-adj.','Net rating adjusted for opponent strength and home court (garbage time removed).',{fmt:sg1}),
+  TT('pace48','Pace','Possessions per 48 minutes.',{hi:null,grp:1}),TT('pace','Poss / game','Possessions per game (overtime included).',{hi:null})]},
+ four:{l:'Four Factors',n:'Dean Oliver’s Four Factors explain most of the difference between teams: shooting (eFG%), turnovers (TOV%), offensive rebounding (ORB%) and free throws (FT/FGA). Shown for the team’s offense and for its defense (what opponents did).',cols:[
+  TP('o_efg','Off eFG%','eFG% on offense.',{grp:1}),TP('o_tov','Off TOV%','Turnovers per possession.',{hi:false}),TP('o_orb','Off ORB%','Share of its misses it rebounded.'),TP('o_ftr','Off FT/FGA','Free throws made per field-goal attempt.'),
+  TP('d_efg','Def eFG%','Opponents’ eFG%.',{hi:false,grp:1}),TP('d_tov','Def TOV%','Opponent turnovers per possession (forced).'),TP('d_orb','Def ORB%','Share of opponent misses opponents rebounded.',{hi:false}),TP('d_ftr','Def FT/FGA','Opponent free throws made per field-goal attempt.',{hi:false}),
+  TP('o_ts','Off TS%','True shooting on offense.',{grp:1}),TP('d_ts','Def TS%','Opponents’ true shooting.',{hi:false})]},
+ turnovers:{l:'Turnovers & transition',n:'Live-ball turnovers (steals) turn into transition and cost far more than dead-ball ones. Points per 100 possessions for and against. Transition PPP from NBA.com play types.',cols:[
+  TP('o_live','Live-ball TOV%','Steals by opponents per possession.',{hi:false,grp:1}),TP('o_dead','Dead-ball TOV%','Other turnovers per possession.',{hi:false}),
+  TP('d_live','Forced live-ball %','Steals per opponent possession.',{grp:1}),TP('d_dead','Forced dead-ball %','Other forced turnovers per opponent possession.'),
+  TT('o_ptsTO','Pts off TOV','Points off turnovers per 100 possessions.',{grp:1}),TT('d_ptsTO','Pts off TOV allowed','Opponent points off turnovers per 100 possessions.',{hi:false}),
+  TT('o_ptsFB','Fast-break pts','Fast-break points per 100 possessions.',{grp:1}),TT('d_ptsFB','Fast-break pts allowed','Opponent fast-break points per 100.',{hi:false}),
+  TT('o_pts2C','2nd-chance pts','Second-chance points per 100 possessions.',{grp:1}),TT('d_pts2C','2nd-chance pts allowed','Opponent second-chance points per 100.',{hi:false}),
+  {k:'trf',l:'Transition freq',t:'Share of possessions in transition (NBA.com play types).',type:'r',get:d=>d.pt&&d.pt[11]?d.pt[11][0]/d.pt[0]:null,fmt:pct,grp:1,hi:null},
+  {k:'trp',l:'Transition PPP',t:'Points per transition possession.',type:'r',get:d=>d.pt&&d.pt[11]?d.pt[11][1]/d.pt[11][0]:null,fmt:f3},
+  TT('o_ptsPT','Paint pts','Points in the paint per 100 possessions.',{grp:1}),TT('d_ptsPT','Paint pts allowed','Opponent paint points per 100.',{hi:false})]},
+ shotq:{l:'Shot quality allowed',n:'Defense is mostly about which shots you allow. Expected eFG% allowed applies league make rates by zone (rim, paint, mid-range, corner 3, above-break 3) to the shots opponents took. Opponent 3P% is left out on purpose: it is mostly luck (about 9,000 attempts to be half signal).',cols:[
+  TP('d_efg','Opp eFG%','Opponents’ eFG%.',{hi:false}),TP('d_xefg','Opp xeFG%','Expected opponent eFG% from shot locations allowed.',{hi:false}),
+  {k:'xdiff',l:'eFG% vs expected',t:'Opponent eFG% minus expected. Negative = opponents shot worse than their shot locations predict (contests, or luck).',type:'r',get:d=>d.d_xefg!=null?d.d_efg-d.d_xefg:null,fmt:sgp,hi:false},
+  TP('d_rim_share','Rim share allowed','Share of opponent shots at the rim.',{hi:false,grp:1}),TP('d_3_share','3PA share allowed','Share of opponent shots from 3.',{hi:false})]},
+ clutch:{l:'Clutch',n:'Clutch = last 5 minutes of the 4th quarter or overtime, score within 5. Clutch net rating, not close-game record (records barely repeat year to year). Still a small sample.',cols:[
+  TT('cl_net','Clutch net','Net rating in clutch time per 100 possessions.',{fmt:sg1}),{k:'cl_poss',l:'Clutch poss',t:'Clutch possessions (both ends).',type:'r',get:d=>d.cl_poss,fmt:f0,hi:null}]},
+ hustle:{l:'Hustle',n:'Team totals of player hustle tracking (NBA.com), converted by the Per setting.',cols:[
+  TC('h_DEFLECTIONS','Deflections','Deflections.'),TC('h_CONTESTED_SHOTS','Contests','Shots contested.'),TC('h_LOOSE_BALLS_RECOVERED','Loose balls','Loose balls recovered.'),
+  TC('h_BOX_OUTS','Box outs','Box outs.'),TC('h_CHARGES_DRAWN','Charges','Charges drawn.'),TC('h_SCREEN_ASSISTS','Screen AST','Screen assists.'),TC('t_REB_CONTEST','Contested REB','Contested rebounds.')]},
+ playtypes:{l:'Play types',n:'Team offense by play type (NBA.com / Synergy): possessions and points per possession.',cols:[].concat(...PTN.map((l,i)=>ptype(i,l)))},
+ ptdef:{l:'Play-type defense',n:'What opponents did against this defense by play type (NBA.com / Synergy): possessions faced and points per possession allowed.',cols:[].concat(...PTN.map((l,i)=>i===5?[]:[
+  C('pd'+i,l+' poss','Opponent possessions in this play type.',{get:d=>d.ptd&&d.ptd[i]?d.ptd[i][0]:null,grp:1,hi:null}),
+  R('pdp'+i,l+' PPP allowed','Opponent points per possession in this play type.',{get:d=>d.ptd&&d.ptd[i]?d.ptd[i][1]:null,fmt:f3,hi:false})]))}
+};
+// ---------- controls
+const seg=(id,opts,key,cb)=>{const el=document.getElementById(id);el.innerHTML='';opts.forEach(([v,l,t])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;if(t)b.title=t;
+  b.onclick=()=>{state[key]=v;if(cb)cb();save();go();};el.appendChild(b);});return el;};
+const entEl=seg('ent',[['players','Players'],['teams','Teams']],'ent',()=>{state.cat='box';state.sort=null;});
+const basEl=seg('basis',[['p100','Per 100','Per 100 possessions'],['pg','Per game'],['tot','Totals']],'basis');
+const adjEl=seg('adj',[['raw','Raw','Standard numbers (match NBA.com and Basketball-Reference within rounding).'],['adj','Adjusted','Rates pulled toward league average by sample size, so tiny samples don’t top the list.']],'adj');
+const sEl=document.getElementById('seasonf');IDX.seasons.forEach(s=>{const o=document.createElement('option');o.value=s.season;o.textContent=s.season;sEl.appendChild(o);});
+sEl.onchange=()=>{state.season=sEl.value;go();};
+const posEl=document.getElementById('posf'),teamEl=document.getElementById('teamf'),mEl=document.getElementById('minm');
+posEl.onchange=()=>{state.pos=posEl.value;save();render();};teamEl.onchange=()=>{state.team=teamEl.value;render();};mEl.oninput=()=>{state.min=+mEl.value;save();render();};
+document.getElementById('q').oninput=e=>{state.q=e.target.value;render();};
+let D=null;
+async function go(){D=await load(state.season);
+  const tms=[...new Set(Object.values(D.players).map(p=>p.t).filter(Boolean))].sort();teamEl.innerHTML='<option value="all">All teams</option>'+tms.map(t=>`<option>${t}</option>`).join('');teamEl.value=tms.includes(state.team)?state.team:'all';
+  render();}
+const cats=()=>state.ent==='players'?PCATS:TCATS;
+function render(){
+  const CT=cats();if(!CT[state.cat])state.cat=Object.keys(CT)[0];const cat=CT[state.cat],team=state.ent==='teams',adj=state.adj==='adj';
+  [...entEl.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.ent));[...basEl.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.basis));
+  [...adjEl.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===state.adj));sEl.value=state.season;posEl.value=state.pos;
+  [posEl,teamEl,mEl].forEach(e=>e.disabled=team);
+  const ce=document.getElementById('cats');ce.innerHTML='';Object.entries(CT).forEach(([k,c])=>{const b=document.createElement('button');b.type='button';b.textContent=c.l;b.setAttribute('aria-pressed',k===state.cat);b.onclick=()=>{state.cat=k;state.sort=null;save();render();};ce.appendChild(b);});
+  document.getElementById('catnote').textContent=cat.n;
+  const live=state.season===IDX.seasons[0].season;const fr=live?Math.min(1,Math.max(...Object.values(D.teams).map(t=>t.gp))/82):1;
+  const minM=Math.round(state.min*fr);document.getElementById('minmV').textContent=minM.toLocaleString()+(live&&fr<1?' (prorated)':'');mEl.value=state.min;
+  // values
+  const src=team?D.teams:D.players;const q=FOLD(state.q.trim());
+  const cols=cat.cols;
+  const val=(c,d)=>{let v=null;if(adj&&c.a){const a=c.a(d);if(a!=null){v=c.type==='c'?(B()==='p100'?a:B()==='pg'?a*(d.poss/100)/Math.max(d.gp,1):a*d.poss/100):a;return v;}}
+    v=c.get(d);if(v==null||Number.isNaN(v))return null;return c.type==='c'?conv(d,v,team):v;};
+  let rows=Object.entries(src).map(([id,d])=>{if(!d.n)d.n=TN[id]||id;return {id,d,pos:team?'':(POS[id]||''),vals:cols.map(c=>val(c,d))};});
+  const qual=r=>team||r.d.min>=minM;
+  const okF=r=>team||((state.pos==='all'||PG[state.pos].includes(r.pos))&&(state.team==='all'||r.d.t===state.team));
+  const Q=rows.filter(qual);
+  // percentiles per column among qualifiers
+  const PCT=cols.map((c,j)=>{if(c.hi===null)return null;const v=Q.map(r=>r.vals[j]).filter(x=>x!=null).sort((a,b)=>a-b);return v;});
+  let shown=rows.filter(r=>(q?FOLD(r.d.n+' '+(r.d.t||'')).includes(q):qual(r))&&okF(r));
+  if(state.sort==null){state.sort=0;state.dir=cols[0].hi===false?1:-1;}const j=state.sort,dir=state.dir;
+  shown.sort((a,b)=>{const x=a.vals[j],y=b.vals[j];return (x==null)-(y==null)||dir*((x>y)-(x<y))||a.d.n.localeCompare(b.d.n);});
+  // header
+  const th=document.getElementById('sthead');th.innerHTML=`<th>#</th><th>${team?'Team':'Player'}</th>`+(team?'<th title="Games">GP</th>':'<th title="Games">GP</th><th title="Minutes per game">MPG</th>')+cols.map((c,i)=>`<th data-i="${i}" class="${c.grp?'grp ':''}${i===j?'sorted':''}" title="${ESC(c.t)}">${ESC(c.l)}${i===j?(dir<0?' ↓':' ↑'):''}</th>`).join('');
+  th.querySelectorAll('th[data-i]').forEach(t=>t.onclick=()=>{const i=+t.dataset.i;if(state.sort===i)state.dir*=-1;else{state.sort=i;state.dir=cols[i].hi===false?1:-1;}render();});
+  const band=(c,i,v)=>{const P=PCT[i];if(!P||v==null||!P.length)return '';let lo=0,hi=P.length;while(lo<hi){const m=(lo+hi)>>1;if(P[m]<v)lo=m+1;else hi=m;}
+    let p=lo/Math.max(P.length-1,1);if(c.hi===false)p=1-p;const rk=c.hi===false?lo+1:P.length-lo;
+    return {cls:p>=.9?'p5':p>=.75?'p4':p>=.5?'p3':p<.1?'p1':'',tip:`Rank ${Math.max(1,rk)} of ${P.length} · ${Math.round(100*p)}th percentile`};};
+  const body=shown.slice(0,500).map((r,k)=>{const d=r.d;const nm=team?ESC(d.n||r.id):`<a href="/player?p=${SLUG(d.n)}">${ESC(d.n)}</a><span class="meta">${ESC(d.t||'')}${r.pos?' · '+ESC(r.pos):''}</span>`;
+    return `<tr><td>${k+1}</td><td>${nm}</td><td class="num">${team?(d.W+d.L):d.gp}</td>${team?'':`<td class="num">${(d.min/Math.max(d.gp,1)).toFixed(1)}</td>`}`+cols.map((c,i)=>{const v=r.vals[i];const b=band(c,i,v)||{};const ss=c.ss&&c.ss(d);
+      const txt=v==null?'–':(c.fmt.length>1?c.fmt(v,d):c.fmt(v));return `<td class="num${c.grp?' grp':''}${v==null?' na':''}${b.cls&&!ss?' '+b.cls:''}${ss?' ss':''}" title="${b.tip||''}${ss?' · small sample':''}">${txt}</td>`;}).join('')+'</tr>';}).join('');
+  document.getElementById('stbody').innerHTML=body||`<tr><td></td><td colspan="${cols.length+3}">Nothing matches these filters.</td></tr>`;
+  document.getElementById('count').textContent=team?`${shown.length} teams`:`${shown.length} players · min ${minM.toLocaleString()} minutes`;
+  document.getElementById('eyebrow').textContent=`${D.season} · ${state.basis==='p100'?'per 100 possessions':state.basis==='pg'?'per game':'totals'} · ${adj?'adjusted':'raw'}`;
+  const miss=(state.cat==='creation'||(state.cat==='playmaking'))&&!D.ptstats;
+  document.getElementById('srcnote').textContent=(miss?'Passing, drive, catch-and-shoot, pull-up and touch tracking for this season is still being added; those columns show – for now. ':'')+
+    'Sources: NBA.com play-by-play (box, on-court and team stats, all minutes), NBA.com player tracking (hustle, rebounding, passing, drives, shot types), NBA.com / Synergy play types, NBA.com defensive shot tracking. Small samples are faded.';
+}
+go();
+})().catch(err=>{const m=document.createElement('p');m.className='load-err';m.textContent='The data for this page did not load. Refresh to try again.';document.querySelector('.app').prepend(m);console.error(err);});
+</script>
+</body></html>
